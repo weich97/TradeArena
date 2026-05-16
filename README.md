@@ -46,6 +46,8 @@ The current diagnostic suite highlights three research axes:
 
 - representation signatures before agent failure
 - risk-feedback alignment under true, hidden, placebo, and contrarian feedback
+- mechanism probes for noise robustness, reasoning-mode ablations, and false
+  audit trust calibration
 - high-dimensional portfolio behavior under realistic execution constraints
 
 | Representation signature preview | Crisis-scene trajectory probe |
@@ -56,11 +58,22 @@ The current diagnostic suite highlights three research axes:
 | --- | --- |
 | <img src="docs/assets/crisis/crisis_correlation_intent_heatmap.svg" alt="Market correlation versus LLM intent co-exposure" width="430"> | <img src="docs/assets/crisis/crisis_feedback_learning_curves.svg" alt="Risk-feedback calibration curves" width="430"> |
 
+| Mechanism probe dashboard | 51-stock intraday portfolio probe |
+| --- | --- |
+| <img src="docs/assets/mechanism_probe_summary.svg" alt="Mechanism probes for intent geometry, noise robustness, and false-audit trust calibration" width="430"> | <img src="docs/assets/intraday_portfolio_summary.svg" alt="51-stock intraday portfolio concentration and risk-gate pressure" width="430"> |
+
 The crisis-scene probes use timestamp-masked historical stress paths, including
 a 2022 Tech/Rates drawdown scene and a 2023 SVB/regional-bank shock scene. The
 tracked snapshots include redacted model metadata for GPT-family, Gemini,
 Claude, and DeepSeek V4 Pro runs without shipping raw provider prompt/response
 text.
+
+The mechanism probe dashboard summarizes three stress tests that are useful for
+agent evaluation: CoT-free intent geometry, noise-injection robustness, and
+contrarian false-audit drift. The 51-stock intraday probe compares passive,
+Markowitz/MVO, and LLM allocation behavior under a high-dimensional hourly
+portfolio task, exposing concentration, risk-gate pressure, and execution-aware
+return differences in a single view.
 
 Run the gallery locally:
 
