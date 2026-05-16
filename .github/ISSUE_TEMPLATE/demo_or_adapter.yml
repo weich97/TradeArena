@@ -1,0 +1,38 @@
+name: Demo or adapter request
+description: Propose a new data source, market rule, analyst, risk gate, or hands-on example
+title: "[Demo/Adapter] "
+labels: ["enhancement", "good first issue"]
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Data provider or CSV sidecar
+        - Analyst or strategy plugin
+        - Risk manager or market rule
+        - Execution simulator
+        - Evaluation metric
+        - Visualization or demo
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What would this help users, reviewers, or researchers understand?
+    validations:
+      required: true
+  - type: textarea
+    id: artifact
+    attributes:
+      label: Proposed artifact
+      description: What should the demo write under outputs/examples?
+      placeholder: "JSON summary, CSV table, SVG chart, HTML report"
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Implementation scope
+      description: Which files or interfaces would this likely touch?

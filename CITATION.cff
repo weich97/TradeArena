@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use TradeArena in your research or software, please cite this repository."
+title: "TradeArena: A Modular and Execution-Realistic Framework for Risk-Aware LLM Trading Agents"
+type: software
+authors:
+  - family-names: Xue
+    given-names: Weicheng
+    email: "weich97@vt.edu"
+repository-code: "https://github.com/weich97/TradeArena"
+url: "https://github.com/weich97/TradeArena"
+license: MIT
+version: "0.1.0"
+date-released: "2026-05-16"
+keywords:
+  - LLM agents
+  - trading agents
+  - risk management
+  - execution simulation
+  - benchmark

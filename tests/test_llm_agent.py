@@ -1,0 +1,199 @@
+import json
+from pathlib import Path
+
+import pytest
+
+from trading_agent_os.agents.llm import DeepSeekLLMAnalyst
+from trading_agent_os.core.domain import Bar, MarketSnapshot, PortfolioState
+
+
+def test_deepseek_llm_analyst_replays_cache_without_key(tmp_path: Path, monkeypatch):
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    cache = tmp_path / "cache.jsonl"
+    analyst = DeepSeekLLMAnalyst(cache_path=str(cache), model="test-model")
+    snapshot = MarketSnapshot(
+        timestamp=__import__("datetime").datetime(2026, 1, 1),
+        bars={
+            "BTC-USD": Bar(
+                symbol="BTC-USD",
+                timestamp=__import__("datetime").datetime(2026, 1, 1),
+                open=100.0,
+                high=105.0,
+                low=98.0,
+                close=104.0,
+                volume=1000.0,
+            )
+        },
+    )
+    prompt = analyst._prompt(snapshot, PortfolioState(cash=100000.0), memory=None)
+    prompt_hash = __import__("hashlib").sha256(prompt.encode("utf-8")).hexdigest()
+    cache.write_text(
+        json.dumps(
+            {
+                "cache_key": f"test-model:{prompt_hash}",
+                "model": "test-model",
+                "prompt_hash": prompt_hash,
+                "prompt": prompt,
+                "response_text": json.dumps(
+                    {
+                        "signals": [
+                            {
+                                "symbol": "BTC-USD",
+                                "score": 0.25,
+                                "confidence": 0.7,
+                                "horizon": "1w",
+                                "rationale": "cached response",
+                                "risk_notes": "moderate volatility",
+                            }
+                        ]
+                    }
+                ),
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    signals = analyst.analyze(snapshot, PortfolioState(cash=100000.0), memory=None)
+
+    assert len(signals) == 1
+    assert signals[0].symbol == "BTC-USD"
+    assert signals[0].score == 0.25
+    assert signals[0].metadata["llm_call"] is True
+
+
+def test_placebo_risk_feedback_keeps_prompt_shape():
+    analyst = DeepSeekLLMAnalyst(model="test-model", risk_feedback_mode="placebo")
+    snapshot = MarketSnapshot(
+        timestamp=__import__("datetime").datetime(2026, 1, 1),
+        bars={
+            "BTC-USD": Bar(
+                symbol="BTC-USD",
+                timestamp=__import__("datetime").datetime(2026, 1, 1),
+                open=100.0,
+                high=105.0,
+                low=98.0,
+                close=104.0,
+                volume=1000.0,
+            )
+        },
+    )
+    memory = type(
+        "Memory",
+        (),
+        {
+            "events": [
+                {
+                    "payload": {
+                        "risk_report": {"clipped_count": 2, "blocked_count": 1},
+                        "execution_report": {"rejected_orders": 1, "pending_orders": 0, "total_slippage": 3.4},
+                        "risk_violations": ["max_position"],
+                        "equity": 100000.0,
+                    }
+                }
+            ]
+        },
+    )()
+
+    prompt = json.loads(analyst._prompt(snapshot, PortfolioState(cash=100000.0), memory=memory))
+
+    assert "recent_risk_feedback" in prompt
+    assert "long_term_risk_memory" in prompt
+    assert prompt["recent_risk_feedback"][0]["clipped_count"] == 0
+    assert prompt["long_term_risk_memory"]["risk_gate_rate"] == 0.0
+
+
+def test_weights_only_mode_replays_target_weights_without_rationale(tmp_path: Path, monkeypatch):
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    cache = tmp_path / "cache.jsonl"
+    analyst = DeepSeekLLMAnalyst(cache_path=str(cache), model="test-model", output_mode="weights_only")
+    timestamp = __import__("datetime").datetime(2026, 1, 1)
+    snapshot = MarketSnapshot(
+        timestamp=timestamp,
+        bars={
+            "BTC-USD": Bar("BTC-USD", timestamp, open=100.0, high=105.0, low=98.0, close=104.0, volume=1000.0)
+        },
+    )
+    prompt = analyst._prompt(snapshot, PortfolioState(cash=100000.0), memory=None)
+    prompt_hash = __import__("hashlib").sha256(prompt.encode("utf-8")).hexdigest()
+    cache.write_text(
+        json.dumps(
+            {
+                "cache_key": f"deepseek:test-model:{prompt_hash}",
+                "model": "test-model",
+                "provider": "deepseek",
+                "prompt_hash": prompt_hash,
+                "prompt": prompt,
+                "response_text": json.dumps(
+                    {"weights": [{"symbol": "BTC-USD", "target_weight": 0.35, "confidence": 0.9, "horizon": "1w"}]}
+                ),
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    signals = analyst.analyze(snapshot, PortfolioState(cash=100000.0), memory=None)
+
+    assert len(signals) == 1
+    assert abs(signals[0].score - 0.07) < 1e-12
+    assert signals[0].rationale == ""
+    assert signals[0].metadata["llm_output_mode"] == "weights_only"
+
+
+def test_contrarian_feedback_injects_severe_audit_report():
+    analyst = DeepSeekLLMAnalyst(model="test-model", risk_feedback_mode="contrarian")
+    timestamp = __import__("datetime").datetime(2026, 1, 1)
+    snapshot = MarketSnapshot(
+        timestamp=timestamp,
+        bars={
+            "BTC-USD": Bar("BTC-USD", timestamp, open=100.0, high=105.0, low=98.0, close=104.0, volume=1000.0)
+        },
+    )
+
+    prompt = json.loads(analyst._prompt(snapshot, PortfolioState(cash=100000.0), memory=None))
+
+    assert prompt["recent_risk_feedback"][0]["clipped_count"] >= 6
+    assert prompt["long_term_risk_memory"]["risk_gate_rate"] == 0.92
+
+
+def test_masked_timestamp_prompt_uses_relative_step():
+    analyst = DeepSeekLLMAnalyst(model="test-model", mask_timestamps=True)
+    timestamp = __import__("datetime").datetime(2022, 3, 8)
+    snapshot = MarketSnapshot(
+        timestamp=timestamp,
+        bars={
+            "BTC-USD": Bar("BTC-USD", timestamp, open=100.0, high=105.0, low=98.0, close=104.0, volume=1000.0)
+        },
+    )
+    memory = type("Memory", (), {"events": [{"payload": {}}, {"payload": {}}]})()
+
+    prompt = json.loads(analyst._prompt(snapshot, PortfolioState(cash=100000.0), memory=memory))
+
+    assert prompt["timestamp"] == "T+2"
+    assert "2022" not in json.dumps(prompt)
+
+
+def test_poe_provider_requires_key_or_cache_without_cached_response(tmp_path: Path, monkeypatch):
+    monkeypatch.delenv("TRADEARENA_TEST_POE_KEY", raising=False)
+    cache = tmp_path / "empty.jsonl"
+    analyst = DeepSeekLLMAnalyst(
+        model="gpt-5.5",
+        api_model="gpt-5.5",
+        provider="poe",
+        api_key_env="TRADEARENA_TEST_POE_KEY",
+        api_base_url="https://api.poe.com/v1",
+        api_protocol="openai_chat_completions",
+        use_response_format=False,
+        cache_path=str(cache),
+    )
+    timestamp = __import__("datetime").datetime(2026, 1, 1)
+    snapshot = MarketSnapshot(
+        timestamp=timestamp,
+        bars={
+            "BTC-USD": Bar("BTC-USD", timestamp, open=100.0, high=105.0, low=98.0, close=104.0, volume=1000.0)
+        },
+    )
+
+    with pytest.raises(RuntimeError, match="TRADEARENA_TEST_POE_KEY is not set"):
+        analyst.analyze(snapshot, PortfolioState(cash=100000.0), memory=None)
