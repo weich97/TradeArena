@@ -36,3 +36,25 @@ body:
     attributes:
       label: Implementation scope
       description: Which files or interfaces would this likely touch?
+      placeholder: |
+        Files likely to touch:
+        - src/trading_agent_os/...
+        - examples/...
+        - tests/...
+        - docs/...
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation command
+      description: What command should reviewers run?
+      placeholder: |
+        python -m pytest tests/test_new_feature.py -q
+        python examples/new_demo.py
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safe boundary
+      description: Confirm that this remains offline, paper-only, or human-approved.
+      placeholder: "No live orders; no credentials; no raw provider cache committed."

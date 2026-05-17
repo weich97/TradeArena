@@ -9,7 +9,7 @@ description = "Auditable benchmark for LLM trading agents with realistic executi
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Trading Agent OS Contributors" }]
-license = { text = "MIT" }
+license = "MIT"
 dependencies = []
 
 [project.urls]
@@ -20,13 +20,13 @@ Issues = "https://github.com/weich97/TradeArena/issues"
 
 [project.optional-dependencies]
 data = ["pandas>=2.0", "yfinance>=0.2"]
-dev = ["pytest>=7.0", "pillow>=10.0"]
+dev = ["pytest>=7.0", "pytest-cov>=5.0", "pillow>=10.0", "ruff>=0.6"]
 embeddings = ["sentence-transformers>=3.0"]
 ashare = ["akshare>=1.18"]
 
 [project.scripts]
 taos-run-benchmark = "trading_agent_os.cli:main"
-tradearena = "trading_agent_os.cli:main"
+tradearena = "tradearena.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -34,3 +34,10 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

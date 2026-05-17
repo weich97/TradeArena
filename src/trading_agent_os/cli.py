@@ -1,11 +1,20 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
+import sys
 from pathlib import Path
 
+from trading_agent_os.core.reproducibility import hash_trajectory_file
 from trading_agent_os.core.serialization import to_jsonable, write_json
 from trading_agent_os.evaluation import BenchmarkCase, BenchmarkRunner
+from trading_agent_os.evaluation.submissions import (
+    build_registry_rows,
+    validate_submission_file,
+    write_registry_html,
+    write_registry_markdown,
+)
 from trading_agent_os.experiments import PaperExperimentConfig, run_paper_experiment
 from trading_agent_os.factory import build_default_system, default_registry
 
@@ -75,6 +84,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] in {"validate-submission", "build-registry", "hash-run"}:
+        return _run_utility_command(argv)
+
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -219,6 +232,68 @@ def main(argv: list[str] | None = None) -> int:
         write_json(Path(args.output), trajectories)
 
     return 0
+
+
+def _run_utility_command(argv: list[str]) -> int:
+    command = argv[0]
+    if command == "validate-submission":
+        parser = argparse.ArgumentParser(description="Validate a redacted TradeArena benchmark submission.")
+        parser.add_argument("submission")
+        parser.add_argument("--no-verify-hash", action="store_true")
+        args = parser.parse_args(argv[1:])
+        _, errors = validate_submission_file(args.submission, verify_hash=not args.no_verify_hash)
+        if errors:
+            print(f"Invalid benchmark submission: {args.submission}")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        print(f"Valid benchmark submission: {args.submission}")
+        return 0
+
+    if command == "build-registry":
+        parser = argparse.ArgumentParser(description="Build a community benchmark registry from redacted submissions.")
+        parser.add_argument("input")
+        parser.add_argument("--output", default="docs/results/community_registry.md")
+        parser.add_argument("--csv-output", default="docs/results/community_registry.csv")
+        parser.add_argument("--html-output", default="docs/results/community_registry.html")
+        args = parser.parse_args(argv[1:])
+        rows, errors = build_registry_rows(args.input)
+        if errors:
+            print("Benchmark registry build failed:")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        write_registry_markdown(rows, args.output)
+        _write_registry_csv(rows, args.csv_output)
+        _write_registry_html(rows, args.html_output)
+        print(f"Wrote {args.output}")
+        print(f"Wrote {args.csv_output}")
+        print(f"Wrote {args.html_output}")
+        print(f"Accepted submissions: {len(rows)}")
+        return 0
+
+    if command == "hash-run":
+        parser = argparse.ArgumentParser(description="Compute a reproducibility hash for a trajectory JSON.")
+        parser.add_argument("trajectory")
+        args = parser.parse_args(argv[1:])
+        print(json.dumps(hash_trajectory_file(args.trajectory), indent=2))
+        return 0
+
+    raise AssertionError(f"Unhandled utility command: {command}")
+
+
+def _write_registry_csv(rows: list[dict[str, object]], path: str | Path) -> None:
+    fieldnames = list(rows[0]) if rows else ["scenario_id"]
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _write_registry_html(rows: list[dict[str, object]], path: str | Path) -> None:
+    write_registry_html(rows, path)
 
 
 if __name__ == "__main__":

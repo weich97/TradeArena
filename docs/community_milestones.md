@@ -25,6 +25,13 @@ Goal: let external users submit comparable, redacted benchmark rows.
 - Add one external baseline or scenario.
 - Document review rules for provider-sensitive model outputs.
 
+Initial implementation paths:
+
+- `examples/benchmark_submissions/example_redacted_submission.json`
+- `scripts/validate_benchmark_submission.py`
+- `scripts/build_benchmark_registry.py`
+- `docs/results/community_registry.md`
+
 ## Discussion Calls To Action
 
 - Execution simulation: comment with the market-friction assumption you think

@@ -1,0 +1,37 @@
+version: "0.1"
+artifacts:
+  - id: quickstart_core
+    command: python examples/quickstart_core_benchmark.py
+    required_outputs:
+      - outputs/examples/quickstart_core_metrics.json
+    required_json_fields:
+      - outputs/examples/quickstart_core_metrics.json:risk_aware_realistic.total_return
+      - outputs/examples/quickstart_core_metrics.json:risk_aware_realistic.execution_fill_rate
+      - outputs/examples/quickstart_core_metrics.json:risk_aware_realistic.trajectory_reproducibility_coverage
+  - id: audit_report
+    command: python examples/audit_trajectory_walkthrough.py && python scripts/render_audit_report.py
+    required_outputs:
+      - outputs/examples/audit_walkthrough_trajectory.json
+      - outputs/examples/audit_report.html
+    required_json_fields:
+      - outputs/examples/audit_walkthrough_trajectory.json:steps
+  - id: execution_realism_sweep
+    command: python examples/execution_realism_sweep_demo.py
+    required_outputs:
+      - outputs/examples/execution_realism_sweep_summary.json
+      - outputs/examples/execution_realism_sweep.csv
+      - outputs/examples/execution_realism_sweep.svg
+    required_json_fields:
+      - outputs/examples/execution_realism_sweep_summary.json:rows
+      - outputs/examples/execution_realism_sweep_summary.json:interpretation.high_spread
+  - id: benchmark_card
+    command: python scripts/build_benchmark_page.py
+    required_outputs:
+      - docs/results/benchmark_v0_1.md
+      - outputs/examples/benchmark-v0.1.html
+  - id: community_registry
+    command: python scripts/build_benchmark_registry.py examples/benchmark_submissions
+    required_outputs:
+      - docs/results/community_registry.md
+      - docs/results/community_registry.csv
+      - docs/results/community_registry.html

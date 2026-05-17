@@ -27,6 +27,12 @@ SECTIONS = [
         "python scripts/build_benchmark_page.py",
     ),
     (
+        "Community benchmark registry",
+        "A redacted benchmark-submission page that compares runs without exposing raw provider prompts or responses.",
+        "community_registry.html",
+        "python scripts/build_benchmark_registry.py examples/benchmark_submissions",
+    ),
+    (
         "Experiment-design demos",
         "Execution realism, Markowitz/MVO baselines, representation signatures, and custom plugin extensibility.",
         "experiment_design_index.html",
@@ -94,6 +100,7 @@ def main() -> int:
         _run([sys.executable, "scripts/run_launch_demo.py", "--skip-paper-figures"], "Launch demo portal")
         _preserve_launch_portal()
         _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.1 result page")
+        _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
         _run([sys.executable, "scripts/run_paper_design_demos.py"], "Experiment-design demo suite")
         _run([sys.executable, "examples/visual_tour_demo.py"], "Animated visual tour")
         _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")
@@ -101,8 +108,10 @@ def main() -> int:
     else:
         _preserve_launch_portal()
         _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.1 result page")
+        _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
 
     _copy_pages_assets()
+    _copy_registry_page()
     _write_demo_video_page()
     _write_landing_page(OUTPUT_DIR / "index.html")
     _write_showcase_index(OUTPUT_DIR / "showcase.html")
@@ -142,6 +151,13 @@ def _copy_pages_assets() -> None:
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(source, target)
+
+
+def _copy_registry_page() -> None:
+    for filename in ("community_registry.md", "community_registry.html", "community_registry.csv"):
+        source = ROOT / "docs/results" / filename
+        if source.exists():
+            shutil.copy2(source, OUTPUT_DIR / filename)
 
 
 def _write_demo_video_page() -> None:
@@ -260,6 +276,7 @@ python scripts/run_showcase.py
   </section>
   <section class="grid">
     <a class="card" href="benchmark-v0.1.html"><strong>Benchmark result page</strong><span>Crisis scenes, intraday portfolio probes, and representation robustness in one compact snapshot.</span></a>
+    <a class="card" href="community_registry.html"><strong>Community registry</strong><span>Validate redacted benchmark submissions and compare runs without raw provider text.</span></a>
     <a class="card" href="audit_report.html"><strong>Replayable audit report</strong><span>Trace one decision through observation, proposal, risk revision, execution, memory, and reproducibility fields.</span></a>
     <a class="card" href="crisis_snapshot_gallery.html"><strong>Crisis-scene visual probes</strong><span>Inspect representation trajectories, correlation/intent heatmaps, feedback curves, and exposure waterfalls.</span></a>
     <a class="card" href="extension_walkthrough.svg"><strong>Contributor extension path</strong><span>See how custom analysts, risk managers, and evaluators plug into the fixed protocol stack.</span></a>

@@ -1,0 +1,2 @@
+scenario_id,agent_type,model_family,model_redacted,data_source,frequency,symbols,total_return,max_drawdown,fill_rate,rejected_orders,risk_edits,audit_coverage,reproducibility_hash,source_file
+quickstart_core_synthetic_v0_1,deterministic,signal-weighted-baseline,True,synthetic-market,daily,2,0.3507666274,-0.0126263887,0.9034090909,14,124,1.0,sha256:8389671da54bb7574ef68f830b8c03046f457b445a3202974a94253f92eb7c1e,examples/benchmark_submissions/example_redacted_submission.json

@@ -44,6 +44,10 @@ try {
         & $Python -m compileall src scripts examples tests -q
     }
 
+    Invoke-Step "Run Ruff critical checks" {
+        & $Python -m ruff check src scripts examples tests
+    }
+
     Invoke-Step "Run test suite" {
         & $Python -m pytest tests -q
     }
@@ -55,6 +59,24 @@ try {
     if (Test-Path "schemas\benchmark_submission.schema.json") {
         Invoke-Step "Validate benchmark submission schema JSON" {
             & $Python -m json.tool schemas\benchmark_submission.schema.json | Out-Null
+        }
+    }
+
+    if (Test-Path "schemas\demo_artifact_contract.schema.json") {
+        Invoke-Step "Validate demo artifact contract schema JSON" {
+            & $Python -m json.tool schemas\demo_artifact_contract.schema.json | Out-Null
+        }
+    }
+
+    if (Test-Path "examples\benchmark_submissions\example_redacted_submission.json") {
+        Invoke-Step "Validate example benchmark submission" {
+            & $Python scripts\validate_benchmark_submission.py examples\benchmark_submissions\example_redacted_submission.json
+        }
+    }
+
+    if (Test-Path "docs\demo_artifacts.yaml") {
+        Invoke-Step "Validate demo artifact contract" {
+            & $Python scripts\validate_demo_artifacts.py
         }
     }
 

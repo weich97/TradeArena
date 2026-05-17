@@ -18,6 +18,8 @@ TradeArena treats an LLM trading agent as an auditable lifecycle, not a black-bo
 - `Decision`: symbol, side, target weight, confidence, rationale
 - `Order`: symbol, side, quantity, type, limit price, reason
 - `Fill`: executed quantity, requested quantity, price, commission, slippage, latency, liquidity, fill ratio, status
+- execution config: commission, quoted spread, base slippage, latency,
+  participation, and market impact assumptions
 
 ## Risk Schema
 
@@ -77,3 +79,23 @@ responses. The minimal public submission contract lives at
 It records the scenario, redacted agent metadata, data source, execution
 configuration, risk configuration, metrics, trajectory manifest, redaction
 policy, and reproducibility hash.
+
+Validate an example submission with:
+
+```bash
+tradearena validate-submission examples/benchmark_submissions/example_redacted_submission.json
+```
+
+## Demo Artifact Contract
+
+The demo artifact contract lives at
+[`../schemas/demo_artifact_contract.schema.json`](../schemas/demo_artifact_contract.schema.json)
+and is instantiated by [`demo_artifacts.yaml`](demo_artifacts.yaml). It lists
+the commands and output files that should remain stable for quickstart,
+execution-realism, audit-report, benchmark-card, and community-registry demos.
+
+Validate it after building the showcase:
+
+```bash
+python scripts/validate_demo_artifacts.py
+```

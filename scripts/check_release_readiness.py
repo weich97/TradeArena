@@ -13,8 +13,16 @@ REQUIRED_FILES = [
     "docs/getting_started.md",
     "docs/demo_matrix.md",
     "docs/results/benchmark_v0_1.md",
+    "docs/results/community_registry.md",
+    "docs/results/community_registry.html",
+    "docs/demo_artifacts.yaml",
     "schemas/benchmark_submission.schema.json",
+    "schemas/demo_artifact_contract.schema.json",
+    "examples/benchmark_submissions/example_redacted_submission.json",
     "scripts/run_showcase.py",
+    "scripts/validate_benchmark_submission.py",
+    "scripts/validate_demo_artifacts.py",
+    "SECURITY.md",
 ]
 FORBIDDEN_TRACKED_PATTERNS = [
     "data/llm_cache/*.jsonl",

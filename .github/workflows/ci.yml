@@ -7,18 +7,32 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
       - name: Install
         run: python -m pip install -e ".[dev]"
+      - name: Compile sources
+        run: python -m compileall src scripts examples tests -q
+      - name: Ruff critical checks
+        run: python -m ruff check src scripts examples tests
       - name: Unit tests
-        run: python -m pytest tests -q
+        run: python -m pytest tests -q --cov=trading_agent_os --cov-report=xml
       - name: Launch demo smoke test
         run: python scripts/run_launch_demo.py --skip-paper-figures
       - name: Showcase index smoke test
         run: python scripts/run_showcase.py --reuse-existing
+      - name: Validate demo artifact contract
+        run: python scripts/validate_demo_artifacts.py
+      - name: Validate example benchmark submission
+        run: python scripts/validate_benchmark_submission.py examples/benchmark_submissions/example_redacted_submission.json
+      - name: Build community benchmark registry
+        run: python scripts/build_benchmark_registry.py examples/benchmark_submissions
       - name: Release readiness smoke test
         run: python scripts/check_release_readiness.py
