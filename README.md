@@ -21,6 +21,12 @@
   <a href="https://github.com/weich97/TradeArena/releases/latest">
     <img alt="Release" src="https://img.shields.io/github/v/release/weich97/TradeArena">
   </a>
+  <a href="https://pypi.org/project/tradearena-benchmark/">
+    <img alt="PyPI" src="https://img.shields.io/pypi/v/tradearena-benchmark">
+  </a>
+  <a href="https://pypi.org/project/tradearena-benchmark/">
+    <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/tradearena-benchmark">
+  </a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.10--3.12-0f172a">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
 </p>
@@ -51,11 +57,24 @@ before anyone trusts its headline return.
 ## Quick Start
 
 ```bash
+python -m pip install tradearena-benchmark
+tradearena --benchmark tradearena-core
+```
+
+The PyPI distribution is `tradearena-benchmark` because `tradearena` is already
+occupied on PyPI by an unrelated project. The import namespace and CLI remain
+`tradearena`.
+
+To run the full local showcase:
+
+```bash
+git clone https://github.com/weich97/TradeArena.git
+cd TradeArena
 python -m pip install -e ".[dev]"
 python scripts/run_showcase.py
 ```
 
-Open:
+Then open:
 
 ```text
 outputs/examples/index.html
@@ -95,17 +114,8 @@ python -m pip install "git+https://github.com/weich97/TradeArena.git"
 tradearena --benchmark tradearena-core
 ```
 
-PyPI package status: the `tradearena` distribution name is already occupied by
-an unrelated project, so the release distribution is `tradearena-benchmark`.
-Install from PyPI with:
-
-```bash
-python -m pip install tradearena-benchmark
-tradearena --benchmark tradearena-core
-```
-
-The import namespace and CLI remain `tradearena`. The historical implementation
-package `trading_agent_os` remains available as a compatibility namespace.
+The historical implementation package `trading_agent_os` remains available as a
+compatibility namespace.
 
 ## Benchmark Result
 
