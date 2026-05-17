@@ -95,8 +95,17 @@ python -m pip install "git+https://github.com/weich97/TradeArena.git"
 tradearena --benchmark tradearena-core
 ```
 
-The package name and CLI are `tradearena`. The historical implementation
-package `trading_agent_os` remains as a compatibility namespace.
+PyPI package status: the `tradearena` distribution name is already occupied by
+an unrelated project, so the release distribution is `tradearena-benchmark`.
+After the first PyPI release, install with:
+
+```bash
+python -m pip install tradearena-benchmark
+tradearena --benchmark tradearena-core
+```
+
+The import namespace and CLI remain `tradearena`. The historical implementation
+package `trading_agent_os` remains available as a compatibility namespace.
 
 ## Benchmark Result
 

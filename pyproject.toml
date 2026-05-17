@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tradearena"
+name = "tradearena-benchmark"
 version = "0.1.1"
 description = "Auditable benchmark for LLM trading agents with realistic execution, risk gates, and replayable trajectories."
 readme = "README.md"
