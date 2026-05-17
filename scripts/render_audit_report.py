@@ -57,7 +57,7 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TradeArena Audit Report</title>
+  <title>TradeArena Audit Report: Replayable Decision Trace</title>
   <style>
     :root {{
       color-scheme: light;
@@ -166,7 +166,7 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
   <header>
     <div class="hero">
       <div>
-        <h1>TradeArena Audit Report</h1>
+        <h1>TradeArena Audit Report: Replayable Decision Trace</h1>
         <p>One replayable trading decision, rendered from the same trajectory JSON used by the benchmark. This report shows what the agent saw, what it proposed, how the risk gate revised it, what the execution simulator did, and which reproducibility fields make the step auditable.</p>
       </div>
       <div class="hero-card">
@@ -194,13 +194,13 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
         <div>{_e(highlight)}</div>
       </div>
       <div>
-        <h3>Market observation</h3>
+        <h3>Market Observation Summary</h3>
         {_observation_tags(observation)}
       </div>
     </section>
 
     <section class="panel">
-      <h2>Observe -> Plan -> Risk -> Execute -> Reflect</h2>
+      <h2>Decision Trace: Observe, Plan, Risk, Execute, Reflect</h2>
       <div class="timeline">
         {_stage("Observe", f"{len(observation.get('prices', {}))} symbols", f"news {observation.get('news_count', 0)}, macro {observation.get('macro_count', 0)}")}
         {_stage("Plan", f"{len(step.get('signals', []))} signals", f"{len(step.get('decisions', []))} proposed decisions")}
@@ -213,7 +213,7 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
 
     <section class="two">
       <div class="panel">
-        <h2>Equity Path</h2>
+        <h2>Portfolio Equity Path</h2>
         <div class="svgbox">{_equity_svg(equity_points)}</div>
         <p class="muted">Source: <code>{_e(str(trajectory_path))}</code></p>
       </div>
@@ -234,23 +234,23 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
     </section>
 
     <section class="panel">
-      <h2>Proposed vs Risk-Approved Decisions</h2>
+      <h2>Proposed vs Risk-Approved Decisions: Comparison Table</h2>
       {_decision_table(step.get("decisions", []), step.get("approved_decisions", []))}
     </section>
 
     <section class="two">
       <div class="panel">
-        <h2>Risk Lifecycle</h2>
+        <h2>Risk Lifecycle Reports</h2>
         {_risk_lifecycle_table(risk, in_trade, post_trade)}
       </div>
       <div class="panel">
-        <h2>Execution Simulator</h2>
+        <h2>Execution Simulator Outcomes</h2>
         {_execution_table(step)}
       </div>
     </section>
 
     <section class="panel">
-      <h2>Signals and Rationales</h2>
+      <h2>Agent Signals and Rationales</h2>
       {_signals_table(step.get("signals", []))}
     </section>
   </main>
