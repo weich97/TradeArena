@@ -152,7 +152,7 @@ Output:
 python examples/representation_signature_demo.py
 ```
 
-Shows how tracked diagnostic tables can be turned into an API-free visual
+Shows how tracked diagnostic tables can be turned into an offline visual
 artifact.
 
 Output:

@@ -1,4 +1,4 @@
-# v0.1.0: API-Free Benchmark Release For Auditable LLM Trading Agents
+# v0.1.0: No-Key Benchmark Release For Auditable LLM Trading Agents
 
 TradeArena v0.1.0 is the first public benchmark release for evaluating LLM
 trading agents as auditable decision-making systems under realistic market
@@ -6,7 +6,7 @@ constraints.
 
 ## Highlights
 
-- **API-free showcase:** run `python scripts/run_showcase.py` to generate a
+- **No-key showcase:** run `python scripts/run_showcase.py` to generate a
   local demo portal without model keys or live market-data downloads.
 - **Replayable audit trajectories:** every decision records observation,
   signals, intended allocation, risk-gate changes, orders, fills/rejections,
@@ -47,5 +47,5 @@ realistic constraints.
 ## Suggested GitHub Release Title
 
 ```text
-v0.1.0: API-free benchmark release for auditable LLM trading agents
+v0.1.0: No-key benchmark release for auditable LLM trading agents
 ```

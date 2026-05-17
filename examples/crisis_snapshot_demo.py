@@ -100,7 +100,7 @@ th {{ background: #eef2f7; }}
 </style>
 <main>
   <h1>TradeArena Crisis Snapshot Gallery</h1>
-  <p>{summary['rows']} crisis rows across {len(summary['models'])} models and {len(summary['feedback_modes'])} feedback modes. This page is API-free and reads tracked table/image snapshots.</p>
+  <p>{summary['rows']} crisis rows across {len(summary['models'])} models and {len(summary['feedback_modes'])} feedback modes. This page makes no live provider calls and reads tracked table/image snapshots.</p>
   <section class="grid">{cards}</section>
   <h2>Top Calibration Rows</h2>
   <table>

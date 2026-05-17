@@ -64,7 +64,7 @@ redacted manifest submission for community comparisons.
 
 Labels: `benchmark request`, `crypto`, `execution`
 
-Create an API-free crypto-style synthetic scenario with high volatility,
+Create a no-key crypto-style synthetic scenario with high volatility,
 continuous trading, and liquidity-sensitive fills.
 
 ### Add a futures roll and expiry risk demo

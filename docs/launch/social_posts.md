@@ -8,7 +8,7 @@ Most LLM trading demos show a return curve.
 TradeArena asks a different question:
 Can every decision be replayed, audited, risk-gated, and stress-tested?
 
-API-free benchmark release:
+No-key benchmark release:
 python -m pip install -e ".[dev]"
 python scripts/run_showcase.py
 
@@ -44,7 +44,7 @@ agent decisions reproducible and inspectable under realistic execution and risk
 constraints: fees, slippage, latency, liquidity, partial fills, rejected orders,
 pre-trade risk gates, post-trade attribution, and replayable trajectories.
 
-First run is API-free:
+First run requires no API keys:
 python -m pip install -e ".[dev]"
 python scripts/run_showcase.py
 

@@ -1,6 +1,6 @@
 # Retail Planning Sandbox
 
-TradeArena includes an API-free planning layer for educational, research, and
+TradeArena includes a no-key planning layer for educational, research, and
 paper-trading workflows. It helps contributors build investor-facing tools
 without bypassing suitability checks or turning the framework into an
 unreviewed live-trading bot.

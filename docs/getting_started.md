@@ -1,6 +1,6 @@
 # Getting Started
 
-TradeArena is easiest to evaluate as a sequence of small, API-free artifacts.
+TradeArena is easiest to evaluate as a sequence of small, no-key artifacts.
 The first run should show a working benchmark, an auditable trajectory, and a
 visual demo portal before asking you to configure any model or data provider.
 

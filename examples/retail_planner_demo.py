@@ -218,7 +218,7 @@ code {{ background: #eef2ff; padding: 2px 5px; border-radius: 4px; }}
 </style>
 <main>
   <h1>TradeArena Retail Planning Demo</h1>
-  <p>This report demonstrates an auditable planning workflow: investor profile, suitability gate, target allocation, paper rebalance instructions, and futures margin estimates. It is API-free and does not place live trades.</p>
+  <p>This report demonstrates an auditable planning workflow: investor profile, suitability gate, target allocation, paper rebalance instructions, and futures margin estimates. It makes no live API calls and does not place live trades.</p>
   <div class="notice"><strong>Important:</strong> Educational and research artifact only. Recommendations require human review and are not investment, tax, legal, or futures trading advice.</div>
   <img src="retail_planning_allocation.svg" alt="Retail planning allocation chart" style="width:100%;max-width:1040px">
   {sections}

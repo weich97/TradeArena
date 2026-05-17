@@ -23,7 +23,7 @@
 <p align="center">
   <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-0f172a">
-  <img alt="API-free showcase" src="https://img.shields.io/badge/showcase-no%20API%20key-059669">
+  <img alt="No-key quickstart" src="https://img.shields.io/badge/quickstart-no%20keys-059669">
   <img alt="Execution realistic" src="https://img.shields.io/badge/execution-fees%20%7C%20slippage%20%7C%20latency%20%7C%20partial%20fills-0284c7">
   <img alt="Replayable trajectories" src="https://img.shields.io/badge/trajectories-replayable-7c3aed">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
@@ -52,7 +52,7 @@ headline return?
 | Agent behavior beyond final return | Replayable observe-plan-risk-act-reflect trajectories |
 | Realistic execution assumptions | Fees, slippage, latency, liquidity limits, partial fills, and rejections |
 | Risk-aware evaluation | Pre-trade suitability/risk gates, in-trade monitors, post-trade attribution |
-| First-run reproducibility | API-free showcase, tracked demo artifacts, and CI smoke tests |
+| First-run reproducibility | No-key showcase, tracked demo artifacts, and CI smoke tests |
 | Extensibility | Narrow plugins for data, analysts, strategies, risk modules, simulators, planners, and evaluators |
 
 ![TradeArena motivation: from leaderboard returns to accountable trading decisions](docs/assets/motivation.svg)
@@ -70,8 +70,9 @@ Open:
 outputs/examples/showcase.html
 ```
 
-The first-run path is API-free: no OpenAI, DeepSeek, Poe, Hugging Face, AkShare,
-or Yahoo Finance key is required.
+The first-run path requires no API keys and makes no live model or
+market-data calls. Advanced experiments can still use DeepSeek, Poe, Hugging Face,
+AkShare, Yahoo Finance, and other provider APIs when you opt in.
 
 Prefer to click before cloning? Open the static demo:
 [`weich97.github.io/TradeArena/showcase.html`](https://weich97.github.io/TradeArena/showcase.html).
@@ -94,7 +95,7 @@ paper-only and requires human approval for generated rebalance instructions.
 ## Visual Tour
 
 The fastest way to understand TradeArena is to watch the decision loop. These
-short, API-free previews are generated from the same concepts used by the
+short, no-key previews are generated from the same concepts used by the
 examples: lifecycle logging, execution realism, risk feedback, and portfolio
 diagnostics.
 
@@ -205,7 +206,7 @@ outputs/examples/audit_report.html
 ## Research-Grade Diagnostics
 
 TradeArena is more than a toy backtester: the repository includes tracked,
-API-free diagnostic artifacts produced by the same trajectory, risk, execution,
+offline diagnostic artifacts produced by the same trajectory, risk, execution,
 and evaluation interfaces used by the framework. These examples show how an
 agent's decision path can be inspected as a system object rather than reduced
 to a final return number.
@@ -273,7 +274,7 @@ Open:
 outputs/examples/showcase.html
 ```
 
-The showcase is API-free. It builds a local portal linking to:
+The showcase runs without API keys or live API calls. It builds a local portal linking to:
 
 - an auditable trajectory report
 - an animated lifecycle/execution/diagnostics tour
@@ -364,7 +365,7 @@ python -m trading_agent_os.cli --benchmark tradearena-core --data-source csv --r
 
 ## LLM And Cache Policy
 
-Live model calls are optional. The API-free demos use deterministic agents,
+Live model and data calls are optional. The no-key demos use deterministic agents,
 tracked market data, and redacted cache manifests. If you run live model-backed
 experiments, raw prompt/response JSONL caches are ignored by Git:
 

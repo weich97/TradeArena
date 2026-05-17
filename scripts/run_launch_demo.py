@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run the API-free TradeArena launch demo.")
+    parser = argparse.ArgumentParser(description="Run the no-key TradeArena launch demo.")
     parser.add_argument(
         "--skip-paper-figures",
         action="store_true",
@@ -20,7 +20,7 @@ def main() -> int:
 
     print("TradeArena launch demo", flush=True)
     print("======================", flush=True)
-    print("This run is API-free: no DeepSeek, Poe, OpenAI, or market-data calls.", flush=True)
+    print("This run requires no keys and stays offline: no DeepSeek, Poe, OpenAI, or market-data calls.", flush=True)
     print(flush=True)
 
     _run([sys.executable, "examples/quickstart_core_benchmark.py"], "1/8 Core benchmark")
@@ -138,7 +138,7 @@ h1 {{ margin: 0 0 8px; font-size: 34px; letter-spacing: 0; }}
 </style>
 <main>
   <h1>TradeArena Demo Portal</h1>
-  <p class="lead">One API-free launch path for auditable LLM trading agents: lifecycle traces, execution realism, hard market rules, crisis-scene visuals, and cached model replay metadata.</p>
+  <p class="lead">One no-key launch path for auditable LLM trading agents: lifecycle traces, execution realism, hard market rules, crisis-scene visuals, and cached model replay metadata.</p>
   <section class="grid">
     {card_html}
   </section>

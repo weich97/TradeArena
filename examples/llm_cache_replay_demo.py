@@ -21,7 +21,7 @@ def main() -> int:
         "manifest_path": str(MANIFEST_PATH),
         "raw_cache_tracked_in_repo": False,
         "demo_notes": [
-            "This demo is API-free and reads a redacted manifest, not raw Poe or DeepSeek prompt/response text.",
+            "This demo makes no live provider calls and reads a redacted manifest, not raw Poe or DeepSeek prompt/response text.",
             "The main repository tracks provider/model coverage, hash prefixes, prompt modes, and parse statistics only.",
             "Raw JSONL caches are local or external artifacts and are ignored by Git.",
         ],
