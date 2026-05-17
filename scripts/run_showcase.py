@@ -239,7 +239,7 @@ h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.06; letter-spacing: 0; }
     <pre class="terminal">python -m pip install -e ".[dev]"
 python scripts/run_showcase.py
 
-# Open outputs/examples/showcase.html
+# Open outputs/examples/index.html
 # First-run path uses deterministic agents,
 # tracked snapshots, and no live provider calls.</pre>
   </section>
