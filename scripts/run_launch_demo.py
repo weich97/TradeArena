@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run the no-key TradeArena launch demo.")
+    parser = argparse.ArgumentParser(description="Run the offline TradeArena launch demo.")
     parser.add_argument(
         "--skip-paper-figures",
         action="store_true",
@@ -138,7 +138,7 @@ h1 {{ margin: 0 0 8px; font-size: 34px; letter-spacing: 0; }}
 </style>
 <main>
   <h1>TradeArena Demo Portal</h1>
-  <p class="lead">One no-key launch path for auditable LLM trading agents: lifecycle traces, execution realism, hard market rules, crisis-scene visuals, and cached model replay metadata.</p>
+  <p class="lead">One offline launch path for auditable LLM trading agents: lifecycle traces, execution realism, hard market rules, crisis-scene visuals, and cached model replay metadata.</p>
   <section class="grid">
     {card_html}
   </section>

@@ -110,7 +110,7 @@ See [`docs/launch/demo_video.md`](docs/launch/demo_video.md).
 ## Visual Tour
 
 The fastest way to understand TradeArena is to watch the decision loop. These
-short, no-key previews are generated from the same concepts used by the
+short offline-generated previews are produced from the same concepts used by the
 examples: lifecycle logging, execution realism, risk feedback, and portfolio
 diagnostics.
 
@@ -380,7 +380,7 @@ python -m trading_agent_os.cli --benchmark tradearena-core --data-source csv --r
 
 ## LLM And Cache Policy
 
-Live model and data calls are optional. The no-key demos use deterministic agents,
+Live model and data calls are optional. The offline demos use deterministic agents,
 tracked market data, and redacted cache manifests. If you run live model-backed
 experiments, raw prompt/response JSONL caches are ignored by Git:
 
