@@ -33,6 +33,7 @@
 
 <p align="center">
   <a href="docs/getting_started.md">Getting started</a> |
+  <a href="https://pypi.org/project/tradearena-benchmark/">PyPI</a> |
   <a href="https://weich97.github.io/TradeArena/">Project site</a> |
   <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark card</a> |
   <a href="docs/benchmark_submissions.md">Submit results</a> |
