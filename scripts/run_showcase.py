@@ -22,7 +22,7 @@ SECTIONS = [
     ),
     (
         "First-run portal",
-        "A guided quickstart tour of the audit report, A-share rules, crisis gallery, and redacted cache manifest.",
+        "Start with a guided quickstart route through the main demo artifacts, their source commands, and redacted cache manifest.",
         "index.html",
         "python scripts/run_launch_demo.py",
     ),
@@ -34,13 +34,13 @@ SECTIONS = [
     ),
     (
         "Animated visual tour",
-        "A hands-on regeneration of the audit lifecycle, execution realism, and diagnostics GIFs shown in the README.",
+        "Regenerate the README animations and inspect what each preview conveys without relying on motion alone.",
         "visual_tour_index.html",
         "python examples/visual_tour_demo.py",
     ),
     (
         "Audit report",
-        "One complete observe-plan-risk-act-reflect trajectory with risk gate and execution outcomes.",
+        "Trace one decision from market observation through proposal, risk review, execution, and reflection.",
         "audit_report.html",
         "python scripts/render_audit_report.py",
     ),
@@ -70,7 +70,7 @@ SECTIONS = [
     ),
     (
         "Retail planning sandbox",
-        "Investor profile, suitability gate, stock/ETF allocation, futures margin checks, and paper rebalance instructions.",
+        "Review investor profiles, suitability checks, target allocations, futures margin estimates, and paper rebalance orders.",
         "retail_planning_report.html",
         "python examples/retail_planner_demo.py",
     ),
@@ -169,7 +169,7 @@ def _write_showcase_index(path: Path) -> None:
     html = f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>TradeArena Showcase</title>
+<title>TradeArena Showcase: Quickstart Tour</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }}
 main {{ max-width: 1080px; margin: 0 auto; padding: 44px 28px 54px; }}
@@ -186,8 +186,8 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 .footer {{ margin-top: 26px; color: #64748b; font-size: 13px; line-height: 1.5; }}
 </style>
 <main>
-  <h1>TradeArena Showcase</h1>
-  <p class="lead">A compact quickstart showcase for the repository: run one command, open one page, then inspect the artifacts that demonstrate auditable trajectories, realistic execution, risk gates, diagnostic visuals, and extensible plugins. This showcase path requires no API keys or live provider calls.</p>
+  <h1>TradeArena Showcase: Quickstart Tour</h1>
+  <p class="lead">Run one command, open one page, and inspect the artifacts that demonstrate auditable trajectories, realistic execution, risk gates, diagnostic visuals, and extensible plugins. Each card names the artifact and the command that regenerates it, and the showcase path requires no API keys or live provider calls.</p>
   <div class="strip">
     <span class="pill">No API key required</span>
     <span class="pill">Execution realism</span>

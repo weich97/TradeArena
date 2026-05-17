@@ -55,7 +55,7 @@ headline return?
 | First-run reproducibility | Quickstart showcase, tracked demo artifacts, and CI smoke tests |
 | Extensibility | Narrow plugins for data, analysts, strategies, risk modules, simulators, planners, and evaluators |
 
-![TradeArena motivation: from leaderboard returns to accountable trading decisions](docs/assets/motivation.svg)
+![Concept diagram contrasting leaderboard returns with replayable, risk-checked trading decisions](docs/assets/motivation.svg)
 
 ## Quick Start
 
@@ -115,7 +115,7 @@ diagnostics.
 
 | Audit lifecycle | Execution realism | Diagnostic loop |
 | --- | --- | --- |
-| <img src="docs/assets/readme_audit_lifecycle.gif" alt="Animated audit lifecycle showing observe, plan, risk gate, execute, and reflect" width="280"> | <img src="docs/assets/readme_execution_realism.gif" alt="Animated execution realism demo showing fills, slippage, latency, liquidity, and rejected orders" width="280"> | <img src="docs/assets/readme_diagnostics_loop.gif" alt="Animated diagnostics demo showing representation rank, risk feedback, and portfolio concentration" width="280"> |
+| <img src="docs/assets/readme_audit_lifecycle.gif" alt="Animated decision trace moving through observe, plan, risk gate, execute, and reflect stages into an audit record" width="280"> | <img src="docs/assets/readme_execution_realism.gif" alt="Animated execution comparison of ideal fills, realistic fills, low liquidity, and high latency using fill-rate, slippage, and rejection bars" width="280"> | <img src="docs/assets/readme_diagnostics_loop.gif" alt="Animated diagnostics dashboard showing representation-rank contraction, risk-feedback curves, and portfolio concentration bars beyond final return" width="280"> |
 
 The visual tour is deliberately small enough for a README, while the underlying
 artifacts are real files produced by the repository demos and diagnostic
@@ -150,7 +150,7 @@ outputs/examples/extension_walkthrough.svg
 ```
 
 <p align="center">
-  <img src="docs/assets/extension_walkthrough_preview.svg" alt="TradeArena contributor extension walkthrough" width="900">
+  <img src="docs/assets/extension_walkthrough_preview.svg" alt="Flow diagram showing a custom analyst, risk manager, and evaluator plugged into the fixed data, strategy, execution, memory, and trajectory stack" width="900">
 </p>
 
 The example contributes:
@@ -183,7 +183,7 @@ outputs/examples/retail_planning_report.html
 ```
 
 <p align="center">
-  <img src="docs/assets/retail_planning_preview.svg" alt="TradeArena retail planning sandbox" width="900">
+  <img src="docs/assets/retail_planning_preview.svg" alt="Retail planning preview with investor profiles, suitability checks, target allocations, futures margin estimates, and paper rebalance orders" width="900">
 </p>
 
 The demo is deliberately conservative: no live brokerage calls, no automatic
@@ -201,7 +201,7 @@ fills, rejections, portfolio state, memory events, and reproducibility
 fingerprints in one browser-readable artifact.
 
 <p align="center">
-  <img src="docs/assets/audit_report_preview.svg" alt="TradeArena audit report preview" width="880">
+  <img src="docs/assets/audit_report_preview.svg" alt="HTML audit report preview linking observations, proposed decisions, risk-gate changes, execution outcomes, memory events, and reproducibility metadata" width="880">
 </p>
 
 Generate the same style of report locally:
