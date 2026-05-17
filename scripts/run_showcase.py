@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -8,14 +9,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "outputs/examples"
-DEMO_VIDEO_URL = "https://github.com/weich97/TradeArena/releases/download/v0.1.0/tradearena_3min_demo.mp4"
+DEMO_VIDEO_ASSET = ROOT / "docs/assets/tradearena_3min_demo.mp4"
+DEMO_VIDEO_POSTER = ROOT / "docs/assets/tradearena_3min_demo_thumbnail.png"
 
 
 SECTIONS = [
     (
         "3-minute demo video",
         "A captioned walkthrough of the quickstart command, audit report, execution realism, extension walkthrough, and retail planning sandbox.",
-        DEMO_VIDEO_URL,
+        "demo_video.html",
         "python scripts/build_demo_video.py",
     ),
     (
@@ -95,15 +97,14 @@ def main() -> int:
         _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")
         _run([sys.executable, "examples/retail_planner_demo.py"], "Retail planning sandbox")
 
+    _write_demo_video_page()
     _write_showcase_index(OUTPUT_DIR / "showcase.html")
     print("\nShowcase artifacts", flush=True)
     print("------------------", flush=True)
     for _, _, href, _ in SECTIONS:
-        if href.startswith("http"):
-            print(f"[link] {href}", flush=True)
-            continue
         path = OUTPUT_DIR / href
         print(f"[{'ok' if path.exists() else 'missing'}] outputs/examples/{href}", flush=True)
+    print(f"[{'ok' if (OUTPUT_DIR / 'tradearena_3min_demo.mp4').exists() else 'missing'}] outputs/examples/tradearena_3min_demo.mp4", flush=True)
     print("[ok] outputs/examples/showcase.html", flush=True)
     return 0
 
@@ -112,6 +113,54 @@ def _run(command: list[str], label: str) -> None:
     print(f"\n{label}", flush=True)
     print("-" * len(label), flush=True)
     subprocess.run(command, cwd=ROOT, check=True)
+
+
+def _write_demo_video_page() -> None:
+    if not DEMO_VIDEO_ASSET.exists():
+        raise FileNotFoundError(
+            f"Missing demo video asset: {DEMO_VIDEO_ASSET}. Run python scripts/build_demo_video.py first."
+        )
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(DEMO_VIDEO_ASSET, OUTPUT_DIR / "tradearena_3min_demo.mp4")
+    poster_html = ""
+    if DEMO_VIDEO_POSTER.exists():
+        shutil.copy2(DEMO_VIDEO_POSTER, OUTPUT_DIR / "tradearena_3min_demo_thumbnail.png")
+        poster_html = ' poster="tradearena_3min_demo_thumbnail.png"'
+    html = f"""<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TradeArena 3-Minute Demo Video</title>
+<style>
+body {{ margin: 0; font-family: Inter, Arial, sans-serif; background: #0f172a; color: #e2e8f0; }}
+main {{ max-width: 1120px; margin: 0 auto; padding: 40px 24px 54px; }}
+a {{ color: #67e8f9; }}
+h1 {{ margin: 0 0 8px; font-size: 38px; letter-spacing: 0; }}
+.lead {{ margin: 0 0 22px; max-width: 850px; color: #cbd5e1; line-height: 1.55; }}
+.video-wrap {{ border: 1px solid #334155; border-radius: 12px; overflow: hidden; background: #020617; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35); }}
+video {{ display: block; width: 100%; height: auto; background: #020617; }}
+.links {{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }}
+.links a {{ display: inline-block; padding: 9px 12px; border: 1px solid #334155; border-radius: 8px; background: #111827; text-decoration: none; font-weight: 700; }}
+</style>
+<main>
+  <h1>TradeArena 3-Minute Demo Video</h1>
+  <p class="lead">A captioned walkthrough of the quickstart command, showcase portal, audit report, execution realism, extension walkthrough, and retail planning sandbox. This static Pages video plays in the browser and does not require downloading a release asset.</p>
+  <div class="video-wrap">
+    <video controls preload="metadata"{poster_html}>
+      <source src="tradearena_3min_demo.mp4" type="video/mp4">
+      Your browser does not support embedded MP4 video. Open <a href="tradearena_3min_demo.mp4">the MP4 file</a>.
+    </video>
+  </div>
+  <div class="links">
+    <a href="showcase.html">Back to showcase</a>
+    <a href="audit_report.html">Audit report</a>
+    <a href="extension_walkthrough.svg">Extension walkthrough</a>
+    <a href="retail_planning_report.html">Retail planning</a>
+  </div>
+</main>
+</html>
+"""
+    (OUTPUT_DIR / "demo_video.html").write_text(html, encoding="utf-8")
 
 
 def _write_showcase_index(path: Path) -> None:
@@ -158,7 +207,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 
 
 def _card_html(title: str, body: str, href: str, command: str) -> str:
-    status = "external video" if href.startswith("http") else "ready" if (OUTPUT_DIR / href).exists() else "generate first"
+    status = "ready" if (OUTPUT_DIR / href).exists() else "generate first"
     return (
         f'<a class="card" href="{href}">'
         f"<span>{title}</span>"

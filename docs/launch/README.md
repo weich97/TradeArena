@@ -53,7 +53,7 @@ ai-agents
 - Enable GitHub Discussions.
 - Verify the GitHub Pages demo at `https://weich97.github.io/TradeArena/showcase.html`.
 - Create the issue backlog in `docs/launch/issue_backlog.md`.
-- Attach the 3-minute demo video to the release and link it from the README.
+- Verify the browser-playable 3-minute demo and link it from the README.
 
 ## Core Demo Command
 
@@ -68,10 +68,10 @@ Open:
 outputs/examples/showcase.html
 ```
 
-Watch:
+Watch in the browser:
 
 ```text
-https://github.com/weich97/TradeArena/releases/download/v0.1.0/tradearena_3min_demo.mp4
+https://weich97.github.io/TradeArena/demo_video.html
 ```
 
 ## Suggested Repository Description

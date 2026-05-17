@@ -94,9 +94,9 @@ paper-only and requires human approval for generated rebalance instructions.
 
 ## 3-Minute Demo Video
 
-[![TradeArena 3-minute demo video](docs/assets/demo_video_thumbnail.svg)](https://github.com/weich97/TradeArena/releases/download/v0.1.0/tradearena_3min_demo.mp4)
+[![TradeArena 3-minute demo video](docs/assets/demo_video_thumbnail.svg)](https://weich97.github.io/TradeArena/demo_video.html)
 
-The video walks through the quickstart command, the showcase portal, the audit
+The browser-playable video walks through the quickstart command, the showcase portal, the audit
 report, execution realism, extension walkthrough, and retail planning sandbox.
 Regenerate it locally with:
 

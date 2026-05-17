@@ -7,10 +7,10 @@ The 3-minute demo video shows the recommended first-run path:
 3. Inspect the audit report, execution-realism sweep, extension walkthrough,
    and retail planning sandbox.
 
-Watch the current public MP4:
+Watch it in the browser:
 
 ```text
-https://github.com/weich97/TradeArena/releases/download/v0.1.0/tradearena_3min_demo.mp4
+https://weich97.github.io/TradeArena/demo_video.html
 ```
 
 Regenerate it locally:
