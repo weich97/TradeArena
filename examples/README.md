@@ -18,7 +18,7 @@ outputs/examples/showcase.html
 The showcase links to a practical tour of auditable trajectories, execution
 realism, animated visual diagnostics, A-share market-rule interventions,
 portfolio baselines, redacted LLM cache manifests, and a custom plugin
-extension plus a contributor extension walkthrough.
+extension plus a contributor extension walkthrough and retail planning sandbox.
 
 ## 1. Core Benchmark
 
@@ -189,7 +189,23 @@ Output:
 - `outputs/examples/extension_walkthrough.svg`
 - `outputs/examples/extension_walkthrough_notes.md`
 
-## 12. Redacted LLM Cache Manifest
+## 12. Retail Planning Sandbox
+
+```bash
+python examples/retail_planner_demo.py
+```
+
+Shows how investor profiles and goals become suitability-audited allocations,
+paper rebalance instructions, and futures margin estimates.
+
+Output:
+
+- `outputs/examples/retail_planning_report.html`
+- `outputs/examples/retail_planning_summary.json`
+- `outputs/examples/retail_planning_audit.json`
+- `outputs/examples/retail_planning_allocation.svg`
+
+## 13. Redacted LLM Cache Manifest
 
 ```bash
 python examples/llm_cache_replay_demo.py

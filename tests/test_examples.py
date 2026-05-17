@@ -96,6 +96,20 @@ def test_extension_walkthrough_demo_shows_modular_contribution_path():
     assert (ROOT / "outputs/examples/extension_walkthrough.svg").exists()
 
 
+def test_retail_planner_demo_builds_paper_planning_report():
+    _run_example("examples/retail_planner_demo.py")
+    summary = _read_json("outputs/examples/retail_planning_summary.json")
+
+    assert summary["api_free"] is True
+    assert summary["live_trading"] is False
+    assert summary["manual_approval_required"] is True
+    assert summary["scenarios"]["ordinary_stock_etf_plan"]["futures_margin_estimates"] == 0
+    assert summary["scenarios"]["experienced_futures_overlay"]["futures_margin_estimates"] == 1
+    assert "MCL" in summary["scenarios"]["experienced_futures_overlay"]["blocked_symbols"]
+    assert (ROOT / "outputs/examples/retail_planning_report.html").exists()
+    assert (ROOT / "outputs/examples/retail_planning_allocation.svg").exists()
+
+
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     subprocess.run([sys.executable, "scripts/run_showcase.py", "--reuse-existing"], cwd=ROOT, check=True)
 
@@ -105,6 +119,7 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert "Animated visual tour" in html
     assert "Custom plugin extension" in html
     assert "Contributor extension walkthrough" in html
+    assert "Retail planning sandbox" in html
 
 
 def _run_example(path: str) -> None:

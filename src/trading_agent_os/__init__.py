@@ -18,12 +18,16 @@ from trading_agent_os.core.domain import (
 )
 from trading_agent_os.core.registry import PluginRegistry
 from trading_agent_os.core.runner import TradingAgentOS
+from trading_agent_os.planning import FinancialGoal, Holding, InvestorProfile, RetailPlanningAgent
 
 __all__ = [
     "Bar",
     "AgentProtocolTrace",
     "Decision",
     "Fill",
+    "FinancialGoal",
+    "Holding",
+    "InvestorProfile",
     "MarketSnapshot",
     "Order",
     "PluginRegistry",
@@ -34,6 +38,7 @@ __all__ = [
     "RiskCheck",
     "RiskReport",
     "RiskViolation",
+    "RetailPlanningAgent",
     "Signal",
     "TradingAgentOS",
 ]

@@ -14,6 +14,7 @@
   <a href="#research-grade-diagnostics">Diagnostics</a> |
   <a href="docs/schemas.md">Schemas</a> |
   <a href="docs/extension_walkthrough.md">Extension walkthrough</a> |
+  <a href="docs/retail_planning.md">Retail planning</a> |
   <a href="docs/plugin_interfaces.md">Plugin interfaces</a>
 </p>
 
@@ -94,6 +95,33 @@ The example contributes:
 It reuses the existing data provider, strategy, execution agent, realistic order
 simulator, memory store, reproducibility state, and trajectory logger. For the
 contribution checklist, see [`docs/extension_walkthrough.md`](docs/extension_walkthrough.md).
+
+## Retail Planning Sandbox
+
+TradeArena can also be extended from trading-agent benchmarks into auditable
+investment-planning workflows. The planning module takes an investor profile,
+goals, holdings, and an asset universe, then produces suitability checks, target
+allocations, futures margin estimates, and paper rebalance instructions.
+
+```bash
+python examples/retail_planner_demo.py
+```
+
+Open:
+
+```text
+outputs/examples/retail_planning_report.html
+```
+
+<p align="center">
+  <img src="docs/assets/retail_planning_preview.svg" alt="TradeArena retail planning sandbox" width="900">
+</p>
+
+The demo is deliberately conservative: no live brokerage calls, no automatic
+execution, and every generated order is marked `paper_pending_human_approval`.
+It includes a stock/ETF profile and an experienced futures-overlay profile so
+users can inspect how the suitability gate blocks unapproved futures exposure.
+See [`docs/retail_planning.md`](docs/retail_planning.md).
 
 ## Audit Report Preview
 
@@ -202,6 +230,7 @@ The showcase is API-free. It builds a local portal linking to:
 - representation-signature diagnostics
 - a custom plugin extension example
 - a contributor extension walkthrough
+- a retail planning sandbox with paper rebalance instructions
 - redacted LLM cache manifest metadata
 
 ## Quick Start

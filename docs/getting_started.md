@@ -33,6 +33,7 @@ python examples/portfolio_markowitz_demo.py
 python examples/visual_tour_demo.py
 python examples/custom_plugin_demo.py
 python examples/extension_walkthrough_demo.py
+python examples/retail_planner_demo.py
 ```
 
 Useful files:
@@ -43,6 +44,7 @@ Useful files:
 - `outputs/examples/visual_tour_index.html`
 - `outputs/examples/custom_plugin.svg`
 - `outputs/examples/extension_walkthrough.svg`
+- `outputs/examples/retail_planning_report.html`
 - `outputs/examples/audit_walkthrough_trajectory.json`
 
 ## Extension Path
@@ -55,6 +57,10 @@ Then run `examples/extension_walkthrough_demo.py`. It shows the fuller
 contributor path: a custom analyst, a custom risk manager, and a custom
 evaluator plugged into the same runner while the data provider, strategy,
 execution simulator, memory store, and trajectory logger remain unchanged.
+
+For an investor-facing extension, run `examples/retail_planner_demo.py`. It
+uses a separate planning layer with investor profiles, goals, suitability
+checks, paper rebalance instructions, and futures margin estimates.
 
 ## Quality Check
 
