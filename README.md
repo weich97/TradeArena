@@ -97,7 +97,7 @@ tradearena --benchmark tradearena-core
 
 PyPI package status: the `tradearena` distribution name is already occupied by
 an unrelated project, so the release distribution is `tradearena-benchmark`.
-After the first PyPI release, install with:
+Install from PyPI with:
 
 ```bash
 python -m pip install tradearena-benchmark

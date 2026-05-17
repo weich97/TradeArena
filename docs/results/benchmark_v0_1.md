@@ -12,7 +12,7 @@ limits, partial fills, rejected orders, and pre-trade risk edits.
 
 ## Result Provenance
 
-- Software release: v0.1.1.
+- Software release: v0.1.2.
 - Benchmark snapshot lineage: v0.1.
 - Benchmark card source: tracked snapshots under `docs/results/`.
 - Reproduction command:

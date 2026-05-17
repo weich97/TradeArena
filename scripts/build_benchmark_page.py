@@ -15,7 +15,7 @@ CRISIS_CSV = ROOT / "docs/results/crisis/crisis_summary.csv"
 REPRESENTATION_CSV = ROOT / "docs/results/representation/embedding_robustness.csv"
 INTRADAY_CSV = ROOT / "docs/results/intraday/intraday_complex.csv"
 QUICKSTART_JSON = ROOT / "outputs/examples/quickstart_core_metrics.json"
-RELEASE_TAG = "v0.1.1"
+RELEASE_TAG = "v0.1.2"
 POLICY_LABELS = {
     "gpt-5.5": "frontier-policy-A (redacted)",
     "claude-opus-4.7": "frontier-policy-B (redacted)",
