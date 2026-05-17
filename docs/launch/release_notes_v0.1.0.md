@@ -6,7 +6,7 @@ constraints.
 
 ## Highlights
 
-- **No-key showcase:** run `python scripts/run_showcase.py` to generate a
+- **Quickstart showcase:** run `python scripts/run_showcase.py` to generate a
   local demo portal without model keys or live market-data downloads.
 - **Replayable audit trajectories:** every decision records observation,
   signals, intended allocation, risk-gate changes, orders, fills/rejections,

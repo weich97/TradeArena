@@ -1,6 +1,6 @@
 # GitHub Pages Demo
 
-TradeArena publishes the no-key showcase as a static GitHub Pages demo:
+TradeArena publishes the quickstart showcase as a static GitHub Pages demo:
 
 ```text
 https://weich97.github.io/TradeArena/showcase.html
@@ -15,7 +15,7 @@ The Pages workflow lives in `.github/workflows/pages.yml`. On every push to
 4. deploys the artifact with GitHub Pages Actions
 
 The deployed demo contains only generated HTML, SVG, GIF, CSV, and JSON
-artifacts from the no-key showcase path. It does not include raw LLM caches,
+artifacts from the quickstart showcase path. It does not include raw LLM caches,
 paper sources, or local credentials.
 
 Useful entry points:

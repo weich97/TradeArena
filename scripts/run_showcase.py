@@ -13,7 +13,7 @@ OUTPUT_DIR = ROOT / "outputs/examples"
 SECTIONS = [
     (
         "First-run portal",
-        "A guided no-key tour of the audit report, A-share rules, crisis gallery, and redacted cache manifest.",
+        "A guided quickstart tour of the audit report, A-share rules, crisis gallery, and redacted cache manifest.",
         "index.html",
         "python scripts/run_launch_demo.py",
     ),
@@ -79,7 +79,7 @@ def main() -> int:
 
     print("TradeArena showcase", flush=True)
     print("===================", flush=True)
-    print("A one-command no-key repo tour for new users, reviewers, and launch posts.", flush=True)
+    print("A one-command quickstart repo tour for new users, reviewers, and launch posts.", flush=True)
 
     if not args.reuse_existing:
         _run([sys.executable, "scripts/run_launch_demo.py", "--skip-paper-figures"], "Launch demo portal")
@@ -128,7 +128,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 </style>
 <main>
   <h1>TradeArena Showcase</h1>
-  <p class="lead">A compact, no-key launch surface for the repository: run one command, open one page, then inspect the artifacts that demonstrate auditable trajectories, realistic execution, risk gates, diagnostic visuals, and extensible plugins.</p>
+  <p class="lead">A compact quickstart showcase for the repository: run one command, open one page, then inspect the artifacts that demonstrate auditable trajectories, realistic execution, risk gates, diagnostic visuals, and extensible plugins. This showcase path requires no API keys or live provider calls.</p>
   <div class="strip">
     <span class="pill">No API key required</span>
     <span class="pill">Execution realism</span>

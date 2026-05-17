@@ -23,7 +23,7 @@
 <p align="center">
   <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-0f172a">
-  <img alt="No-key quickstart" src="https://img.shields.io/badge/quickstart-no%20keys-059669">
+  <img alt="Quickstart demo" src="https://img.shields.io/badge/quickstart-no%20keys-059669">
   <img alt="Execution realistic" src="https://img.shields.io/badge/execution-fees%20%7C%20slippage%20%7C%20latency%20%7C%20partial%20fills-0284c7">
   <img alt="Replayable trajectories" src="https://img.shields.io/badge/trajectories-replayable-7c3aed">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
@@ -52,7 +52,7 @@ headline return?
 | Agent behavior beyond final return | Replayable observe-plan-risk-act-reflect trajectories |
 | Realistic execution assumptions | Fees, slippage, latency, liquidity limits, partial fills, and rejections |
 | Risk-aware evaluation | Pre-trade suitability/risk gates, in-trade monitors, post-trade attribution |
-| First-run reproducibility | No-key showcase, tracked demo artifacts, and CI smoke tests |
+| First-run reproducibility | Quickstart showcase, tracked demo artifacts, and CI smoke tests |
 | Extensibility | Narrow plugins for data, analysts, strategies, risk modules, simulators, planners, and evaluators |
 
 ![TradeArena motivation: from leaderboard returns to accountable trading decisions](docs/assets/motivation.svg)
