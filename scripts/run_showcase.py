@@ -15,12 +15,6 @@ DEMO_VIDEO_POSTER = ROOT / "docs/assets/tradearena_3min_demo_thumbnail.png"
 
 SECTIONS = [
     (
-        "3-minute demo video",
-        "A captioned walkthrough of the quickstart command, audit report, execution realism, extension walkthrough, and retail planning sandbox.",
-        "demo_video.html",
-        "python scripts/build_demo_video.py",
-    ),
-    (
         "First-run portal",
         "A guided quickstart tour of the audit report, A-share rules, crisis gallery, and redacted cache manifest.",
         "index.html",
@@ -104,6 +98,7 @@ def main() -> int:
     for _, _, href, _ in SECTIONS:
         path = OUTPUT_DIR / href
         print(f"[{'ok' if path.exists() else 'missing'}] outputs/examples/{href}", flush=True)
+    print(f"[{'ok' if (OUTPUT_DIR / 'demo_video.html').exists() else 'missing'}] outputs/examples/demo_video.html", flush=True)
     print(f"[{'ok' if (OUTPUT_DIR / 'tradearena_3min_demo.mp4').exists() else 'missing'}] outputs/examples/tradearena_3min_demo.mp4", flush=True)
     print("[ok] outputs/examples/showcase.html", flush=True)
     return 0
@@ -177,6 +172,13 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 .lead {{ margin: 0 0 18px; max-width: 820px; color: #475569; line-height: 1.58; }}
 .strip {{ display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 26px; }}
 .pill {{ border: 1px solid #cbd5e1; border-radius: 999px; padding: 6px 10px; background: #ffffff; color: #334155; font-size: 12px; font-weight: 700; }}
+.video-spotlight {{ display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.75fr); gap: 18px; align-items: stretch; margin: 0 0 22px; padding: 18px; border: 1px solid #cbd5e1; border-radius: 10px; background: #0f172a; color: #e2e8f0; box-shadow: 0 20px 48px rgba(15, 23, 42, 0.16); }}
+.video-spotlight video {{ display: block; width: 100%; height: auto; border-radius: 8px; background: #020617; }}
+.video-copy {{ padding: 4px 4px 0; }}
+.video-copy h2 {{ margin: 0 0 8px; font-size: 24px; letter-spacing: 0; color: #ffffff; }}
+.video-copy p {{ margin: 0 0 14px; color: #cbd5e1; line-height: 1.5; font-size: 14px; }}
+.video-links {{ display: flex; flex-wrap: wrap; gap: 8px; }}
+.video-links a {{ display: inline-block; padding: 8px 10px; border-radius: 7px; border: 1px solid #334155; background: #111827; color: #ccfbf1; text-decoration: none; font-size: 12px; font-weight: 800; }}
 .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 14px; }}
 .card {{ display: block; min-height: 154px; padding: 18px; border: 1px solid #d8e2ed; border-radius: 8px; background: white; color: inherit; text-decoration: none; }}
 .card:hover {{ border-color: #2563eb; box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10); transform: translateY(-1px); }}
@@ -184,6 +186,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 .card p {{ margin: 0 0 12px; color: #64748b; font-size: 13px; line-height: 1.45; }}
 .command {{ display: inline-block; padding: 6px 8px; border-radius: 6px; background: #f1f5f9; color: #334155; font-size: 12px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }}
 .footer {{ margin-top: 26px; color: #64748b; font-size: 13px; line-height: 1.5; }}
+@media (max-width: 820px) {{ .video-spotlight {{ grid-template-columns: 1fr; }} }}
 </style>
 <main>
   <h1>TradeArena Showcase</h1>
@@ -195,6 +198,20 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
     <span class="pill">Replayable trajectories</span>
     <span class="pill">Extensible plugins</span>
   </div>
+  <section class="video-spotlight" aria-label="TradeArena 3-minute demo video">
+    <video controls preload="metadata" poster="tradearena_3min_demo_thumbnail.png">
+      <source src="tradearena_3min_demo.mp4" type="video/mp4">
+      Your browser does not support embedded MP4 video. Open <a href="tradearena_3min_demo.mp4">the MP4 file</a>.
+    </video>
+    <div class="video-copy">
+      <h2>3-Minute Demo Video</h2>
+      <p>Watch the quickstart command, showcase portal, audit report, execution realism, extension walkthrough, and retail planning sandbox without leaving this page.</p>
+      <div class="video-links">
+        <a href="demo_video.html">Open theater view</a>
+        <a href="tradearena_3min_demo.mp4">Open MP4</a>
+      </div>
+    </div>
+  </section>
   <section class="grid">
     {cards}
   </section>
