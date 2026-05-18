@@ -26,6 +26,7 @@ python scripts/check_release_readiness.py
 - Add a small visualization for an existing JSON or CSV output.
 - Improve the HTML audit report navigation.
 - Add documentation that maps a paper claim to a runnable script.
+- Reproduce a documented command and file an external validation report.
 
 ## Research Extensions
 
@@ -35,6 +36,10 @@ python scripts/check_release_readiness.py
 - A new dense embedding or hidden-state probe.
 - A human annotation workflow for hallucination and audit-proxy calibration.
 - An A-share sector panel and cross-market model comparison.
+- A paper-readiness critique tied to `docs/academic_report_plan.md`.
+
+See `docs/benchmark_maturity.md` for the current academic-report,
+external-validation, and community-participation gaps.
 
 ## Interface Pointers
 

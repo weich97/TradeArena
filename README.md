@@ -35,6 +35,7 @@
   <a href="https://weich97.github.io/TradeArena/">Project site</a> |
   <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark card</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
+  <a href="docs/benchmark_maturity.md">Maturity track</a> |
   <a href="docs/demo_matrix.md">Demo matrix</a> |
   <a href="docs/contributor_roadmap.md">Roadmap</a> |
   <a href="SECURITY.md">Security</a>
@@ -326,6 +327,19 @@ Rebuild:
 python scripts/build_benchmark_page.py
 ```
 
+## Benchmark Maturity
+
+TradeArena is not yet an externally validated community benchmark. The maturity
+track is explicit: strengthen the academic report, collect independent
+validation, and earn real community participation through reviewed issues, pull
+requests, and redacted benchmark rows.
+
+- Maturity track: [`docs/benchmark_maturity.md`](docs/benchmark_maturity.md)
+- Academic report plan: [`docs/academic_report_plan.md`](docs/academic_report_plan.md)
+- External validation protocol: [`docs/external_validation.md`](docs/external_validation.md)
+- Community participation rules:
+  [`docs/community_participation.md`](docs/community_participation.md)
+
 ## Validate A Redacted Benchmark Row
 
 TradeArena can validate redacted benchmark manifests. They share scenario,
@@ -407,6 +421,14 @@ Useful entry points:
 - Advanced integration safety:
   [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md)
 - Technical white paper: [`docs/technical_report.md`](docs/technical_report.md)
+- Benchmark maturity:
+  [`docs/benchmark_maturity.md`](docs/benchmark_maturity.md)
+- Academic report plan:
+  [`docs/academic_report_plan.md`](docs/academic_report_plan.md)
+- External validation:
+  [`docs/external_validation.md`](docs/external_validation.md)
+- Community participation:
+  [`docs/community_participation.md`](docs/community_participation.md)
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
 - Execution model: [`docs/execution_model.md`](docs/execution_model.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)

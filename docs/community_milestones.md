@@ -24,6 +24,9 @@ Goal: let external users submit comparable, redacted benchmark rows.
 - Build a static registry page from submitted manifests.
 - Add one external baseline or scenario.
 - Document review rules for provider-sensitive model outputs.
+- Add external validation and paper-gap issue templates.
+- Track accepted non-maintainer validation reports separately from
+  maintainer-authored examples.
 
 Initial implementation paths:
 
@@ -41,3 +44,5 @@ Initial implementation paths:
   reproduce.
 - New adapters: link the data, broker, or model interface you want TradeArena
   to support.
+- External validation: reproduce a documented command and file the validation
+  report template with commit, environment, commands, and artifacts.

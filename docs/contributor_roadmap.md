@@ -9,6 +9,7 @@ where they fit.
 
 Good first contributions should be small, offline-friendly, and easy to review.
 
+- Reproduce a documented command and submit an external validation issue.
 - Add a holdings CSV importer for the retail planning sandbox.
 - Add another execution stress preset after the v0.1.1 high-spread example.
 - Improve alt text, captions, and keyboard-readable HTML for generated reports.
@@ -61,3 +62,5 @@ dependency in the first-run path.
 - It preserves the audit lifecycle: observation, decision, risk, execution,
   portfolio state, memory, and evaluation.
 - It is clear whether live APIs are optional or required.
+- It states whether the contribution supports the academic report, external
+  validation, or community participation maturity track.
