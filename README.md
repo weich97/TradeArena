@@ -202,6 +202,11 @@ Then open:
 outputs/examples/index.html
 ```
 
+If you are evaluating whether TradeArena is worth using for your own research,
+start here: inspect the generated reports, charts, trajectories, and demo pages
+before spending time on live LLM keys, real-market downloads, or broker-facing
+extensions.
+
 The first-run path uses deterministic agents, tracked snapshots, and local demo
 artifacts. It does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare, Yahoo
 Finance, or broker APIs unless you opt into the model or data commands below.

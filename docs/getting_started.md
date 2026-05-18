@@ -20,6 +20,10 @@ Open:
 outputs/examples/index.html
 ```
 
+Use this page as the first quality check. Inspect the generated reports, charts,
+trajectories, and demo pages before deciding whether to invest time in live LLM
+keys, real-market downloads, or broker-facing extensions.
+
 The first-run path does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare,
 or Yahoo Finance. It uses tracked data, deterministic synthetic markets, and
 redacted metadata artifacts.
