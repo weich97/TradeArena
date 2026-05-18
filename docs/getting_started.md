@@ -1,8 +1,9 @@
 # Getting Started
 
-TradeArena is easiest to evaluate as a sequence of small, offline-friendly artifacts.
-The first run should show a working benchmark, an auditable trajectory, and a
-visual demo portal before asking you to configure any model or data provider.
+TradeArena is easiest to evaluate as a sequence of explicit run modes. The
+first run is a deterministic smoke test for the runner, trajectory schema, risk
+gate, execution simulator, and metric stack. It is not a live LLM call. LLM
+agent runs are opt-in once you configure a provider key or a local cache.
 
 ## Five-Minute Path
 
@@ -27,6 +28,43 @@ No local install yet? Use:
 
 - [GitHub Codespaces][codespaces-quickstart]
 - Colab notebook: [`notebooks/tradearena_5min_colab.ipynb`](../notebooks/tradearena_5min_colab.ipynb)
+
+## LLM Paths
+
+Use the no-key manifest demo to inspect what prior LLM experiment coverage looks
+like without shipping raw prompts or responses:
+
+```bash
+python examples/llm_cache_replay_demo.py
+```
+
+Run one live/cache-backed LLM analyst case through Poe:
+
+```powershell
+$env:POE_API_KEY="..."
+tradearena --benchmark llm-smoke `
+  --analysts poe-llm `
+  --llm-model gpt-5.5 `
+  --periods 3 `
+  --symbols SYN,ALT `
+  --llm-cache outputs/examples/poe_llm_smoke_cache.jsonl
+```
+
+Or run the same smoke test through DeepSeek:
+
+```powershell
+$env:DEEPSEEK_API_KEY="..."
+tradearena --benchmark llm-smoke `
+  --analysts deepseek-llm `
+  --llm-model deepseek-v4-flash `
+  --periods 3 `
+  --symbols SYN,ALT `
+  --llm-cache outputs/examples/deepseek_llm_smoke_cache.jsonl
+```
+
+`llm-smoke` intentionally runs a single LLM analyst case. The default
+`tradearena-core` benchmark remains deterministic unless you explicitly set
+`--analysts deepseek-llm` or `--analysts poe-llm`.
 
 ## Fifteen-Minute Path
 

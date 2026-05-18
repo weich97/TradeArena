@@ -24,12 +24,17 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--benchmark",
         default="tradearena-core",
-        choices=["tradearena-core", "momentum-vs-buyhold"],
-        help="Benchmark suite.",
+        choices=["tradearena-core", "momentum-vs-buyhold", "llm-smoke"],
+        help="Benchmark suite. The default is a deterministic no-key smoke test; llm-smoke runs one live/cache-backed LLM analyst case.",
     )
     parser.add_argument("--symbols", default="SYN,ALT", help="Comma-separated symbols for synthetic benchmark.")
     parser.add_argument("--periods", type=int, default=120)
     parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument(
+        "--analysts",
+        default="momentum,macro-news",
+        help="Comma-separated analyst plugins for non-paper runs. Use deepseek-llm or poe-llm for live/cache-backed LLM analyst calls.",
+    )
     parser.add_argument("--execution", default="realistic", choices=["realistic", "ideal"])
     parser.add_argument(
         "--spread-bps",
@@ -57,6 +62,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-model-matrix", action="store_true", help="Skip Poe-mediated frontier model matrix risk-adaptation experiments.")
     parser.add_argument("--model-matrix-models", default="gpt-5.5,gemini-3.1-pro,kimi-k2.5,glm-5,claude-opus-4.7", help="Comma-separated Poe model/cache names for frontier model matrix experiments.")
     parser.add_argument("--llm-cache", default="data/llm_cache/deepseek_analyst.jsonl", help="JSONL cache for LLM prompts and responses.")
+    parser.add_argument("--llm-output-mode", default="rationale", choices=["rationale", "weights_only"], help="LLM response mode for non-paper llm-smoke runs.")
+    parser.add_argument("--llm-risk-feedback-mode", default="true", choices=["true", "placebo", "contrarian"], help="Risk-feedback mode for non-paper LLM analyst runs.")
+    parser.add_argument("--no-llm-risk-feedback", action="store_true", help="Hide risk feedback from non-paper LLM analyst prompts.")
     parser.add_argument("--llm-periods", type=int, default=52, help="Most recent historical periods to use for LLM experiments.")
     parser.add_argument("--no-statistical", action="store_true", help="Skip 30-seed statistical robustness tables in --paper-output.")
     parser.add_argument("--statistical-seeds", default="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", help="Comma-separated seeds for statistical robustness tables.")
@@ -98,6 +106,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     symbols = tuple(symbol.strip() for symbol in args.symbols.split(",") if symbol.strip())
+    analyst_names = _analyst_names_for_args(args)
     benchmark_data_kwargs = {
         "data_source": args.data_source,
         "real_data_dir": args.real_data_dir,
@@ -169,9 +178,15 @@ def main(argv: list[str] | None = None) -> int:
                 risk_name=args.risk,
                 execution_mode=args.execution,
                 spread_bps=args.spread_bps,
+                analyst_names=analyst_names,
+                llm_model=args.llm_model,
+                llm_cache_path=args.llm_cache,
+                llm_use_risk_feedback=not args.no_llm_risk_feedback,
+                llm_risk_feedback_mode=args.llm_risk_feedback_mode,
+                llm_output_mode=args.llm_output_mode,
                 **benchmark_data_kwargs,
             ),
-            description="Momentum plus macro/news agent with configurable risk and execution realism.",
+            description="Deterministic or configured analyst stack with configurable risk and execution stress.",
         ),
         BenchmarkCase(
             name="buy_and_hold_realistic",
@@ -184,6 +199,12 @@ def main(argv: list[str] | None = None) -> int:
                 risk_name=args.risk,
                 execution_mode=args.execution,
                 spread_bps=args.spread_bps,
+                analyst_names=analyst_names,
+                llm_model=args.llm_model,
+                llm_cache_path=args.llm_cache,
+                llm_use_risk_feedback=not args.no_llm_risk_feedback,
+                llm_risk_feedback_mode=args.llm_risk_feedback_mode,
+                llm_output_mode=args.llm_output_mode,
                 **benchmark_data_kwargs,
             ),
             description="Equal-weight buy-and-hold baseline.",
@@ -199,6 +220,12 @@ def main(argv: list[str] | None = None) -> int:
                 risk_name=args.risk,
                 execution_mode="ideal",
                 spread_bps=0.0,
+                analyst_names=analyst_names,
+                llm_model=args.llm_model,
+                llm_cache_path=args.llm_cache,
+                llm_use_risk_feedback=not args.no_llm_risk_feedback,
+                llm_risk_feedback_mode=args.llm_risk_feedback_mode,
+                llm_output_mode=args.llm_output_mode,
                 **benchmark_data_kwargs,
             ),
             description="Same agent under idealized execution for cost/realism ablation.",
@@ -214,6 +241,12 @@ def main(argv: list[str] | None = None) -> int:
                 risk_name="none",
                 execution_mode=args.execution,
                 spread_bps=args.spread_bps,
+                analyst_names=analyst_names,
+                llm_model=args.llm_model,
+                llm_cache_path=args.llm_cache,
+                llm_use_risk_feedback=not args.no_llm_risk_feedback,
+                llm_risk_feedback_mode=args.llm_risk_feedback_mode,
+                llm_output_mode=args.llm_output_mode,
                 **benchmark_data_kwargs,
             ),
             description="Same agent with the risk gate disabled.",
@@ -221,6 +254,30 @@ def main(argv: list[str] | None = None) -> int:
     ]
     if args.benchmark == "momentum-vs-buyhold":
         cases = cases[:2]
+    elif args.benchmark == "llm-smoke":
+        cases = [
+            BenchmarkCase(
+                name="llm_smoke_realistic_agent",
+                build_system=lambda: build_default_system(
+                    name="llm_smoke_realistic_agent",
+                    symbols=symbols,
+                    periods=args.periods,
+                    seed=args.seed,
+                    strategy_name="signal-weighted",
+                    risk_name=args.risk,
+                    execution_mode=args.execution,
+                    spread_bps=args.spread_bps,
+                    analyst_names=analyst_names,
+                    llm_model=args.llm_model,
+                    llm_cache_path=args.llm_cache,
+                    llm_use_risk_feedback=not args.no_llm_risk_feedback,
+                    llm_risk_feedback_mode=args.llm_risk_feedback_mode,
+                    llm_output_mode=args.llm_output_mode,
+                    **benchmark_data_kwargs,
+                ),
+                description="Single live/cache-backed LLM analyst smoke test.",
+            )
+        ]
     results = BenchmarkRunner(cases=cases).run()
     print(json.dumps(to_jsonable(results), indent=2))
 
@@ -232,6 +289,17 @@ def main(argv: list[str] | None = None) -> int:
         write_json(Path(args.output), trajectories)
 
     return 0
+
+
+def _analyst_names_for_args(args: argparse.Namespace) -> tuple[str, ...]:
+    names = tuple(name.strip() for name in args.analysts.split(",") if name.strip())
+    if args.benchmark == "llm-smoke" and not any(_is_llm_analyst(name) for name in names):
+        return ("deepseek-llm",)
+    return names or ("momentum", "macro-news")
+
+
+def _is_llm_analyst(name: str) -> bool:
+    return name in {"deepseek-llm", "chat-completions-llm", "poe-llm"}
 
 
 def _run_utility_command(argv: list[str]) -> int:

@@ -214,7 +214,7 @@ def _write_landing_page(path: Path) -> None:
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TradeArena — Auditable Benchmark for LLM Trading Agents</title>
+<title>TradeArena — Offline Smoke Showcase And LLM Benchmark Harness</title>
 <style>
 body { margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }
 main { max-width: 1160px; margin: 0 auto; padding: 42px 24px 58px; }
@@ -243,8 +243,8 @@ h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.06; letter-spacing: 0; }
 <main>
   <section class="hero">
     <div>
-      <h1>TradeArena: Auditable Benchmark for LLM Trading Agents</h1>
-      <p class="lead">Open-source benchmark and audit framework for evaluating LLM trading agents under realistic execution, risk-gate, and replayability constraints. It turns every decision into a traceable trajectory: observation → signal → intended allocation → risk gate → order → fill/rejection → portfolio state → diagnostic report.</p>
+      <h1>TradeArena: Offline Smoke Showcase And LLM Benchmark Harness</h1>
+      <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TradeArena also includes opt-in live or cache-backed LLM analyst runs through the same audit lifecycle: observation → signal → intended allocation → risk gate → order → fill/rejection → portfolio state → diagnostic report.</p>
       <div class="cta">
         <a href="showcase.html">Open showcase</a>
         <a href="benchmark-v0.1.html">Benchmark v0.1</a>
@@ -260,7 +260,7 @@ python scripts/run_showcase.py
 # tracked snapshots, and no live provider calls.</pre>
   </section>
   <section class="strip" aria-label="Use cases">
-    <div class="panel"><h2>Evaluate LLM Trading Agents</h2><p>Compare decisions with return, drawdown, risk edits, rejection rate, reproducibility, and audit coverage.</p></div>
+    <div class="panel"><h2>Opt-In LLM Agent Evaluation</h2><p>Run live or cache-backed model analysts after configuring provider keys, then compare return, drawdown, risk edits, rejection rate, reproducibility, and audit coverage.</p></div>
     <div class="panel"><h2>Stress-Test Execution Assumptions</h2><p>Inspect how spread, slippage, latency, liquidity limits, partial fills, and rejected orders change realized exposure.</p></div>
     <div class="panel"><h2>Build Auditable Workflows</h2><p>Plug in data adapters, analysts, strategies, risk gates, execution simulators, memory, and evaluators.</p></div>
   </section>

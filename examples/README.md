@@ -1,7 +1,9 @@
 # TradeArena Hands-On Examples
 
 These examples are designed for the first hour after cloning. They avoid live
-LLM calls by default and write local artifacts under `outputs/examples/`.
+LLM calls by default and write local artifacts under `outputs/examples/`. The
+default examples are deterministic smoke tests and visual demos, not live model
+benchmarks; live or cache-backed LLM runs are opt-in.
 
 ## Recommended First Run
 
@@ -219,11 +221,31 @@ python examples/llm_cache_replay_demo.py
 ```
 
 Shows portable model-experiment metadata without shipping raw prompt/response
-text.
+text. This is not a live LLM run and does not replay raw model decisions; it is
+a public manifest of model coverage, parse rates, and cache portability.
 
 Output:
 
 - `outputs/examples/llm_cache_replay_summary.json`
+
+## 14. Live LLM Smoke Test
+
+Use the CLI when you want the first run to actually call an LLM analyst:
+
+```powershell
+$env:POE_API_KEY="..."
+tradearena --benchmark llm-smoke `
+  --analysts poe-llm `
+  --llm-model gpt-5.5 `
+  --periods 3 `
+  --symbols SYN,ALT `
+  --llm-cache outputs/examples/poe_llm_smoke_cache.jsonl
+```
+
+The command runs one LLM-backed analyst case through the normal
+observe-plan-risk-act-reflect loop. If a matching cache row exists, the analyst
+replays it; otherwise it calls the configured provider and appends a local cache
+entry ignored by Git.
 
 ## Full Local Check
 

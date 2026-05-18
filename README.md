@@ -168,12 +168,18 @@ original intent and the executable decision after risk feedback, which is the
 core substrate for risk-feedback, representation-drift, and hallucination-audit
 experiments.
 
-## Quick Start
+## Quick Start: Deterministic Smoke Test
 
 ```bash
 python -m pip install tradearena-benchmark
 tradearena --benchmark tradearena-core
 ```
+
+This default command intentionally does **not** call an LLM. It is a no-key
+smoke test for the runner, trajectory schema, risk gate, execution simulator,
+and metric stack. It uses deterministic analysts so every new checkout can pass
+CI-style validation before provider keys, model routing, or billing enter the
+loop.
 
 The PyPI distribution is `tradearena-benchmark` because `tradearena` is already
 occupied on PyPI by an unrelated project. The import namespace and CLI remain
@@ -196,7 +202,48 @@ outputs/examples/index.html
 
 The first-run path uses deterministic agents, tracked snapshots, and local demo
 artifacts. It does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare, Yahoo
-Finance, or broker APIs unless you opt into advanced experiments.
+Finance, or broker APIs unless you opt into the model or data commands below.
+
+## LLM Run Paths
+
+TradeArena supports LLM trading-agent experiments, but the repository keeps live
+provider calls out of the default path. Use the path that matches what you want
+to verify:
+
+| Path | Calls an LLM? | Purpose |
+| --- | --- | --- |
+| `tradearena --benchmark tradearena-core` | No | Deterministic smoke test for core mechanics |
+| `python examples/llm_cache_replay_demo.py` | No | Redacted manifest of prior LLM experiment coverage; no raw prompts or responses |
+| `tradearena --benchmark llm-smoke ...` | Yes, unless a matching cache row exists | Minimal live/cache-backed LLM analyst run |
+| `tradearena --paper-output ...` | Optional | Larger paper-grade suite with cache-first LLM sections |
+
+Minimal live LLM smoke test through Poe:
+
+```powershell
+$env:POE_API_KEY="..."
+tradearena --benchmark llm-smoke `
+  --analysts poe-llm `
+  --llm-model gpt-5.5 `
+  --periods 3 `
+  --symbols SYN,ALT `
+  --llm-cache outputs/examples/poe_llm_smoke_cache.jsonl
+```
+
+Minimal live LLM smoke test through DeepSeek:
+
+```powershell
+$env:DEEPSEEK_API_KEY="..."
+tradearena --benchmark llm-smoke `
+  --analysts deepseek-llm `
+  --llm-model deepseek-v4-flash `
+  --periods 3 `
+  --symbols SYN,ALT `
+  --llm-cache outputs/examples/deepseek_llm_smoke_cache.jsonl
+```
+
+These commands run one LLM analyst case and write cache entries locally. The
+cache is deliberately ignored by Git because raw prompts and responses can carry
+provider, licensing, privacy, or portfolio constraints.
 
 No local install yet?
 

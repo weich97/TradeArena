@@ -1,4 +1,5 @@
 from tradearena.factory import build_default_system, default_registry
+from tradearena.cli import _analyst_names_for_args, build_parser
 
 
 def test_default_system_runs_and_records_trajectory():
@@ -40,6 +41,18 @@ def test_registry_lists_default_plugins():
     assert "performance" in registry.names("evaluator")
     assert "realistic" in registry.names("simulator")
     assert "none" in registry.names("risk")
+
+
+def test_llm_smoke_defaults_to_llm_analyst():
+    args = build_parser().parse_args(["--benchmark", "llm-smoke"])
+
+    assert _analyst_names_for_args(args) == ("deepseek-llm",)
+
+
+def test_cli_accepts_explicit_poe_llm_smoke_analyst():
+    args = build_parser().parse_args(["--benchmark", "llm-smoke", "--analysts", "poe-llm", "--llm-model", "gpt-5.5"])
+
+    assert _analyst_names_for_args(args) == ("poe-llm",)
 
 
 def test_markowitz_baseline_runs_with_realistic_execution():
