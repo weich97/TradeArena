@@ -6,8 +6,8 @@
 
 <p align="center">
   <strong>
-    Early-stage research prototype for studying LLM trading-agent behavior
-    under explicit execution, risk, and replayability constraints.
+    Research code for testing LLM trading agents with paper execution,
+    risk checks, and reproducible logs.
   </strong>
 </p>
 
@@ -43,8 +43,9 @@
 
 # TradeArena
 
-TradeArena is an early-stage research prototype that experiments with turning
-trading-agent decisions into traceable trajectories.
+TradeArena runs paper-trading experiments for LLM and deterministic agents. For
+each step it records the market input, proposed weights, risk edits, simulated
+fills, portfolio state, and metrics.
 
 <p align="center">
   <img src="docs/assets/readme_pipeline_architecture.svg"
@@ -52,19 +53,17 @@ trading-agent decisions into traceable trajectories.
        width="980">
 </p>
 
-It is not a trading bot and not a mature production benchmark. The current
-prototype asks a narrower research question: whether an LLM trading agent's
-intent, risk interventions, execution effects, and diagnostic artifacts can be
-captured clearly enough to support careful analysis.
+TradeArena only runs paper experiments. The default examples never submit live
+orders. The benchmark is still early; the repo is most useful for checking how
+agent intent changes after risk checks and paper-execution costs.
 
-## Technical Mechanics
+## How A Run Works
 
-TradeArena is organized as a deterministic agent loop. The runner in
+The runner in
 [`src/tradearena/core/runner.py`](src/tradearena/core/runner.py) executes the
-same lifecycle shown above at every market timestamp: observe market state,
-collect analyst signals, propose target-weight decisions, pass them through the
-risk gate, simulate execution frictions, update portfolio state, and write
-replayable diagnostics.
+same loop at every market timestamp: read the market snapshot, collect analyst
+signals, build target weights, apply the risk gate, simulate fills, update the
+portfolio, and write the logs.
 
 The default allocation logic is intentionally simple and inspectable. In
 [`SignalWeightedStrategy`](src/tradearena/agents/strategy.py), analyst signals
@@ -110,16 +109,14 @@ slip_rate =
   + 0.1 * ((high - low) / close)
 ```
 
-The simulator records requested quantity, filled quantity, fill ratio, latency,
-liquidity available, commission, slippage cost, partial fills, pending orders,
-and rejections in an `ExecutionReport`. Its default settings are transparent
-stress-test assumptions, not a claim of broker-grade transaction-cost
-calibration.
+The simulator writes an `ExecutionReport` with quantities, fill ratio, latency,
+available liquidity, fees, slippage cost, partial fills, pending orders, and
+rejections. The defaults are stress-test settings. They are not broker-grade
+transaction-cost calibration.
 
-## Execution Calibration Boundary
+## Execution Assumptions
 
-Execution realism is only meaningful when its assumptions are visible. TradeArena
-therefore separates the simulator equation from parameter calibration:
+The simulator is deliberately simple. The important parameters are:
 
 | Parameter | Default role | Calibration source needed |
 | --- | --- | --- |
@@ -130,12 +127,11 @@ therefore separates the simulator equation from parameter calibration:
 | `latency_steps` | bar-delay before an order is eligible | submission, acknowledgement, and fill timestamps |
 | `market_impact` | coefficient on participation | regression of implementation shortfall on participation |
 
-The tracked Yahoo Finance OHLCV files can estimate bar range, tail range, dollar
-volume, and participation-cap diagnostics. They cannot identify quoted spread,
-queue depth, fee tier, latency, or realized shortfall. For that reason, current
-example benchmark results should be read as execution-stress comparisons under
-shared assumptions. Live-market execution claims require replacing the defaults
-with quote/fill-calibrated parameters.
+The tracked Yahoo Finance OHLCV files are enough for bar ranges, rough volume
+checks, and participation caps. They are not enough for quoted spread, queue
+depth, fee tier, latency, or realized shortfall. Treat the included benchmark
+numbers as stress comparisons under shared assumptions. For execution claims,
+replace the defaults with parameters fitted from quotes and fills.
 
 Run the diagnostic:
 
@@ -149,7 +145,7 @@ This writes `docs/results/execution_calibration_intraday_1h.json` and
 `scripts/compare_execution_to_fills.py` workflow for comparing private or
 licensed historical fills against the simulator equation.
 
-Risk control is an auditable gate, not a hidden post-processing step.
+Risk control runs before, during, and after simulated execution.
 [`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:
 
 - pre-trade approval clips per-symbol weights to `max_abs_weight`, blocks
@@ -162,11 +158,9 @@ Risk control is an auditable gate, not a hidden post-processing step.
 - post-trade attribution reports realized PnL, commission, slippage cost, and
   final exposures.
 
-Every intervention is serialized as a `RiskReport` with `RiskCheck` and
-`RiskViolation` records. The trajectory therefore preserves both the model's
-original intent and the executable decision after risk feedback, which is the
-core substrate for risk-feedback, representation-drift, and hallucination-audit
-experiments.
+Each intervention is saved as a `RiskReport` with `RiskCheck` and
+`RiskViolation` records. That makes it possible to compare the model's original
+intent with the order that actually reached the simulator.
 
 ## Quick Start: Deterministic Smoke Test
 
@@ -175,11 +169,10 @@ python -m pip install tradearena-benchmark
 tradearena --benchmark tradearena-core
 ```
 
-This default command intentionally does **not** call an LLM. It is a no-key
-smoke test for the runner, trajectory schema, risk gate, execution simulator,
-and metric stack. It uses deterministic analysts so every new checkout can pass
-CI-style validation before provider keys, model routing, or billing enter the
-loop.
+This command does **not** call an LLM. It is a no-key smoke test for the runner,
+log schema, risk gate, execution simulator, and metrics. It uses deterministic
+analysts so a fresh checkout can be tested before API keys or billing are
+involved.
 
 The PyPI distribution is `tradearena-benchmark` because `tradearena` is already
 occupied on PyPI by an unrelated project. The import namespace and CLI remain
@@ -200,27 +193,25 @@ Then open:
 outputs/examples/index.html
 ```
 
-If you are evaluating whether TradeArena is worth using for your own research,
-start here: inspect the generated reports, charts, trajectories, and demo pages
-before spending time on live LLM keys, real-market downloads, or broker-facing
-extensions.
+If you are deciding whether the project is worth using, start with this command
+and inspect the generated reports before setting up model keys, market-data
+downloads, or broker-facing code.
 
 The first-run path uses deterministic agents, tracked snapshots, and local demo
-artifacts. It does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare, Yahoo
-Finance, or broker APIs unless you opt into the model or data commands below.
+files. It does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare, Yahoo
+Finance, or broker APIs unless you run the opt-in commands below.
 
 ## LLM Run Paths
 
-TradeArena supports LLM trading-agent experiments, but the repository keeps live
-provider calls out of the default path. Use the path that matches what you want
-to verify:
+Live provider calls are opt-in.
 
-| Path | Calls an LLM? | Purpose |
-| --- | --- | --- |
-| `tradearena --benchmark tradearena-core` | No | Deterministic smoke test for core mechanics |
-| `python examples/llm_cache_replay_demo.py` | No | Redacted manifest of prior LLM experiment coverage; no raw prompts or responses |
-| `tradearena --benchmark llm-smoke ...` | Yes, unless a matching cache row exists | Minimal live/cache-backed LLM analyst run |
-| `tradearena --paper-output ...` | Optional | Larger paper-grade suite with cache-first LLM sections |
+- `tradearena --benchmark tradearena-core` runs the deterministic smoke test.
+- `python examples/llm_cache_replay_demo.py` shows a redacted manifest from
+  prior LLM runs without storing raw prompts or responses.
+- `tradearena --benchmark llm-smoke ...` runs one live or cache-backed LLM
+  analyst case.
+- `tradearena --paper-output ...` runs the larger experiment suite. LLM sections
+  use cache-first behavior where configured.
 
 One real provider-backed smoke baseline is tracked here:
 [`docs/results/llm_live_baseline.md`](docs/results/llm_live_baseline.md).
@@ -251,28 +242,28 @@ tradearena --benchmark llm-smoke `
   --llm-cache outputs/examples/deepseek_llm_smoke_cache.jsonl
 ```
 
-These commands run one LLM analyst case and write cache entries locally. The
-cache is deliberately ignored by Git because raw prompts and responses can carry
-provider, licensing, privacy, or portfolio constraints.
+These commands write cache entries locally. Git ignores the cache because raw
+prompts and responses can contain provider, licensing, privacy, or portfolio
+constraints.
 
 ## Advanced Integrations Safety
 
 DeepSeek, Poe-hosted models, OpenAI-compatible chat endpoints, AkShare, Yahoo
 Finance, and broker-facing workflows are opt-in advanced paths. They are not
-part of the first-run command, and they must stay inside an explicit audit
-boundary:
+part of the first-run command.
 
-| Surface | Default boundary | Public artifact policy |
-| --- | --- | --- |
-| LLM providers | Environment-variable keys, cache-first replay, signals only | Track metrics and redacted manifests, not raw prompt/response caches |
-| Yahoo Finance / AkShare | Download to normalized OHLCV CSV with source metadata | Record source, frequency, symbols, timestamp policy, and adjustment mode |
-| Execution model | Stress assumptions unless calibrated with quote/fill logs | State parameter sources; do not call bar-only diagnostics broker-grade |
-| Broker adapters | Paper export or human-review sandbox only | No live submission in default examples; no credentials in artifacts |
+- Keep provider keys in environment variables or an OS secret manager.
+- Track metrics and redacted manifests, not raw prompt/response caches.
+- For Yahoo Finance or AkShare downloads, record source, frequency, symbols,
+  timestamp policy, and adjustment mode.
+- Treat the execution model as a stress model unless quote/fill logs are used
+  for calibration.
+- Broker-facing examples must stay paper-only or human-reviewed. The default
+  examples do not submit live orders.
 
-Use per-session environment variables or an OS secret manager. Do not commit
-`.env` files, provider JSONL caches, broker tokens, account statements, or
-private holdings. If a run needs to be shared, publish a redacted submission or
-cache manifest instead of raw provider text.
+Do not commit `.env` files, provider JSONL caches, broker tokens, account
+statements, or private holdings. If a run needs to be shared, publish a redacted
+submission or cache manifest instead of raw provider text.
 
 The full checklist is in
 [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md).
@@ -309,10 +300,10 @@ tradearena --benchmark tradearena-core
 
 ## Benchmark Result
 
-The v0.1 benchmark card makes one compact claim:
+The v0.1 benchmark card makes one limited claim:
 
-> LLM trading-agent evaluation changes materially once intended allocations
-> pass through auditable risk gates and explicit execution-stress constraints.
+> LLM trading-agent results can change materially once risk gates and
+> paper-execution costs are included.
 
 Open:
 
@@ -329,10 +320,9 @@ python scripts/build_benchmark_page.py
 
 ## Benchmark Maturity
 
-TradeArena is not yet an externally validated community benchmark. The maturity
-track is explicit: strengthen the academic report, collect independent
-validation, and earn real community participation through reviewed issues, pull
-requests, and redacted benchmark rows.
+Before calling TradeArena an externally validated community benchmark, three
+pieces still need to exist: a stable academic report, independent validation
+reports, and non-maintainer contributions that are reviewed in public.
 
 - Maturity track: [`docs/benchmark_maturity.md`](docs/benchmark_maturity.md)
 - Academic report plan: [`docs/academic_report_plan.md`](docs/academic_report_plan.md)
@@ -342,10 +332,11 @@ requests, and redacted benchmark rows.
 
 ## Validate A Redacted Benchmark Row
 
-TradeArena can validate redacted benchmark manifests. They share scenario,
-execution, risk, metrics, and reproducibility metadata without exposing raw
-provider prompts, responses, credentials, or private portfolios. This is a local
-research artifact format, not an adoption signal.
+TradeArena can validate redacted benchmark manifests. A manifest shares the
+scenario, execution settings, risk settings, metrics, and reproducibility hash.
+It should not expose raw provider prompts, raw responses, credentials, or
+private portfolios. The format is for research exchange; one maintainer-authored
+manifest is not community adoption.
 
 ```bash
 tradearena validate-submission examples/benchmark_submissions/example_redacted_submission.json
@@ -385,15 +376,17 @@ See [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md).
 The browser-playable demo video is here:
 [`weich97.github.io/TradeArena/demo_video.html`](https://weich97.github.io/TradeArena/demo_video.html).
 
-## What TradeArena Provides
+## What Is In The Repo
 
-| Need | TradeArena surface |
-| --- | --- |
-| Replayable decisions | Trajectory logs with prompts, memory digests, risk reports, fills, and metrics |
-| Execution stress model | Configurable fees, spread, slippage, latency, liquidity caps, partial fills, rejections, and calibration diagnostics |
-| Risk-aware evaluation | Pre-trade gates, in-trade monitors, post-trade attribution, violations |
-| Extensibility | Data, analyst, strategy, risk, simulator, memory, planner, evaluator plugins |
-| Redacted benchmark manifests | Manifest schema, registry builder, reproducibility hashes |
+- A runner that records market observations, agent decisions, risk reports,
+  simulated fills, portfolio state, and metrics.
+- A paper-execution simulator with fees, spread, slippage, latency, liquidity
+  caps, partial fills, and rejections.
+- A risk manager with pre-trade clipping/blocking, in-trade warnings, and
+  post-trade attribution.
+- Extension points for data providers, analysts, strategies, risk managers,
+  simulators, memory stores, planners, and evaluators.
+- A schema for redacted benchmark manifests and a small registry builder.
 
 ## Extension Path
 
@@ -404,9 +397,8 @@ python examples/custom_plugin_demo.py
 python examples/extension_walkthrough_demo.py
 ```
 
-The walkthrough swaps in a custom analyst, risk manager, and evaluator while
-reusing the existing runner, data provider, strategy, execution simulator,
-memory store, trajectory logger, and metric stack.
+The walkthrough swaps in a custom analyst, risk manager, and evaluator while the
+rest of the runner stays unchanged.
 
 Useful entry points:
 
@@ -440,16 +432,16 @@ Useful entry points:
 
 ## Local Checks
 
-Each checkout can use its own `.venv`, so public and private repos do not
-fight over editable installs:
+Each checkout can use its own `.venv`, which helps if you keep public and
+private copies of the project side by side:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\check_local.ps1
 ```
 
-The script installs the current checkout in editable mode, runs compile checks,
-Ruff critical checks, tests, release-readiness checks, submission validation,
-artifact-contract validation, and JSON validation.
+The script installs the checkout in editable mode, then runs compile checks,
+Ruff, tests, release-readiness checks, submission validation, artifact-contract
+validation, and JSON validation.
 
 ## Safety Boundary
 
