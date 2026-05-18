@@ -19,8 +19,9 @@ outputs/examples/showcase.html
 
 The showcase links to a practical tour of auditable trajectories, execution
 realism, animated visual diagnostics, A-share market-rule interventions,
-portfolio baselines, redacted LLM cache manifests, and a custom plugin
-extension plus a contributor extension walkthrough and retail planning sandbox.
+portfolio baselines, paper broker exports, crypto microstructure stress,
+futures roll risk, redacted LLM cache manifests, and a custom plugin extension
+plus a contributor extension walkthrough and retail planning sandbox.
 
 ## 1. Core Benchmark
 
@@ -246,6 +247,77 @@ The command runs one LLM-backed analyst case through the normal
 observe-plan-risk-act-reflect loop. If a matching cache row exists, the analyst
 replays it; otherwise it calls the configured provider and appends a local cache
 entry ignored by Git.
+
+## 15. Paper-Only Alpaca Export
+
+```bash
+python examples/alpaca_paper_export_demo.py
+```
+
+Converts approved TradeArena orders into neutral JSON/CSV rows for Alpaca
+paper-trading review. It does not submit orders.
+
+Output:
+
+- `outputs/examples/alpaca_paper_export/summary.json`
+- `outputs/examples/alpaca_paper_export/alpaca_paper_orders.json`
+- `outputs/examples/alpaca_paper_export/alpaca_paper_orders.csv`
+
+## 16. Holdings CSV Import
+
+```bash
+python examples/holdings_csv_import_demo.py
+```
+
+Loads `examples/fixtures/retail_holdings.csv` into the retail planning sandbox
+and produces paper rebalance diagnostics.
+
+Output:
+
+- `outputs/examples/holdings_csv_import/summary.json`
+
+## 17. Futures Roll Risk
+
+```bash
+python examples/futures_roll_risk_demo.py
+```
+
+Uses contract metadata and a paper roll schedule to flag futures expiry or roll
+risk in a normal `RiskReport`.
+
+Output:
+
+- `outputs/examples/futures_roll_risk/summary.json`
+- `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
+
+## 18. Crypto Microstructure Stress
+
+```bash
+python examples/crypto_microstructure_stress_demo.py
+```
+
+Runs a no-key synthetic crypto scenario with high volatility, low participation,
+latency, spread, slippage, partial fills, and rejections.
+
+Output:
+
+- `outputs/examples/crypto_microstructure_stress/summary.json`
+- `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
+
+## 19. Mock Deep-RL Policy Baseline
+
+```bash
+python examples/rl_policy_baseline_demo.py
+```
+
+Wraps a deterministic mock RL allocation policy as a `StrategyAgent` so a real
+FinRL/Qlib policy can later replace the scoring function while reusing the risk,
+execution, trajectory, and evaluator stack.
+
+Output:
+
+- `outputs/examples/rl_policy_baseline/summary.json`
+- `outputs/examples/rl_policy_baseline/rl_policy_baseline.svg`
 
 ## Full Local Check
 

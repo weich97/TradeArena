@@ -13,6 +13,7 @@ from tradearena.planning.domain import (
     SuitabilityCheck,
     SuitabilityReport,
 )
+from tradearena.planning.importers import load_holdings_csv
 from tradearena.planning.planner import (
     FuturesMarginModel,
     PaperRebalanceBroker,
@@ -30,6 +31,7 @@ __all__ = [
     "FuturesMarginModel",
     "Holding",
     "InvestorProfile",
+    "load_holdings_csv",
     "PaperRebalanceBroker",
     "PlanningOrder",
     "PlanningReport",

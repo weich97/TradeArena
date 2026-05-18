@@ -5,6 +5,7 @@ from tradearena.agents.execution import TargetWeightExecutionAgent
 from tradearena.agents.llm import ChatCompletionsLLMAnalyst, DeepSeekLLMAnalyst
 from tradearena.agents.portfolio import EqualWeightPortfolioManager
 from tradearena.agents.risk import MaxPositionRiskManager, NoRiskManager
+from tradearena.agents.rl import DeterministicRLAllocationStrategy
 from tradearena.agents.strategy import (
     BuyAndHoldStrategy,
     MeanVarianceStrategy,
@@ -16,6 +17,7 @@ __all__ = [
     "BuyAndHoldStrategy",
     "ChatCompletionsLLMAnalyst",
     "DeepSeekLLMAnalyst",
+    "DeterministicRLAllocationStrategy",
     "EqualWeightPortfolioManager",
     "MacroNewsAnalyst",
     "MaxPositionRiskManager",

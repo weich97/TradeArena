@@ -45,11 +45,25 @@ without reading the full source tree.
 - Shows: the same agent under spread, slippage, latency, liquidity limits,
   and rejections.
 
+### Crypto Microstructure Stress
+
+- Run: `python examples/crypto_microstructure_stress_demo.py`
+- Artifact: `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
+- Shows: a no-key synthetic crypto path with high volatility, low participation,
+  latency, partial fills, rejections, and slippage metrics.
+
 ### Risk Lifecycle
 
 - Run: `python examples/ashare_market_rules_demo.py`
 - Artifact: `outputs/examples/ashare_market_rules.svg`
 - Shows: hard A-share market rules as clipped or blocked risk reports.
+
+### Futures Roll Risk
+
+- Run: `python examples/futures_roll_risk_demo.py`
+- Artifact: `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
+- Shows: contract metadata, a roll schedule, and expiry/roll-window warnings in
+  a normal `RiskReport`.
 
 ## Data And Portfolio Baselines
 
@@ -73,6 +87,13 @@ without reading the full source tree.
 - Artifact: `outputs/examples/portfolio_markowitz.svg`
 - Shows: buy-and-hold, signal-weighted, and MVO strategies in the same
   evaluation stack.
+
+### Mock Deep-RL Policy Baseline
+
+- Run: `python examples/rl_policy_baseline_demo.py`
+- Artifact: `outputs/examples/rl_policy_baseline/rl_policy_baseline.svg`
+- Shows: a deterministic CI-safe policy wrapper that emits normal decisions and
+  reuses risk, execution, trajectory, and evaluator plugins.
 
 ## LLM And Diagnostics
 
@@ -112,3 +133,16 @@ without reading the full source tree.
 - Artifact: `outputs/examples/retail_planning_report.html`
 - Shows: investor profiles, suitability gates, target allocations, futures
   margin estimates, and paper rebalance orders.
+
+### Holdings CSV Import
+
+- Run: `python examples/holdings_csv_import_demo.py`
+- Artifact: `outputs/examples/holdings_csv_import/summary.json`
+- Shows: a tiny holdings CSV fixture entering the retail planning sandbox.
+
+### Paper Broker Export
+
+- Run: `python examples/alpaca_paper_export_demo.py`
+- Artifact: `outputs/examples/alpaca_paper_export/alpaca_paper_orders.json`
+- Shows: approved orders converted into Alpaca-compatible paper-review rows
+  without live submission.

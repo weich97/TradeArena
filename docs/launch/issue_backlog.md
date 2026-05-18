@@ -1,13 +1,17 @@
 # Starter Issue Backlog
 
-Use these as the first public issues so contributors immediately see where to
-enter the project.
+These were the first public starter issues. The corresponding examples now live
+in the repository; keep this page as launch history and as a template for future
+community tasks.
 
 ## Good First Issues
 
 ### Add a small Alpaca paper-trading adapter
 
 Labels: `good first issue`, `adapter`, `paper-trading`
+
+Status: implemented in `examples/alpaca_paper_export_demo.py` and
+`src/tradearena/tools/broker_export.py`.
 
 Build a paper-only broker adapter that converts approved TradeArena orders into
 a neutral export format compatible with Alpaca paper-trading review. The first
@@ -23,6 +27,10 @@ Acceptance criteria:
 ### Add a holdings CSV importer for the retail planning sandbox
 
 Labels: `good first issue`, `retail-planning`, `data`
+
+Status: implemented in `examples/holdings_csv_import_demo.py`,
+`examples/fixtures/retail_holdings.csv`, and
+`src/tradearena/planning/importers.py`.
 
 Add a helper that loads holdings from a CSV with columns `symbol`, `market_value`,
 `quantity`, and optional `cost_basis`, then feeds `examples/retail_planner_demo.py`.
@@ -47,6 +55,9 @@ reader clarity.
 
 Labels: `research extension`, `baseline`, `reinforcement-learning`
 
+Status: implemented as a deterministic integration baseline in
+`examples/rl_policy_baseline_demo.py` and `src/tradearena/agents/rl.py`.
+
 Add an interface example showing how a trained RL allocation policy can be
 wrapped as a TradeArena strategy or analyst. The goal is integration and audit
 compatibility, not state-of-the-art RL performance.
@@ -64,12 +75,17 @@ redacted manifest submission for community comparisons.
 
 Labels: `benchmark request`, `crypto`, `execution`
 
+Status: implemented in `examples/crypto_microstructure_stress_demo.py`.
+
 Create an offline-friendly crypto-style synthetic scenario with high volatility,
 continuous trading, and liquidity-sensitive fills.
 
 ### Add a futures roll and expiry risk demo
 
 Labels: `benchmark request`, `futures`, `risk`
+
+Status: implemented in `examples/futures_roll_risk_demo.py` and
+`src/tradearena/tools/futures.py`.
 
 Extend the retail planning or execution layer with futures expiry, roll windows,
 and margin-call stress reporting.

@@ -63,6 +63,36 @@ SECTIONS = [
         "python examples/ashare_market_rules_demo.py",
     ),
     (
+        "Crypto microstructure stress",
+        "No-key high-volatility crypto-style stress with fill, rejection, latency, and slippage diagnostics.",
+        "crypto_microstructure_stress/crypto_microstructure_stress.svg",
+        "python examples/crypto_microstructure_stress_demo.py",
+    ),
+    (
+        "Futures roll risk",
+        "Contract metadata and a roll schedule produce expiry and roll-window risk reports.",
+        "futures_roll_risk/futures_roll_risk.svg",
+        "python examples/futures_roll_risk_demo.py",
+    ),
+    (
+        "Mock deep-RL policy baseline",
+        "A deterministic policy wrapper emits normal decisions and reuses risk, execution, trajectory, and evaluator plugins.",
+        "rl_policy_baseline/rl_policy_baseline.svg",
+        "python examples/rl_policy_baseline_demo.py",
+    ),
+    (
+        "Alpaca paper export",
+        "Approved orders become paper-review JSON/CSV rows without any live broker submission.",
+        "alpaca_paper_export/alpaca_paper_orders.json",
+        "python examples/alpaca_paper_export_demo.py",
+    ),
+    (
+        "Holdings CSV import",
+        "A tiny holdings CSV fixture feeds the retail planning sandbox and paper rebalance diagnostics.",
+        "holdings_csv_import/summary.json",
+        "python examples/holdings_csv_import_demo.py",
+    ),
+    (
         "Custom plugin extension",
         "A local analyst plugin running through the same strategy, risk, execution, memory, and evaluator stack.",
         "custom_plugin.svg",
@@ -103,6 +133,11 @@ def main() -> int:
         _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
         _run([sys.executable, "scripts/run_paper_design_demos.py"], "Experiment-design demo suite")
         _run([sys.executable, "examples/visual_tour_demo.py"], "Animated visual tour")
+        _run([sys.executable, "examples/crypto_microstructure_stress_demo.py"], "Crypto microstructure stress")
+        _run([sys.executable, "examples/futures_roll_risk_demo.py"], "Futures roll risk")
+        _run([sys.executable, "examples/rl_policy_baseline_demo.py"], "Mock deep-RL policy baseline")
+        _run([sys.executable, "examples/alpaca_paper_export_demo.py"], "Alpaca paper export")
+        _run([sys.executable, "examples/holdings_csv_import_demo.py"], "Holdings CSV import")
         _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")
         _run([sys.executable, "examples/retail_planner_demo.py"], "Retail planning sandbox")
     else:
@@ -214,7 +249,7 @@ def _write_landing_page(path: Path) -> None:
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TradeArena — Offline Smoke Showcase And LLM Benchmark Harness</title>
+<title>TradeArena - Offline Smoke Showcase And LLM Benchmark Harness</title>
 <style>
 body { margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }
 main { max-width: 1160px; margin: 0 auto; padding: 42px 24px 58px; }
@@ -244,7 +279,7 @@ h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.06; letter-spacing: 0; }
   <section class="hero">
     <div>
       <h1>TradeArena: Offline Smoke Showcase And LLM Benchmark Harness</h1>
-      <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TradeArena also includes opt-in live or cache-backed LLM analyst runs through the same audit lifecycle: observation → signal → intended allocation → risk gate → order → fill/rejection → portfolio state → diagnostic report.</p>
+      <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TradeArena also includes opt-in live or cache-backed LLM analyst runs through the same audit lifecycle: observation -> signal -> intended allocation -> risk gate -> order -> fill/rejection -> portfolio state -> diagnostic report.</p>
       <div class="cta">
         <a href="showcase.html">Open showcase</a>
         <a href="benchmark-v0.1.html">Benchmark v0.1</a>

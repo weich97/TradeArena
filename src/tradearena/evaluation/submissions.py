@@ -89,6 +89,10 @@ def validate_submission(payload: dict[str, Any], *, verify_hash: bool = True) ->
     if not _is_number(fill_rate) or not 0.0 <= float(fill_rate) <= 1.0:
         errors.append("metrics.execution_fill_rate must be a number in [0, 1]")
 
+    parse_coverage = payload["agent"].get("parse_coverage")
+    if parse_coverage is not None and (not _is_number(parse_coverage) or not 0.0 <= float(parse_coverage) <= 1.0):
+        errors.append("agent.parse_coverage must be a number in [0, 1] when provided")
+
     coverage = payload["metrics"].get("trajectory_reproducibility_coverage")
     if not _is_number(coverage) or not 0.0 <= float(coverage) <= 1.0:
         errors.append("metrics.trajectory_reproducibility_coverage must be a number in [0, 1]")
@@ -138,7 +142,11 @@ def build_registry_rows(input_dir: str | Path) -> tuple[list[dict[str, Any]], li
             {
                 "scenario_id": payload["scenario_id"],
                 "agent_type": payload["agent"]["agent_type"],
+                "provider": payload["agent"].get("provider", "unknown"),
                 "model_family": payload["agent"]["model_family"],
+                "prompt_mode": payload["agent"].get("prompt_mode", "n/a"),
+                "risk_feedback_mode": payload["agent"].get("risk_feedback_mode", "n/a"),
+                "parse_coverage": payload["agent"].get("parse_coverage", ""),
                 "model_redacted": payload["agent"]["model_identifier_redacted"],
                 "data_source": payload["data_source"]["name"],
                 "frequency": payload["data_source"]["frequency"],
@@ -169,18 +177,22 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
         "It is designed to compare audit-ready runs without exposing raw provider",
         "prompts, responses, private portfolios, or credentials.",
         "",
-        "| Scenario | Agent | Data | Return | Max DD | Fill | Rejected | Risk edits | Audit | Hash |",
-        "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Scenario | Agent | Prompt | Feedback | Parse | Data | Return | Max DD | Fill | Rejected | Risk edits | Audit | Hash |",
+        "| --- | --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for row in rows:
-        agent = f"{row['agent_type']} / {row['model_family']}"
+        agent = f"{row['provider']} / {row['model_family']}"
         data = f"{row['data_source']} ({row['frequency']}, {row['symbols']} symbols)"
+        parse_coverage = "" if row["parse_coverage"] == "" else _fmt_float(row["parse_coverage"])
         lines.append(
             "| "
             + " | ".join(
                 [
                     str(row["scenario_id"]),
                     agent,
+                    str(row["prompt_mode"]),
+                    str(row["risk_feedback_mode"]),
+                    parse_coverage,
                     data,
                     _fmt_float(row["total_return"]),
                     _fmt_float(row["max_drawdown"]),
@@ -194,7 +206,7 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
             + " |"
         )
     if not rows:
-        lines.append("| _No accepted submissions yet._ |  |  |  |  |  |  |  |  |  |")
+        lines.append("| _No accepted submissions yet._ |  |  |  |  |  |  |  |  |  |  |  |  |")
     lines.extend(
         [
             "",
@@ -215,19 +227,23 @@ def write_registry_html(rows: list[dict[str, Any]], output_path: str | Path) -> 
     table_rows = "\n".join(
         "<tr>"
         f"<td>{row['scenario_id']}</td>"
-        f"<td>{row['agent_type']} / {row['model_family']}</td>"
+        f"<td>{row['provider']} / {row['model_family']}</td>"
+        f"<td>{row['prompt_mode']}</td>"
+        f"<td>{row['risk_feedback_mode']}</td>"
+        f"<td>{_fmt_float(row['parse_coverage']) if row['parse_coverage'] != '' else 'n/a'}</td>"
         f"<td>{row['data_source']} ({row['frequency']})</td>"
         f"<td>{float(row['total_return']):.4f}</td>"
         f"<td>{float(row['max_drawdown']):.4f}</td>"
         f"<td>{float(row['fill_rate']):.4f}</td>"
         f"<td>{row['rejected_orders']}</td>"
         f"<td>{row['risk_edits']}</td>"
+        f"<td>{float(row['audit_coverage']):.4f}</td>"
         f"<td><code>{str(row['reproducibility_hash'])[:22]}...</code></td>"
         "</tr>"
         for row in rows
     )
     if not table_rows:
-        table_rows = '<tr><td colspan="9">No accepted submissions yet.</td></tr>'
+        table_rows = '<tr><td colspan="13">No accepted submissions yet.</td></tr>'
     html_text = f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
@@ -250,8 +266,8 @@ code {{ background: #eef2f7; padding: 2px 4px; border-radius: 4px; }}
   <table>
     <thead>
       <tr>
-        <th>Scenario</th><th>Agent</th><th>Data</th><th>Return</th>
-        <th>Max DD</th><th>Fill</th><th>Rejected</th><th>Risk edits</th><th>Hash</th>
+        <th>Scenario</th><th>Agent</th><th>Prompt</th><th>Feedback</th><th>Parse</th><th>Data</th><th>Return</th>
+        <th>Max DD</th><th>Fill</th><th>Rejected</th><th>Risk edits</th><th>Audit</th><th>Hash</th>
       </tr>
     </thead>
     <tbody>

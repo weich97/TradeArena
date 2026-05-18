@@ -21,6 +21,18 @@ def test_example_redacted_submission_validates_and_hash_matches():
     assert payload["redaction"]["raw_provider_text_removed"] is True
 
 
+def test_example_llm_redacted_submission_includes_model_audit_fields():
+    path = ROOT / "examples/benchmark_submissions/example_llm_redacted_submission.json"
+    payload, errors = validate_submission_file(path)
+
+    assert errors == []
+    assert payload["agent"]["provider"] == "poe"
+    assert payload["agent"]["prompt_mode"] == "rationale"
+    assert payload["agent"]["risk_feedback_mode"] == "true"
+    assert 0 <= payload["agent"]["parse_coverage"] <= 1
+    assert payload["trajectory_manifest"]["artifact_hashes"]
+
+
 def test_cli_submission_registry_and_hash_run(tmp_path: Path):
     submission = ROOT / "examples/benchmark_submissions/example_redacted_submission.json"
     registry = tmp_path / "registry.md"

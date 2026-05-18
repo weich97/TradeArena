@@ -38,7 +38,11 @@ def _write_csv(rows: list[dict[str, object]], path: str | Path) -> None:
     fieldnames = [
         "scenario_id",
         "agent_type",
+        "provider",
         "model_family",
+        "prompt_mode",
+        "risk_feedback_mode",
+        "parse_coverage",
         "model_redacted",
         "data_source",
         "frequency",

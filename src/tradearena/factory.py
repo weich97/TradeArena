@@ -3,6 +3,7 @@ from __future__ import annotations
 from tradearena.agents import (
     BuyAndHoldStrategy,
     DeepSeekLLMAnalyst,
+    DeterministicRLAllocationStrategy,
     MacroNewsAnalyst,
     MaxPositionRiskManager,
     MeanVarianceStrategy,
@@ -46,6 +47,7 @@ def default_registry() -> PluginRegistry:
     registry.register("strategy", "memory-aware", MemoryAwareSignalWeightedStrategy)
     registry.register("strategy", "buy-and-hold", BuyAndHoldStrategy)
     registry.register("strategy", "mean-variance", MeanVarianceStrategy)
+    registry.register("strategy", "mock-rl-policy", DeterministicRLAllocationStrategy)
     registry.register("risk", "max-position", MaxPositionRiskManager)
     registry.register("risk", "none", NoRiskManager)
     registry.register("execution", "target-weight", TargetWeightExecutionAgent)
@@ -107,6 +109,8 @@ def build_default_system(
         strategy = BuyAndHoldStrategy()
     elif strategy_name in {"mean-variance", "markowitz", "mvo"}:
         strategy = MeanVarianceStrategy(max_long_weight=max_position_weight)
+    elif strategy_name in {"mock-rl-policy", "rl-policy", "deep-rl"}:
+        strategy = DeterministicRLAllocationStrategy(max_long_weight=max_position_weight)
     elif strategy_name == "memory-aware":
         strategy = MemoryAwareSignalWeightedStrategy()
     else:

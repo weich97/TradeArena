@@ -13,10 +13,12 @@ from tradearena.planning import (
     InvestorProfile,
     RetailPlanningAgent,
     default_retail_universe,
+    load_holdings_csv,
 )
 
 
 OUTPUT_DIR = Path("outputs/examples")
+HOLDINGS_FIXTURE = Path("examples/fixtures/retail_holdings.csv")
 
 
 def main() -> int:
@@ -57,12 +59,7 @@ def main() -> int:
             FinancialGoal("emergency reserve", target_amount=30_000, horizon_years=1, priority=1),
             FinancialGoal("retirement bridge", target_amount=750_000, horizon_years=12, priority=2),
         ),
-        holdings=(
-            Holding("CASH", 12_000),
-            Holding("VTI", 44_000),
-            Holding("AAPL", 24_000),
-            Holding("MSFT", 20_000),
-        ),
+        holdings=load_holdings_csv(HOLDINGS_FIXTURE),
         universe=universe,
         prices=prices,
         timestamp=timestamp,
@@ -103,6 +100,7 @@ def main() -> int:
     reports = {"ordinary_stock_etf_plan": ordinary_report, "experienced_futures_overlay": futures_report}
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     summary = _summary(reports)
+    summary["holdings_csv_fixture"] = str(HOLDINGS_FIXTURE)
     write_json(OUTPUT_DIR / "retail_planning_summary.json", summary)
     _write_svg(OUTPUT_DIR / "retail_planning_allocation.svg", reports)
     _write_html(OUTPUT_DIR / "retail_planning_report.html", reports)

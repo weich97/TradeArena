@@ -20,12 +20,13 @@ code { background: #eef2f7; padding: 2px 4px; border-radius: 4px; }
   <table>
     <thead>
       <tr>
-        <th>Scenario</th><th>Agent</th><th>Data</th><th>Return</th>
-        <th>Max DD</th><th>Fill</th><th>Rejected</th><th>Risk edits</th><th>Hash</th>
+        <th>Scenario</th><th>Agent</th><th>Prompt</th><th>Feedback</th><th>Parse</th><th>Data</th><th>Return</th>
+        <th>Max DD</th><th>Fill</th><th>Rejected</th><th>Risk edits</th><th>Audit</th><th>Hash</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>quickstart_core_synthetic_v0_1</td><td>deterministic / signal-weighted-baseline</td><td>synthetic-market (daily)</td><td>0.3508</td><td>-0.0126</td><td>0.9034</td><td>14</td><td>124</td><td><code>sha256:8389671da54bb75...</code></td></tr>
+      <tr><td>crisis_scene_llm_redacted_example</td><td>poe / frontier-chat-model-redacted</td><td>rationale</td><td>true</td><td>0.9670</td><td>yahoo-finance-csv (hourly)</td><td>0.0108</td><td>-0.0187</td><td>0.7816</td><td>28</td><td>196</td><td>1.0000</td><td><code>sha256:aad1948b44bf9d6...</code></td></tr>
+<tr><td>quickstart_core_synthetic_v0_1</td><td>deterministic / signal-weighted-baseline</td><td>none</td><td>true</td><td>1.0000</td><td>synthetic-market (daily)</td><td>0.3508</td><td>-0.0126</td><td>0.9034</td><td>14</td><td>124</td><td>1.0000</td><td><code>sha256:ed2d5e4f2ff3c87...</code></td></tr>
     </tbody>
   </table>
 </main>

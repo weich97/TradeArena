@@ -30,6 +30,16 @@ The generated registry is tracked at
 The browser-readable version is
 [`docs/results/community_registry.html`](results/community_registry.html).
 
+The registry format is designed for both deterministic baselines and redacted
+LLM policy runs. Public submissions can include provider family, public-safe
+model display name, prompt mode, risk-feedback mode, parse coverage, metrics,
+and hashes for derived artifacts while still omitting raw prompts and responses.
+See:
+
+- [`examples/benchmark_submissions/example_redacted_submission.json`](../examples/benchmark_submissions/example_redacted_submission.json)
+- [`examples/benchmark_submissions/example_llm_redacted_submission.json`](../examples/benchmark_submissions/example_llm_redacted_submission.json)
+- [`schemas/benchmark_submission.schema.json`](../schemas/benchmark_submission.schema.json)
+
 ## Hash A Trajectory
 
 ```bash
@@ -46,9 +56,10 @@ the score.
 Submissions should include:
 
 - redacted model metadata,
+- prompt mode, parse coverage, and risk feedback mode when an LLM is involved,
 - execution and risk configuration,
 - compact metrics,
-- trajectory manifest path or URI,
+- trajectory manifest path or URI plus public artifact hashes,
 - reproducibility hash.
 
 Submissions should not include:
@@ -57,3 +68,13 @@ Submissions should not include:
 - raw model prompts or responses,
 - private holdings,
 - live-order instructions.
+
+## Privacy And Reproducibility Tradeoff
+
+The registry is intentionally not a raw trajectory warehouse. It preserves
+enough metadata to compare audit-ready runs and detect duplicate submissions,
+but it does not require providers, researchers, or users to publish raw prompts,
+raw completions, exact private holdings, or credentials. The reproducibility
+hash covers scenario, data, agent/config, risk, execution, redaction, and
+manifest identity; outcome metrics are excluded so a score change does not
+rewrite the run identity.
