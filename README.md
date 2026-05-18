@@ -13,19 +13,20 @@
 
 <p align="center">
   <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml">
-    <img alt="CI" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg">
-  </a>
-  <a href="https://github.com/weich97/TradeArena/actions/workflows/codeql.yml">
-    <img alt="CodeQL" src="https://github.com/weich97/TradeArena/actions/workflows/codeql.yml/badge.svg">
-  </a>
-  <a href="https://github.com/weich97/TradeArena/releases/latest">
-    <img alt="Release" src="https://img.shields.io/github/v/release/weich97/TradeArena">
+    <img alt="CI status" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg">
   </a>
   <a href="https://pypi.org/project/tradearena-benchmark/">
-    <img alt="PyPI" src="https://img.shields.io/pypi/v/tradearena-benchmark">
+    <img alt="PyPI version" src="https://img.shields.io/pypi/v/tradearena-benchmark">
   </a>
-  <img alt="Python" src="https://img.shields.io/badge/python-3.10--3.12-0f172a">
-  <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
+  <a href="https://pypi.org/project/tradearena-benchmark/">
+    <img alt="Python versions" src="https://img.shields.io/pypi/pyversions/tradearena-benchmark">
+  </a>
+  <a href="https://github.com/weich97/TradeArena/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/weich97/TradeArena">
+  </a>
+  <a href="https://codecov.io/gh/weich97/TradeArena">
+    <img alt="Coverage" src="https://codecov.io/gh/weich97/TradeArena/branch/main/graph/badge.svg">
+  </a>
 </p>
 
 <p align="center">
