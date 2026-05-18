@@ -52,6 +52,89 @@ It is not another "LLM trading bot." It is a framework for asking whether an
 LLM trading agent can be audited, reproduced, stress-tested, and constrained
 before anyone trusts its headline return.
 
+## Technical Mechanics
+
+TradeArena is organized as a deterministic agent loop. The runner in
+[`src/tradearena/core/runner.py`](src/tradearena/core/runner.py) executes the
+same lifecycle at every market timestamp:
+
+```text
+observe market snapshot
+  -> collect analyst signals
+  -> convert signals into target-weight decisions
+  -> clip or block decisions with the risk manager
+  -> convert approved targets into orders
+  -> simulate fills under latency, liquidity, spread, slippage, and commission
+  -> write risk reports, execution reports, memory events, and trajectory rows
+```
+
+The default allocation logic is intentionally simple and inspectable. In
+[`SignalWeightedStrategy`](src/tradearena/agents/strategy.py), analyst signals
+are grouped by symbol, confidence-weighted, and converted into target weights:
+
+```text
+combined_score(symbol) =
+  sum(signal.score * max(0.01, signal.confidence)) /
+  sum(max(0.01, signal.confidence))
+
+target_weight = clip(5 * combined_score, -max_short_weight, max_long_weight)
+```
+
+Small scores inside the deadband become `HOLD`. The optional
+[`MemoryAwareSignalWeightedStrategy`](src/tradearena/agents/strategy.py) applies
+a risk-off scale when recent memory contains drawdowns, rejected orders, or risk
+violations. Classical baselines are also available, including equal
+buy-and-hold and a rolling minimum-variance strategy that estimates realized
+covariance from the current trajectory only.
+
+Execution is split into two stages. First,
+[`TargetWeightExecutionAgent`](src/tradearena/agents/execution.py) translates
+approved target weights into market orders by comparing current position value
+with target portfolio value. Trades below `min_trade_value` are skipped to avoid
+noise. Second,
+[`RealisticOrderSimulator`](src/tradearena/tools/simulator.py) applies a
+microstructure-style fill model:
+
+- submitted orders enter a pending queue and become eligible after
+  `latency_steps`;
+- per-symbol fill capacity is capped by `bar.volume * participation_rate`;
+- buys cannot exceed available cash, and sells cannot exceed holdings unless
+  shorting is enabled;
+- market orders cross half the configured bid-ask spread;
+- execution price includes base slippage, spread, market impact, and intrabar
+  volatility:
+
+```text
+slip_rate =
+  spread_bps / 20000
+  + base_slippage_bps / 10000
+  + market_impact * (filled_quantity / volume)
+  + 0.1 * ((high - low) / close)
+```
+
+The simulator records requested quantity, filled quantity, fill ratio, latency,
+liquidity available, commission, slippage cost, partial fills, pending orders,
+and rejections in an `ExecutionReport`.
+
+Risk control is an auditable gate, not a hidden post-processing step.
+[`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:
+
+- pre-trade approval clips per-symbol weights to `max_abs_weight`, blocks
+  decisions below `min_confidence`, rescales gross exposure above
+  `max_gross_exposure`, and reports projected turnover above
+  `max_single_step_turnover`;
+- in-trade monitoring checks realized participation, latency, and slippage
+  against `max_order_participation`, `max_latency_steps`, and
+  `max_slippage_bps`;
+- post-trade attribution reports realized PnL, commission, slippage cost, and
+  final exposures.
+
+Every intervention is serialized as a `RiskReport` with `RiskCheck` and
+`RiskViolation` records. The trajectory therefore preserves both the model's
+original intent and the executable decision after risk feedback, which is the
+core substrate for risk-feedback, representation-drift, and hallucination-audit
+experiments.
+
 ## Quick Start
 
 ```bash
