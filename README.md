@@ -367,11 +367,12 @@ The v0.1 benchmark card makes one limited claim:
 > LLM trading-agent results can change materially once risk gates and
 > paper-execution costs are included.
 
-The public leaderboard now includes a seven-model smoke matrix on the same
-synthetic scenario: Poe-hosted `gpt-5.5`, `gemini-3.1-pro`, `kimi-k2.5`,
-`glm-5`, `claude-opus-4.7`, plus direct `deepseek-v4-flash` and
-`deepseek-v4-pro`. The model-matrix rows are redacted benchmark manifests; raw
-provider prompts and responses remain in ignored local caches.
+The public leaderboard now includes a 21-row model matrix: seven LLMs across
+calm-trend, high-volatility, and jump/tail synthetic market scenarios. Models
+include Poe-hosted `gpt-5.5`, `gemini-3.1-pro`, `kimi-k2.5`, `glm-5`,
+`claude-opus-4.7`, plus direct `deepseek-v4-flash` and `deepseek-v4-pro`.
+The model-matrix rows are redacted benchmark manifests; raw provider prompts
+and responses remain in ignored local caches.
 
 Open:
 

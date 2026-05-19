@@ -13,7 +13,7 @@
     "risk_feedback_mode": "true"
   },
   "data_source": {
-    "data_hash": "sha256:synthetic-seed-7-symbols-SYN-ALT-periods-8",
+    "data_hash": "sha256:high_vol-synthetic-seed-17-symbols-SYN-ALT-periods-8",
     "frequency": "daily",
     "name": "synthetic-market",
     "symbols": [
@@ -31,13 +31,13 @@
     "spread_bps": 0.0
   },
   "metrics": {
-    "execution_fill_rate": 0.8461538461538461,
-    "max_drawdown": -0.0008398349500295943,
-    "rejected_order_count": 0,
-    "risk_clipped_decisions": 12,
+    "execution_fill_rate": 0.75,
+    "max_drawdown": -0.00582775325630025,
+    "rejected_order_count": 1,
+    "risk_clipped_decisions": 8,
     "risk_violation_count": 0,
-    "sharpe": 20.34187953957956,
-    "total_return": 0.030886452642615136,
+    "sharpe": 1.9820421506448034,
+    "total_return": 0.004469174811702281,
     "trajectory_reproducibility_coverage": 1.0
   },
   "redaction": {
@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:ddd0c821f9510f0137fed084d10f9aa1011d027d11ff6ef57763023d81249b32",
+  "reproducibility_hash": "sha256:a26229c4bfd18ff61fa73f217fa8bc4435273565a2e29d097c55cf7c3b18beea",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -56,15 +56,15 @@
     },
     "risk_manager": "max-position"
   },
-  "scenario_id": "leaderboard_llm_smoke_synthetic_v0_1",
+  "scenario_id": "leaderboard_llm_high_vol_synthetic_v0_1",
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:60e3613f8a7e212ac46b80f4fb990378efec8e4387e7d8d20a489de890dcc94c"
+      "redacted_summary": "sha256:29d4dd4c6b9a28fb4c653869cb28acec2fa5d4902884fac102ba16de97955c7f"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:60e3613f8a7e212ac46b80f4fb990378efec8e4387e7d8d20a489de890dcc94c",
-    "path_or_uri": "docs/results/model_matrix/poe_claude_opus_4_7_summary.json",
+    "manifest_hash": "sha256:29d4dd4c6b9a28fb4c653869cb28acec2fa5d4902884fac102ba16de97955c7f",
+    "path_or_uri": "docs/results/model_matrix/high_vol__poe_claude_opus_4_7_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false
   }

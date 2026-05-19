@@ -2,8 +2,8 @@
   "agent": {
     "agent_commit": "redacted-or-local",
     "agent_type": "llm_policy",
-    "model_display_name": "glm-5",
-    "model_family": "glm-5",
+    "model_display_name": "gpt-5.5",
+    "model_family": "gpt-5.5",
     "model_identifier_redacted": false,
     "parse_coverage": 1.0,
     "prompt_mode": "rationale",
@@ -13,7 +13,7 @@
     "risk_feedback_mode": "true"
   },
   "data_source": {
-    "data_hash": "sha256:synthetic-seed-7-symbols-SYN-ALT-periods-8",
+    "data_hash": "sha256:high_vol-synthetic-seed-17-symbols-SYN-ALT-periods-8",
     "frequency": "daily",
     "name": "synthetic-market",
     "symbols": [
@@ -31,13 +31,13 @@
     "spread_bps": 0.0
   },
   "metrics": {
-    "execution_fill_rate": 0.8333333333333334,
-    "max_drawdown": -0.0008398349500295943,
-    "rejected_order_count": 0,
-    "risk_clipped_decisions": 12,
+    "execution_fill_rate": 0.75,
+    "max_drawdown": -0.006492709120251905,
+    "rejected_order_count": 1,
+    "risk_clipped_decisions": 8,
     "risk_violation_count": 0,
-    "sharpe": 17.199194358610892,
-    "total_return": 0.0256595690093544,
+    "sharpe": 1.647212733262726,
+    "total_return": 0.003797331808502946,
     "trajectory_reproducibility_coverage": 1.0
   },
   "redaction": {
@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:c7e6cbf723e1ab8d49e2713b75ca5b7461e2bcb3eddb9e9ba188d1130ad96b8f",
+  "reproducibility_hash": "sha256:ca1ac51567e2e1619eb33d2fb8047eb42fa3bb381ce289036fb0ec75ec955108",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -56,15 +56,15 @@
     },
     "risk_manager": "max-position"
   },
-  "scenario_id": "leaderboard_llm_smoke_synthetic_v0_1",
+  "scenario_id": "leaderboard_llm_high_vol_synthetic_v0_1",
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:cef8d14f7c10d311b57acebbf2c2028cf95648c9fbeee1244727a5adb3fbca30"
+      "redacted_summary": "sha256:0b1a8cb1254b2e6db47ee8111d95e84bb197630d7b7936a03e82aaba23e83313"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:cef8d14f7c10d311b57acebbf2c2028cf95648c9fbeee1244727a5adb3fbca30",
-    "path_or_uri": "docs/results/model_matrix/poe_glm_5_summary.json",
+    "manifest_hash": "sha256:0b1a8cb1254b2e6db47ee8111d95e84bb197630d7b7936a03e82aaba23e83313",
+    "path_or_uri": "docs/results/model_matrix/high_vol__poe_gpt_5_5_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false
   }

@@ -46,7 +46,8 @@
     "raw_responses_included": false,
     "timestamps_masked": true
   },
-  "scenario_id": "leaderboard_llm_smoke_synthetic_v0_1",
+  "scenario_id": "leaderboard_llm_calm_trend_synthetic_v0_1",
+  "scenario_label": "Calm trend",
   "schema_version": "0.1",
   "seed": 7,
   "symbols": [

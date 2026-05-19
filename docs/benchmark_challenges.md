@@ -30,7 +30,7 @@ The tracked leaderboard is generated from redacted manifests:
 
 - Markdown: [`docs/results/community_registry.md`](results/community_registry.md)
 - HTML: [`docs/results/community_registry.html`](results/community_registry.html)
-- Seven-model smoke matrix:
+- Multi-scenario LLM model matrix:
   [`docs/results/model_matrix/leaderboard_model_matrix.md`](results/model_matrix/leaderboard_model_matrix.md)
 
 The HTML page supports search, sortable columns, and row details. Each accepted

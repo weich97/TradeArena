@@ -2,8 +2,8 @@
   "agent": {
     "agent_commit": "redacted-or-local",
     "agent_type": "llm_policy",
-    "model_display_name": "deepseek-v4-pro",
-    "model_family": "deepseek-v4-pro",
+    "model_display_name": "deepseek-v4-flash",
+    "model_family": "deepseek-v4-flash",
     "model_identifier_redacted": false,
     "parse_coverage": 1.0,
     "prompt_mode": "rationale",
@@ -13,7 +13,7 @@
     "risk_feedback_mode": "true"
   },
   "data_source": {
-    "data_hash": "sha256:synthetic-seed-7-symbols-SYN-ALT-periods-8",
+    "data_hash": "sha256:calm_trend-synthetic-seed-7-symbols-SYN-ALT-periods-8",
     "frequency": "daily",
     "name": "synthetic-market",
     "symbols": [
@@ -31,13 +31,13 @@
     "spread_bps": 0.0
   },
   "metrics": {
-    "execution_fill_rate": 0.6666666666666666,
-    "max_drawdown": -0.0005222525977854886,
-    "rejected_order_count": 1,
-    "risk_clipped_decisions": 4,
-    "risk_violation_count": 9,
-    "sharpe": 7.285735559476281,
-    "total_return": 0.02395016123958449,
+    "execution_fill_rate": 0.8333333333333334,
+    "max_drawdown": -0.0008398349500295943,
+    "rejected_order_count": 0,
+    "risk_clipped_decisions": 12,
+    "risk_violation_count": 0,
+    "sharpe": 17.199194358610892,
+    "total_return": 0.0256595690093544,
     "trajectory_reproducibility_coverage": 1.0
   },
   "redaction": {
@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:292f01e9176b29e0c5d2008a5e18d329ad4cec860b0a3c9899c195155e406d75",
+  "reproducibility_hash": "sha256:1924d80a1f015a060321f401457e0243fd3831cdaa1e8cfb50be8af156d6833b",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -56,15 +56,15 @@
     },
     "risk_manager": "max-position"
   },
-  "scenario_id": "leaderboard_llm_smoke_synthetic_v0_1",
+  "scenario_id": "leaderboard_llm_calm_trend_synthetic_v0_1",
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:5d2f5b1a65bfd21a927205d025cc5dc3f1a0a7cc5aa313756305a959e6e0b2d4"
+      "redacted_summary": "sha256:5ec090bd3bf1647f98823fc70314613457ad9efc0c42606965e28e4c423ede32"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:5d2f5b1a65bfd21a927205d025cc5dc3f1a0a7cc5aa313756305a959e6e0b2d4",
-    "path_or_uri": "docs/results/model_matrix/deepseek_deepseek_v4_pro_summary.json",
+    "manifest_hash": "sha256:5ec090bd3bf1647f98823fc70314613457ad9efc0c42606965e28e4c423ede32",
+    "path_or_uri": "docs/results/model_matrix/calm_trend__deepseek_deepseek_v4_flash_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false
   }

@@ -2,8 +2,8 @@
   "agent": {
     "agent_commit": "redacted-or-local",
     "agent_type": "llm_policy",
-    "model_display_name": "kimi-k2.5",
-    "model_family": "kimi-k2.5",
+    "model_display_name": "gemini-3.1-pro",
+    "model_family": "gemini-3.1-pro",
     "model_identifier_redacted": false,
     "parse_coverage": 1.0,
     "prompt_mode": "rationale",
@@ -13,7 +13,7 @@
     "risk_feedback_mode": "true"
   },
   "data_source": {
-    "data_hash": "sha256:synthetic-seed-7-symbols-SYN-ALT-periods-8",
+    "data_hash": "sha256:high_vol-synthetic-seed-17-symbols-SYN-ALT-periods-8",
     "frequency": "daily",
     "name": "synthetic-market",
     "symbols": [
@@ -32,12 +32,12 @@
   },
   "metrics": {
     "execution_fill_rate": 0.75,
-    "max_drawdown": -0.0008398349500295943,
-    "rejected_order_count": 1,
-    "risk_clipped_decisions": 11,
-    "risk_violation_count": 1,
-    "sharpe": 15.68365700095113,
-    "total_return": 0.0319117870102712,
+    "max_drawdown": -0.004041424009702865,
+    "rejected_order_count": 2,
+    "risk_clipped_decisions": 6,
+    "risk_violation_count": 0,
+    "sharpe": 6.936511012321784,
+    "total_return": 0.014380820994550625,
     "trajectory_reproducibility_coverage": 1.0
   },
   "redaction": {
@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:a4801f76be7cce78431b4687654273a521d4ed30f0f0750514ce30107ae3c5aa",
+  "reproducibility_hash": "sha256:f17bd495aee155bd7ce6f0f18c41dff46ab0b1c6226edeb9fd5d3aa310ff8852",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -56,15 +56,15 @@
     },
     "risk_manager": "max-position"
   },
-  "scenario_id": "leaderboard_llm_smoke_synthetic_v0_1",
+  "scenario_id": "leaderboard_llm_high_vol_synthetic_v0_1",
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:c92daf622eb5422d983836d804671caab7d4a9afec2d400e2947d65ced142c45"
+      "redacted_summary": "sha256:d9bd12bad0d5c608b79a932a98f86d449c80013fce579213a1a415bf1a6c9144"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:c92daf622eb5422d983836d804671caab7d4a9afec2d400e2947d65ced142c45",
-    "path_or_uri": "docs/results/model_matrix/poe_kimi_k2_5_summary.json",
+    "manifest_hash": "sha256:d9bd12bad0d5c608b79a932a98f86d449c80013fce579213a1a415bf1a6c9144",
+    "path_or_uri": "docs/results/model_matrix/high_vol__poe_gemini_3_1_pro_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false
   }

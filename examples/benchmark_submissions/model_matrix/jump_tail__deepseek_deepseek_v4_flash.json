@@ -13,7 +13,7 @@
     "risk_feedback_mode": "true"
   },
   "data_source": {
-    "data_hash": "sha256:synthetic-seed-7-symbols-SYN-ALT-periods-8",
+    "data_hash": "sha256:jump_tail-synthetic-seed-29-symbols-SYN-ALT-periods-8",
     "frequency": "daily",
     "name": "synthetic-market",
     "symbols": [
@@ -31,13 +31,13 @@
     "spread_bps": 0.0
   },
   "metrics": {
-    "execution_fill_rate": 0.8333333333333334,
-    "max_drawdown": -0.0008398349500295943,
-    "rejected_order_count": 0,
+    "execution_fill_rate": 0.6666666666666666,
+    "max_drawdown": -0.021397961890934902,
+    "rejected_order_count": 3,
     "risk_clipped_decisions": 12,
-    "risk_violation_count": 0,
-    "sharpe": 17.199194358610892,
-    "total_return": 0.0256595690093544,
+    "risk_violation_count": 4,
+    "sharpe": 2.9762006561932854,
+    "total_return": 0.016686905489183834,
     "trajectory_reproducibility_coverage": 1.0
   },
   "redaction": {
@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:dd24cf8c1010dfbbc31174882fe4599aa2167d397df8f80e4f9ce9527b738ad6",
+  "reproducibility_hash": "sha256:92c579427c5c8d989df37d5821153bbf86572c3969718d582b6a0425a2a4b061",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -56,15 +56,15 @@
     },
     "risk_manager": "max-position"
   },
-  "scenario_id": "leaderboard_llm_smoke_synthetic_v0_1",
+  "scenario_id": "leaderboard_llm_jump_tail_synthetic_v0_1",
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:18b83362a04a409dea2a7b3f263aea9c418483df2abf78e4fc91d4b82e1a9627"
+      "redacted_summary": "sha256:89945f6a79134046709f8af689715904a70daf82efaa3ee031b5bbce1dc8394f"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:18b83362a04a409dea2a7b3f263aea9c418483df2abf78e4fc91d4b82e1a9627",
-    "path_or_uri": "docs/results/model_matrix/deepseek_deepseek_v4_flash_summary.json",
+    "manifest_hash": "sha256:89945f6a79134046709f8af689715904a70daf82efaa3ee031b5bbce1dc8394f",
+    "path_or_uri": "docs/results/model_matrix/jump_tail__deepseek_deepseek_v4_flash_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false
   }
