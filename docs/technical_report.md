@@ -250,6 +250,7 @@ pre-trade approval, in-trade monitoring, and post-trade attribution.
 | `min_confidence` | `0.05` | Pre-trade blocking |
 | `max_gross_exposure` | `1.0` | Pre-trade portfolio rescaling |
 | `max_single_step_turnover` | `0.75` | Pre-trade warning and violation record |
+| `max_drawdown` | `0.20` | Pre-trade kill switch |
 | `max_order_participation` | `0.05` | In-trade warning |
 | `max_latency_steps` | `2` | In-trade warning |
 | `max_slippage_bps` | `50.0` | In-trade warning |
@@ -309,6 +310,23 @@ scale = max_gross_exposure / gross_exposure
 
 The scaled decisions retain their symbols and rationales, metadata records
 `risk_scaled_by`, and a warning-severity `max_gross_exposure` check is written.
+
+**Rolling drawdown kill switch.** The gate reads recent equity values from the
+append-only memory journal, appends the current marked portfolio equity, and
+computes:
+
+```text
+rolling_drawdown =
+  current_equity / max(equity over drawdown_lookback plus current) - 1
+```
+
+If `rolling_drawdown < -max_drawdown`, the gate forces every target weight into
+`[-drawdown_de_risk_weight, drawdown_de_risk_weight]`. The default
+`drawdown_de_risk_weight` is `0.0`, so the kill switch converts the next target
+set into a risk-off deallocation. Approved decisions receive
+`drawdown_kill_switch=True` metadata, and an error-severity
+`drawdown_kill_switch` violation is written. This catches the failure mode where
+an LLM becomes more aggressive after consecutive losses.
 
 If none of the checks triggers, the report contains an informational
 `all_constraints` check.
@@ -370,10 +388,11 @@ Risk checks use two practical severity levels:
 - `warning`: an audit-visible intervention or budget breach that is recorded
   but may still allow the run to continue.
 
-The default confidence floor is the main pre-trade hard block. Position caps,
-gross exposure scaling, turnover excess, participation excess, latency excess,
-and slippage excess are recorded as warnings so downstream experiments can
-measure how often the risk layer corrected or flagged model intent.
+The default confidence floor and drawdown kill switch are pre-trade hard
+blocks. Position caps, gross exposure scaling, turnover excess, participation
+excess, latency excess, and slippage excess are recorded as warnings so
+downstream experiments can measure how often the risk layer corrected or flagged
+model intent.
 
 `NoRiskManager` is included only as an ablation. It writes disabled risk reports
 and should not be interpreted as a safe trading configuration.

@@ -27,6 +27,8 @@ TradeArena treats an LLM trading agent as an auditable lifecycle, not a black-bo
 - `RiskCheck`: named constraint check with pass/fail, severity, message
 - `RiskViolation`: phase, constraint, observed value, limit, severity, symbol
 - `RiskReport`: phase-level audit object for pre-trade, in-trade, and post-trade stages
+- drawdown kill-switch metadata: rolling drawdown, lookback window, de-risk
+  weight, and trigger status
 - `RiskAttribution`: post-trade PnL/cost/exposure attribution
 
 ## Memory Schema

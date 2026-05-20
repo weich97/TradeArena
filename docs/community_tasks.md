@@ -20,7 +20,7 @@ fit in one focused PR with one validation command.
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
 | Add an SMA crossover strategy plugin | `good first issue`, `help wanted` | `pytest` for deterministic target weights |
-| Add a max-drawdown risk preset | `good first issue`, `risk` | one fixture where decisions are blocked after drawdown |
+| Add a drawdown recovery chart to the showcase | `good first issue`, `risk`, `docs` | one fixture where kill-switch events are visible |
 | Add an anonymous benchmark manifest example | `good first issue`, `docs`, `benchmark` | `tradearena validate-submission ...` |
 | Add an Ollama local-model config example | `good first issue`, `docs` | cache-backed smoke command with no secrets |
 | Improve alt text for generated HTML reports | `good first issue`, `docs` | inspect rebuilt HTML artifacts |

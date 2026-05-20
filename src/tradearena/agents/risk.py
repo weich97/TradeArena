@@ -27,6 +27,9 @@ class MaxPositionRiskManager:
     max_order_participation: float = 0.05
     max_latency_steps: int = 2
     max_slippage_bps: float = 50.0
+    max_drawdown: float = 0.20
+    drawdown_lookback: int = 5
+    drawdown_de_risk_weight: float = 0.0
     name: str = "max-position-risk"
     last_report: RiskReport | None = field(default=None, init=False)
 
@@ -35,10 +38,15 @@ class MaxPositionRiskManager:
             max_position_weight=self.max_abs_weight,
             max_gross_exposure=self.max_gross_exposure,
             max_single_step_turnover=self.max_single_step_turnover,
+            max_drawdown=self.max_drawdown,
             max_order_participation=self.max_order_participation,
             min_confidence=self.min_confidence,
             max_latency_steps=self.max_latency_steps,
             max_slippage_bps=self.max_slippage_bps,
+            metadata={
+                "drawdown_lookback": self.drawdown_lookback,
+                "drawdown_de_risk_weight": self.drawdown_de_risk_weight,
+            },
         )
 
     def approve(self, snapshot: MarketSnapshot, decisions: list[Decision], portfolio: PortfolioState, memory: object) -> list[Decision]:
@@ -47,7 +55,6 @@ class MaxPositionRiskManager:
         violations: list[RiskViolation] = []
         blocked_count = 0
         clipped_count = 0
-        projected_turnover = 0.0
         for decision in decisions:
             target = max(-self.max_abs_weight, min(self.max_abs_weight, decision.target_weight))
             side = decision.side
@@ -91,8 +98,6 @@ class MaxPositionRiskManager:
                     )
                 )
 
-            projected_turnover += abs(target - portfolio.weight(decision.symbol))
-
             approved.append(
                 Decision(
                     symbol=decision.symbol,
@@ -104,6 +109,7 @@ class MaxPositionRiskManager:
                 )
             )
 
+        drawdown = self._rolling_drawdown(portfolio, memory)
         gross = sum(abs(decision.target_weight) for decision in approved)
         if gross > self.max_gross_exposure:
             scale = self.max_gross_exposure / gross
@@ -128,6 +134,62 @@ class MaxPositionRiskManager:
                 )
             )
 
+        if drawdown < -abs(self.max_drawdown):
+            cap = max(0.0, min(self.max_abs_weight, self.drawdown_de_risk_weight))
+            derisked = []
+            derisked_count = 0
+            for decision in approved:
+                target = max(-cap, min(cap, decision.target_weight))
+                if target != decision.target_weight:
+                    derisked_count += 1
+                derisked.append(
+                    Decision(
+                        symbol=decision.symbol,
+                        side=decision.side if abs(target) > 1e-12 else Side.HOLD,
+                        target_weight=target,
+                        confidence=decision.confidence,
+                        rationale=f"drawdown kill switch forced de-risk: {decision.rationale}",
+                        metadata={
+                            **decision.metadata,
+                            "drawdown_kill_switch": True,
+                            "risk_clipped_from": decision.target_weight,
+                            "rolling_drawdown": drawdown,
+                            "drawdown_limit": -abs(self.max_drawdown),
+                        },
+                    )
+                )
+            approved = derisked
+            clipped_count += derisked_count
+            checks.append(
+                RiskCheck(
+                    name="drawdown_kill_switch",
+                    passed=False,
+                    severity="error",
+                    message=(
+                        f"rolling drawdown {drawdown:.3f} breached kill-switch limit "
+                        f"{-abs(self.max_drawdown):.3f}; forced target weights to +/-{cap:.3f}"
+                    ),
+                    metadata={
+                        "rolling_drawdown": drawdown,
+                        "limit": -abs(self.max_drawdown),
+                        "lookback": self.drawdown_lookback,
+                        "de_risk_weight": cap,
+                    },
+                )
+            )
+            violations.append(
+                RiskViolation(
+                    phase=RiskPhase.PRE_TRADE,
+                    constraint="drawdown_kill_switch",
+                    severity="error",
+                    observed=drawdown,
+                    limit=-abs(self.max_drawdown),
+                    message="rolling drawdown breached kill-switch limit; forced de-risk",
+                    metadata={"lookback": self.drawdown_lookback, "de_risk_weight": cap},
+                )
+            )
+
+        projected_turnover = self._projected_turnover(approved, portfolio)
         if projected_turnover > self.max_single_step_turnover:
             checks.append(
                 RiskCheck(
@@ -163,6 +225,33 @@ class MaxPositionRiskManager:
             violations=tuple(violations),
         )
         return approved
+
+    def _projected_turnover(self, decisions: list[Decision], portfolio: PortfolioState) -> float:
+        return sum(abs(decision.target_weight - portfolio.weight(decision.symbol)) for decision in decisions)
+
+    def _rolling_drawdown(self, portfolio: PortfolioState, memory: object) -> float:
+        equities = self._recent_equities(memory)
+        equities.append(portfolio.equity())
+        if len(equities) < 2:
+            return 0.0
+        peak = max(equities)
+        if peak <= 0.0:
+            return 0.0
+        return equities[-1] / peak - 1.0
+
+    def _recent_equities(self, memory: object) -> list[float]:
+        events = getattr(memory, "events", []) if memory is not None else []
+        lookback = max(0, int(self.drawdown_lookback))
+        relevant_events = events[-lookback:] if lookback else events
+        equities: list[float] = []
+        for event in relevant_events:
+            payload = event.get("payload", event) if isinstance(event, dict) else getattr(event, "payload", {})
+            if not isinstance(payload, dict):
+                continue
+            equity = payload.get("equity")
+            if isinstance(equity, (int, float)):
+                equities.append(float(equity))
+        return equities
 
     def monitor(
         self,

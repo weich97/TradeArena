@@ -190,7 +190,8 @@ Risk control runs before, during, and after simulated execution.
 
 - pre-trade approval clips per-symbol weights to `max_abs_weight`, blocks
   decisions below `min_confidence`, rescales gross exposure above
-  `max_gross_exposure`, and reports projected turnover above
+  `max_gross_exposure`, forces de-risking when the rolling drawdown kill switch
+  breaches `max_drawdown`, and reports projected turnover above
   `max_single_step_turnover`;
 - in-trade monitoring checks realized participation, latency, and slippage
   against `max_order_participation`, `max_latency_steps`, and

@@ -1,5 +1,7 @@
-from tradearena.core.domain import Order, PortfolioState, Side
+from tradearena.agents import MaxPositionRiskManager
+from tradearena.core.domain import Decision, Order, PortfolioState, Side
 from tradearena.data import SyntheticMarketDataProvider
+from tradearena.memory import InMemoryResearchMemory
 from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_execution_calibration
 from tradearena.tools import RealisticOrderSimulator, RiskCalculator, SimpleOrderSimulator
 
@@ -20,6 +22,55 @@ def test_risk_calculator_drawdown():
     risk = RiskCalculator()
 
     assert risk.max_drawdown([100.0, 120.0, 90.0, 110.0]) == -0.25
+
+
+def test_drawdown_kill_switch_forces_derisk_after_rolling_loss():
+    snapshot = SyntheticMarketDataProvider(symbols=("SYN",), periods=1, seed=1).stream()[0]
+    memory = InMemoryResearchMemory()
+    memory.record("step", {"equity": 100_000.0})
+    memory.record("step", {"equity": 96_000.0})
+    portfolio = PortfolioState(cash=90_000.0)
+    portfolio.last_prices.update({symbol: bar.close for symbol, bar in snapshot.bars.items()})
+    decision = Decision(
+        symbol="SYN",
+        side=Side.BUY,
+        target_weight=0.30,
+        confidence=0.90,
+        rationale="LLM wants to add after losses",
+    )
+    risk = MaxPositionRiskManager(max_drawdown=0.05, drawdown_lookback=3, drawdown_de_risk_weight=0.0)
+
+    approved = risk.approve(snapshot, [decision], portfolio, memory)
+
+    assert approved[0].target_weight == 0.0
+    assert approved[0].side == Side.HOLD
+    assert approved[0].metadata["drawdown_kill_switch"] is True
+    assert risk.last_report is not None
+    assert risk.last_report.passed is False
+    assert risk.last_report.violations[0].constraint == "drawdown_kill_switch"
+
+
+def test_drawdown_kill_switch_stays_inactive_inside_limit():
+    snapshot = SyntheticMarketDataProvider(symbols=("SYN",), periods=1, seed=1).stream()[0]
+    memory = InMemoryResearchMemory()
+    memory.record("step", {"equity": 100_000.0})
+    portfolio = PortfolioState(cash=98_000.0)
+    portfolio.last_prices.update({symbol: bar.close for symbol, bar in snapshot.bars.items()})
+    decision = Decision(
+        symbol="SYN",
+        side=Side.BUY,
+        target_weight=0.20,
+        confidence=0.90,
+        rationale="within drawdown budget",
+    )
+    risk = MaxPositionRiskManager(max_drawdown=0.05, drawdown_lookback=3)
+
+    approved = risk.approve(snapshot, [decision], portfolio, memory)
+
+    assert approved[0].target_weight == 0.20
+    assert "drawdown_kill_switch" not in approved[0].metadata
+    assert risk.last_report is not None
+    assert risk.last_report.passed is True
 
 
 def test_realistic_simulator_records_partial_fill_and_latency():
