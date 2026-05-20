@@ -27,6 +27,16 @@ def _load_classical_matrix_module():
     return module
 
 
+def _load_quality_decomposition_module():
+    path = ROOT / "scripts" / "build_quality_decomposition.py"
+    spec = importlib.util.spec_from_file_location("build_quality_decomposition", path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def test_default_model_matrix_includes_execution_shock_scenarios():
     module = _load_model_matrix_module()
 
@@ -59,3 +69,14 @@ def test_classical_matrix_includes_non_llm_strong_baselines():
     }
     assert module.CLASSICAL_BASELINES["risk_parity"]["strategy"] == "risk-parity"
     assert module.CLASSICAL_BASELINES["min_var"]["strategy"] == "min-var"
+
+
+def test_quality_decomposition_uses_three_benchmark_axes():
+    module = _load_quality_decomposition_module()
+
+    assert module.DIMENSIONS == (
+        ("alpha_quality_score", "Alpha quality"),
+        ("risk_discipline_score", "Risk discipline"),
+        ("execution_robustness_score", "Execution robustness"),
+    )
+    assert len(module.INPUTS) == 4

@@ -73,6 +73,15 @@ python scripts/run_classical_baseline_matrix.py
 
 The classical baseline summary is tracked at
 [`docs/results/classical_baselines/classical_baselines.md`](results/classical_baselines/classical_baselines.md).
+The benchmark card also has a three-axis quality decomposition that separates
+pre-risk alpha quality, risk discipline, and execution robustness:
+
+```bash
+python scripts/build_quality_decomposition.py
+```
+
+The quality summary and radar chart are tracked at
+[`docs/results/quality_decomposition/quality_decomposition.md`](results/quality_decomposition/quality_decomposition.md).
 
 The registry format is designed for both deterministic baselines and redacted
 LLM policy runs. Public submissions can include provider family, public-safe
@@ -85,6 +94,7 @@ See:
 - [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/)
 - [`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/)
 - [`docs/results/classical_baselines/`](results/classical_baselines/)
+- [`docs/results/quality_decomposition/`](results/quality_decomposition/)
 - [`schemas/benchmark_submission.schema.json`](../schemas/benchmark_submission.schema.json)
 
 ## Hash A Trajectory

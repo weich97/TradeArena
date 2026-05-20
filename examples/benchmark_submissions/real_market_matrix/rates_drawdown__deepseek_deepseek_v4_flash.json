@@ -32,10 +32,17 @@
     "spread_bps": 0.0
   },
   "metrics": {
+    "alpha_pre_risk_hit_rate": 0.6,
+    "alpha_pre_risk_sharpe": -0.8619660888673213,
+    "alpha_pre_risk_steps": 5,
+    "alpha_pre_risk_total_return": -0.009576681451252234,
+    "alpha_quality_score": 0.38983777821742205,
     "execution_fill_rate": 0.7272727272727273,
+    "execution_robustness_score": 0.6462203282398113,
     "max_drawdown": -0.20577384534423304,
     "rejected_order_count": 4,
     "risk_clipped_decisions": 19,
+    "risk_discipline_score": 0.625,
     "risk_violation_count": 4,
     "sharpe": -4.144856262446209,
     "total_return": -0.16005308929434525,
@@ -47,9 +54,12 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:51330c659d2a1cd0159f0e58a5d4bf3128c79bcca532a0c82518e71d4184e525",
+  "reproducibility_hash": "sha256:f6a8a624506bf474a9156e58bef9958f85e3a198357c95dcbf55e42a2f74debb",
   "risk_config": {
     "risk_budget": {
+      "drawdown_de_risk_weight": 0.0,
+      "drawdown_lookback": 5,
+      "max_drawdown": 0.2,
       "max_gross_exposure": 1.0,
       "max_position_weight": 0.35,
       "max_single_step_turnover": 0.75,
@@ -61,10 +71,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:9f4f89eb6482a85c4b0f7c3ab4e43672500f3dc1ab6831d792b9119296488e54"
+      "redacted_summary": "sha256:307bdbf5ae7ee8d7a185c0b3807dfbd880db515413ca185cf35815a7586a17c4"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:9f4f89eb6482a85c4b0f7c3ab4e43672500f3dc1ab6831d792b9119296488e54",
+    "manifest_hash": "sha256:307bdbf5ae7ee8d7a185c0b3807dfbd880db515413ca185cf35815a7586a17c4",
     "path_or_uri": "docs/results/real_market_matrix/rates_drawdown__deepseek_deepseek_v4_flash_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

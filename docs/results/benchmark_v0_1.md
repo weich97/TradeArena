@@ -84,6 +84,21 @@ benchmark can ask whether an LLM policy beats classical strategies, not only oth
 | synthetic | Naive momentum | 6 | 0.75% | -3.81% | 3.510 | 67.41% | 5 | 0 |
 | synthetic | Mean reversion | 6 | 0.15% | -5.21% | 1.670 | 74.44% | 3 | 0 |
 
+## Decision Quality vs Execution Quality
+
+Return alone hides whether a row had useful pre-risk intent, good risk discipline, or
+robust execution. The three-axis diagnostic separates alpha quality, risk discipline,
+and execution robustness.
+
+![Decision quality radar](quality_decomposition/decision_execution_radar.svg)
+
+| Family | Rows | Alpha | Risk | Execution | Pre-risk alpha return | Realized return | Fill rate |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| LLM synthetic | 42 | 0.729 | 0.572 | 0.685 | 4.64% | 1.33% | 67.73% |
+| LLM real-market | 14 | 0.607 | 0.434 | 0.643 | 9.97% | -6.17% | 75.64% |
+| Classical synthetic | 24 | 0.743 | 0.458 | 0.731 | 3.12% | 1.37% | 71.40% |
+| Classical real-market | 8 | 0.694 | 0.212 | 0.722 | 4.18% | 1.21% | 78.12% |
+
 ## Key Result 1: Risk Gates Are Active, Not Cosmetic
 
 Across the crisis and intraday rows, risk gates repeatedly edit or clip intended

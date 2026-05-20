@@ -35,6 +35,15 @@ DEFAULT_SCENARIOS = (
     "spread_explosion",
     "latency_spike",
 )
+QUALITY_FIELDS = (
+    "alpha_pre_risk_total_return",
+    "alpha_pre_risk_sharpe",
+    "alpha_pre_risk_hit_rate",
+    "alpha_pre_risk_steps",
+    "alpha_quality_score",
+    "risk_discipline_score",
+    "execution_robustness_score",
+)
 
 SCENARIOS: dict[str, dict[str, Any]] = {
     "calm_trend": {
@@ -291,6 +300,7 @@ def _run_one(
     ).run()
 
     parse_coverage = _parse_coverage(trajectory.to_dict(), symbols)
+    quality_metrics = _quality_metrics(metrics)
     summary = {
         "schema_version": "0.1",
         "scenario_id": scenario["scenario_id"],
@@ -366,6 +376,7 @@ def _run_one(
                 "trajectory_reproducibility_coverage": float(
                     metrics.get("trajectory_reproducibility_coverage", 0.0)
                 ),
+                **quality_metrics,
             },
             "trajectory_manifest": {
                 "format": "redacted_manifest",
@@ -406,6 +417,8 @@ def _run_one(
         "execution_fill_rate": submission["metrics"]["execution_fill_rate"],
         "rejected_order_count": submission["metrics"]["rejected_order_count"],
         "risk_clipped_decisions": submission["metrics"]["risk_clipped_decisions"],
+        "risk_violation_count": submission["metrics"]["risk_violation_count"],
+        **quality_metrics,
         "reproducibility_hash": submission["reproducibility_hash"],
         "submission": _rel(submission_path),
         "summary": _rel(summary_path),
@@ -469,6 +482,18 @@ def _parse_coverage(trajectory: dict[str, Any], symbols: tuple[str, ...]) -> flo
     return round(min(1.0, observed / expected), 4)
 
 
+def _quality_metrics(metrics: dict[str, float | int | str]) -> dict[str, float | int]:
+    return {
+        "alpha_pre_risk_total_return": float(metrics.get("alpha_pre_risk_total_return", 0.0)),
+        "alpha_pre_risk_sharpe": float(metrics.get("alpha_pre_risk_sharpe", 0.0)),
+        "alpha_pre_risk_hit_rate": float(metrics.get("alpha_pre_risk_hit_rate", 0.0)),
+        "alpha_pre_risk_steps": int(metrics.get("alpha_pre_risk_steps", 0)),
+        "alpha_quality_score": float(metrics.get("alpha_quality_score", 0.0)),
+        "risk_discipline_score": float(metrics.get("risk_discipline_score", 0.0)),
+        "execution_robustness_score": float(metrics.get("execution_robustness_score", 0.0)),
+    }
+
+
 def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
     fieldnames = [
         "scenario_key",
@@ -487,6 +512,8 @@ def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "execution_fill_rate",
         "rejected_order_count",
         "risk_clipped_decisions",
+        "risk_violation_count",
+        *QUALITY_FIELDS,
         "reproducibility_hash",
         "submission",
         "summary",
@@ -515,6 +542,9 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "total_rejected_orders": sum(int(row["rejected_order_count"]) for row in model_rows),
                 "total_risk_edits": sum(int(row["risk_clipped_decisions"]) for row in model_rows),
                 "avg_parse_coverage": _avg(row["parse_coverage"] for row in model_rows),
+                "avg_alpha_quality": _avg(row["alpha_quality_score"] for row in model_rows),
+                "avg_risk_discipline": _avg(row["risk_discipline_score"] for row in model_rows),
+                "avg_execution_robustness": _avg(row["execution_robustness_score"] for row in model_rows),
             }
         )
     return sorted(
@@ -569,6 +599,9 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "total_rejected_orders",
         "total_risk_edits",
         "avg_parse_coverage",
+        "avg_alpha_quality",
+        "avg_risk_discipline",
+        "avg_execution_robustness",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -610,8 +643,8 @@ def _write_matrix_markdown(
         "",
         "## Cross-Scenario Aggregate",
         "",
-        "| Rank | Provider | Model | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Rejected | Risk edits | Parse |",
-        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Rank | Provider | Model | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Alpha | Risk | Execution | Rejected | Risk edits | Parse |",
+        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(aggregate_rows, start=1):
         lines.append(
@@ -626,6 +659,9 @@ def _write_matrix_markdown(
                     _fmt(row["worst_drawdown"]),
                     _fmt(row["avg_sharpe"]),
                     _fmt(row["avg_fill_rate"]),
+                    _fmt(row["avg_alpha_quality"]),
+                    _fmt(row["avg_risk_discipline"]),
+                    _fmt(row["avg_execution_robustness"]),
                     str(row["total_rejected_orders"]),
                     str(row["total_risk_edits"]),
                     _fmt(row["avg_parse_coverage"]),
@@ -670,8 +706,8 @@ def _write_matrix_markdown(
             "",
             "## Scenario Rows",
             "",
-            "| Scenario | Stress | Provider | Model | Participation | Spread bps | Latency | Parse | Return | Max DD | Sharpe | Fill | Rejected | Risk edits | Submission |",
-            "| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+            "| Scenario | Stress | Provider | Model | Participation | Spread bps | Latency | Parse | Return | Max DD | Sharpe | Alpha | Risk | Execution | Fill | Rejected | Risk edits | Submission |",
+            "| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
         ]
     )
     for row in rows:
@@ -690,6 +726,9 @@ def _write_matrix_markdown(
                     _fmt(row["total_return"]),
                     _fmt(row["max_drawdown"]),
                     _fmt(row["sharpe"]),
+                    _fmt(row["alpha_quality_score"]),
+                    _fmt(row["risk_discipline_score"]),
+                    _fmt(row["execution_robustness_score"]),
                     _fmt(row["execution_fill_rate"]),
                     str(row["rejected_order_count"]),
                     str(row["risk_clipped_decisions"]),

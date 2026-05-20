@@ -31,10 +31,17 @@
     "spread_bps": 25.0
   },
   "metrics": {
+    "alpha_pre_risk_hit_rate": 0.6,
+    "alpha_pre_risk_sharpe": 5.479229878951071,
+    "alpha_pre_risk_steps": 5,
+    "alpha_pre_risk_total_return": 0.03909761098814735,
+    "alpha_quality_score": 0.7829696247233315,
     "execution_fill_rate": 0.3,
+    "execution_robustness_score": 0.4957510124053429,
     "max_drawdown": -0.01326271723652983,
     "rejected_order_count": 0,
     "risk_clipped_decisions": 9,
+    "risk_discipline_score": 0.34375,
     "risk_violation_count": 2,
     "sharpe": 0.3667793375159909,
     "total_return": 0.0010006922786887085,
@@ -46,9 +53,12 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:37c24c637fa4d46faae9e75f12508887c6791427b3a36614e7144b728376d86e",
+  "reproducibility_hash": "sha256:6dd5c84b914274571c34c5e89aca8e0a42baa7664f188959d7590e18f53bd8c2",
   "risk_config": {
     "risk_budget": {
+      "drawdown_de_risk_weight": 0.0,
+      "drawdown_lookback": 5,
+      "max_drawdown": 0.2,
       "max_gross_exposure": 1.0,
       "max_position_weight": 0.35,
       "max_single_step_turnover": 0.75,
@@ -60,10 +70,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:f38d53b406ddc8e42eaa0c7b5171b890c4dfad5fa9d8771caa6fc849707558a1"
+      "redacted_summary": "sha256:d77e4acb278a9b14edc5c36e0e9ee7da604b5a5b0a91bfd13f4745979a57d936"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:f38d53b406ddc8e42eaa0c7b5171b890c4dfad5fa9d8771caa6fc849707558a1",
+    "manifest_hash": "sha256:d77e4acb278a9b14edc5c36e0e9ee7da604b5a5b0a91bfd13f4745979a57d936",
     "path_or_uri": "docs/results/model_matrix/latency_spike__poe_glm_5_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

@@ -37,6 +37,15 @@ without reading the full source tree.
   baselines on the same synthetic and Yahoo Finance scenarios as the model
   leaderboard.
 
+### Decision/Execution Quality Radar
+
+- Run: `python scripts/build_quality_decomposition.py`
+- Artifacts:
+  - `docs/results/quality_decomposition/quality_decomposition.md`
+  - `docs/results/quality_decomposition/decision_execution_radar.svg`
+- Shows: alpha quality, risk discipline, and execution robustness as separate
+  benchmark dimensions.
+
 ## Audit And Execution
 
 ### Auditable Trajectories

@@ -16,6 +16,8 @@ REPRESENTATION_CSV = ROOT / "docs/results/representation/embedding_robustness.cs
 INTRADAY_CSV = ROOT / "docs/results/intraday/intraday_complex.csv"
 CLASSICAL_COMPARISON_CSV = ROOT / "docs/results/classical_baselines/classical_vs_llm_comparison.csv"
 CLASSICAL_AGGREGATE_CSV = ROOT / "docs/results/classical_baselines/classical_baseline_aggregate.csv"
+QUALITY_AGGREGATE_CSV = ROOT / "docs/results/quality_decomposition/quality_decomposition_aggregate.csv"
+QUALITY_RADAR_SVG = ROOT / "docs/results/quality_decomposition/decision_execution_radar.svg"
 QUICKSTART_JSON = ROOT / "outputs/examples/quickstart_core_metrics.json"
 RELEASE_TAG = "v0.1.2"
 POLICY_LABELS = {
@@ -37,6 +39,7 @@ def main() -> int:
     intraday_rows = _read_csv(INTRADAY_CSV) if INTRADAY_CSV.exists() else []
     classical_comparison_rows = _read_csv(CLASSICAL_COMPARISON_CSV) if CLASSICAL_COMPARISON_CSV.exists() else []
     classical_aggregate_rows = _read_csv(CLASSICAL_AGGREGATE_CSV) if CLASSICAL_AGGREGATE_CSV.exists() else []
+    quality_rows = _read_csv(QUALITY_AGGREGATE_CSV) if QUALITY_AGGREGATE_CSV.exists() else []
     quickstart_rows = _read_quickstart_rows(QUICKSTART_JSON) if QUICKSTART_JSON.exists() else []
 
     crisis_summary = _summarize_crisis(crisis_rows)
@@ -50,6 +53,7 @@ def main() -> int:
         intraday_rows,
         classical_comparison_rows,
         classical_aggregate_rows,
+        quality_rows,
         representation_summary,
     )
     html_text = _html(
@@ -59,6 +63,7 @@ def main() -> int:
         intraday_rows,
         classical_comparison_rows,
         classical_aggregate_rows,
+        quality_rows,
         representation_summary,
     )
 
@@ -150,6 +155,7 @@ def _markdown(
     intraday_rows: list[dict[str, str]],
     classical_comparison_rows: list[dict[str, str]],
     classical_aggregate_rows: list[dict[str, str]],
+    quality_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
 ) -> str:
     provenance = _provenance_rows()
@@ -284,6 +290,37 @@ def _markdown(
                         row["total_risk_edits"],
                     ]
                     for row in classical_aggregate_rows
+                ],
+            ),
+            "",
+        ]
+    if quality_rows:
+        lines += [
+            "## Decision Quality vs Execution Quality",
+            "",
+            _wrap(
+                "Return alone hides whether a row had useful pre-risk intent, "
+                "good risk discipline, or robust execution. The three-axis "
+                "diagnostic separates alpha quality, risk discipline, and "
+                "execution robustness."
+            ),
+            "",
+            "![Decision quality radar](quality_decomposition/decision_execution_radar.svg)",
+            "",
+            _md_table(
+                ["Family", "Rows", "Alpha", "Risk", "Execution", "Pre-risk alpha return", "Realized return", "Fill rate"],
+                [
+                    [
+                        row["family_label"],
+                        row["rows"],
+                        f"{float(row['alpha_quality_score']):.3f}",
+                        f"{float(row['risk_discipline_score']):.3f}",
+                        f"{float(row['execution_robustness_score']):.3f}",
+                        _pct(float(row["alpha_pre_risk_total_return"])),
+                        _pct(float(row["total_return"])),
+                        _pct(float(row["execution_fill_rate"])),
+                    ]
+                    for row in quality_rows
                 ],
             ),
             "",
@@ -441,6 +478,7 @@ def _html(
     intraday_rows: list[dict[str, str]],
     classical_comparison_rows: list[dict[str, str]],
     classical_aggregate_rows: list[dict[str, str]],
+    quality_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
 ) -> str:
     provenance = _provenance_rows()
@@ -509,6 +547,30 @@ def _html(
                         row["total_risk_edits"],
                     ]
                     for row in classical_aggregate_rows
+                ],
+            ),
+        )
+    quality = ""
+    if quality_rows:
+        radar = QUALITY_RADAR_SVG.read_text(encoding="utf-8", errors="ignore") if QUALITY_RADAR_SVG.exists() else ""
+        quality = _section(
+            "Decision Quality vs Execution Quality",
+            "A three-axis decomposition separates pre-risk intent, risk discipline, and execution robustness.",
+            radar
+            + _html_table(
+                ["Family", "Rows", "Alpha", "Risk", "Execution", "Pre-risk alpha", "Realized return", "Fill rate"],
+                [
+                    [
+                        row["family_label"],
+                        row["rows"],
+                        f"{float(row['alpha_quality_score']):.3f}",
+                        f"{float(row['risk_discipline_score']):.3f}",
+                        f"{float(row['execution_robustness_score']):.3f}",
+                        _pct(float(row["alpha_pre_risk_total_return"])),
+                        _pct(float(row["total_return"])),
+                        _pct(float(row["execution_fill_rate"])),
+                    ]
+                    for row in quality_rows
                 ],
             ),
         )
@@ -676,6 +738,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
   {quickstart}
   {classical}
   {classical_aggregate}
+  {quality}
   {risk_gate_section}
   {crisis}
   {true_feedback}

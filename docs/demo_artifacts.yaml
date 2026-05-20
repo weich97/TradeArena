@@ -26,9 +26,11 @@ artifacts:
       - outputs/examples/execution_realism_sweep_summary.json:rows
       - outputs/examples/execution_realism_sweep_summary.json:interpretation.high_spread
   - id: benchmark_card
-    command: python scripts/build_benchmark_page.py
+    command: python scripts/build_quality_decomposition.py && python scripts/build_benchmark_page.py
     required_outputs:
       - docs/results/benchmark_v0_1.md
+      - docs/results/quality_decomposition/decision_execution_radar.svg
+      - docs/results/quality_decomposition/quality_decomposition_aggregate.csv
       - outputs/examples/benchmark-v0.1.html
   - id: community_registry
     command: python scripts/build_benchmark_registry.py examples/benchmark_submissions

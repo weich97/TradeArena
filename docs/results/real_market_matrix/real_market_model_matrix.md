@@ -6,31 +6,31 @@ Raw provider prompts and responses remain in ignored local caches.
 
 ## Cross-Scenario Aggregate
 
-| Rank | Provider | Model | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Rejected | Risk edits | Parse |
-| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | poe | gemini-3.1-pro | 2 | -0.0449 | -0.1854 | 0.1212 | 0.7054 | 12 | 45 | 1.0000 |
-| 2 | poe | claude-opus-4.7 | 2 | -0.0473 | -0.1854 | -0.0303 | 0.7662 | 8 | 62 | 1.0000 |
-| 3 | poe | kimi-k2.5 | 2 | -0.0601 | -0.1755 | -1.2717 | 0.7538 | 11 | 55 | 1.0000 |
-| 4 | poe | gpt-5.5 | 2 | -0.0645 | -0.1854 | -1.2600 | 0.7767 | 8 | 59 | 1.0000 |
-| 5 | poe | glm-5 | 2 | -0.0660 | -0.1854 | -1.3997 | 0.7707 | 9 | 56 | 1.0000 |
-| 6 | deepseek | deepseek-v4-pro | 2 | -0.0720 | -0.1854 | -2.0636 | 0.7446 | 10 | 48 | 1.0000 |
-| 7 | deepseek | deepseek-v4-flash | 2 | -0.0773 | -0.2058 | -1.7366 | 0.7774 | 8 | 56 | 1.0000 |
+| Rank | Provider | Model | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Alpha | Risk | Execution | Rejected | Risk edits | Parse |
+| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | poe | gemini-3.1-pro | 2 | -0.0449 | -0.1854 | 0.1212 | 0.7054 | 0.5416 | 0.4931 | 0.6012 | 12 | 45 | 1.0000 |
+| 2 | poe | claude-opus-4.7 | 2 | -0.0473 | -0.1854 | -0.0303 | 0.7662 | 0.6224 | 0.4028 | 0.6552 | 8 | 62 | 1.0000 |
+| 3 | poe | kimi-k2.5 | 2 | -0.0601 | -0.1755 | -1.2717 | 0.7538 | 0.5448 | 0.4514 | 0.6332 | 11 | 55 | 1.0000 |
+| 4 | poe | gpt-5.5 | 2 | -0.0645 | -0.1854 | -1.2600 | 0.7767 | 0.6418 | 0.4236 | 0.6488 | 8 | 59 | 1.0000 |
+| 5 | poe | glm-5 | 2 | -0.0660 | -0.1854 | -1.3997 | 0.7707 | 0.6046 | 0.4444 | 0.6546 | 9 | 56 | 1.0000 |
+| 6 | deepseek | deepseek-v4-pro | 2 | -0.0720 | -0.1854 | -2.0636 | 0.7446 | 0.6314 | 0.3611 | 0.6420 | 10 | 48 | 1.0000 |
+| 7 | deepseek | deepseek-v4-flash | 2 | -0.0773 | -0.2058 | -1.7366 | 0.7774 | 0.6649 | 0.4583 | 0.6633 | 8 | 56 | 1.0000 |
 
 ## Scenario Rows
 
-| Scenario | Provider | Model | Parse | Return | Max DD | Sharpe | Fill | Rejected | Risk edits | Submission |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Yahoo recent GSPC/BTC/BTC futures | poe | gpt-5.5 | 1.0000 | 0.0095 | -0.0566 | 1.0548 | 0.8333 | 3 | 37 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_gpt_5_5.json) |
-| Yahoo recent GSPC/BTC/BTC futures | poe | gemini-3.1-pro | 1.0000 | 0.0486 | -0.0423 | 3.8166 | 0.7308 | 6 | 24 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_gemini_3_1_pro.json) |
-| Yahoo recent GSPC/BTC/BTC futures | poe | kimi-k2.5 | 1.0000 | 0.0055 | -0.0566 | 0.6718 | 0.8276 | 4 | 37 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_kimi_k2_5.json) |
-| Yahoo recent GSPC/BTC/BTC futures | poe | glm-5 | 1.0000 | 0.0066 | -0.0566 | 0.7760 | 0.8214 | 4 | 33 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_glm_5.json) |
-| Yahoo recent GSPC/BTC/BTC futures | poe | claude-opus-4.7 | 1.0000 | 0.0439 | -0.0540 | 3.5143 | 0.8125 | 3 | 40 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_claude_opus_4_7.json) |
-| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-flash | 1.0000 | 0.0055 | -0.0566 | 0.6718 | 0.8276 | 4 | 37 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__deepseek_deepseek_v4_flash.json) |
-| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-pro | 1.0000 | -0.0055 | -0.0509 | -0.5518 | 0.7692 | 5 | 25 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__deepseek_deepseek_v4_pro.json) |
-| Yahoo 2022 rates drawdown | poe | gpt-5.5 | 1.0000 | -0.1385 | -0.1854 | -3.5748 | 0.7200 | 5 | 22 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_gpt_5_5.json) |
-| Yahoo 2022 rates drawdown | poe | gemini-3.1-pro | 1.0000 | -0.1385 | -0.1854 | -3.5741 | 0.6800 | 6 | 21 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_gemini_3_1_pro.json) |
-| Yahoo 2022 rates drawdown | poe | kimi-k2.5 | 1.0000 | -0.1258 | -0.1755 | -3.2151 | 0.6800 | 7 | 18 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_kimi_k2_5.json) |
-| Yahoo 2022 rates drawdown | poe | glm-5 | 1.0000 | -0.1385 | -0.1854 | -3.5754 | 0.7200 | 5 | 23 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_glm_5.json) |
-| Yahoo 2022 rates drawdown | poe | claude-opus-4.7 | 1.0000 | -0.1385 | -0.1854 | -3.5748 | 0.7200 | 5 | 22 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_claude_opus_4_7.json) |
-| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-flash | 1.0000 | -0.1601 | -0.2058 | -4.1449 | 0.7273 | 4 | 19 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__deepseek_deepseek_v4_flash.json) |
-| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-pro | 1.0000 | -0.1385 | -0.1854 | -3.5754 | 0.7200 | 5 | 23 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__deepseek_deepseek_v4_pro.json) |
+| Scenario | Provider | Model | Parse | Return | Max DD | Sharpe | Alpha | Risk | Execution | Fill | Rejected | Risk edits | Submission |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Yahoo recent GSPC/BTC/BTC futures | poe | gpt-5.5 | 1.0000 | 0.0095 | -0.0566 | 1.0548 | 0.9400 | 0.2917 | 0.6869 | 0.8333 | 3 | 37 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_gpt_5_5.json) |
+| Yahoo recent GSPC/BTC/BTC futures | poe | gemini-3.1-pro | 1.0000 | 0.0486 | -0.0423 | 3.8166 | 0.7963 | 0.4167 | 0.6176 | 0.7308 | 6 | 24 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_gemini_3_1_pro.json) |
+| Yahoo recent GSPC/BTC/BTC futures | poe | kimi-k2.5 | 1.0000 | 0.0055 | -0.0566 | 0.6718 | 0.9400 | 0.2917 | 0.6804 | 0.8276 | 4 | 37 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_kimi_k2_5.json) |
+| Yahoo recent GSPC/BTC/BTC futures | poe | glm-5 | 1.0000 | 0.0066 | -0.0566 | 0.7760 | 0.9400 | 0.3472 | 0.6842 | 0.8214 | 4 | 33 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_glm_5.json) |
+| Yahoo recent GSPC/BTC/BTC futures | poe | claude-opus-4.7 | 1.0000 | 0.0439 | -0.0540 | 3.5143 | 0.9400 | 0.2500 | 0.7011 | 0.8125 | 3 | 40 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_claude_opus_4_7.json) |
+| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-flash | 1.0000 | 0.0055 | -0.0566 | 0.6718 | 0.9400 | 0.2917 | 0.6804 | 0.8276 | 4 | 37 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__deepseek_deepseek_v4_flash.json) |
+| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-pro | 1.0000 | -0.0055 | -0.0509 | -0.5518 | 0.9750 | 0.1806 | 0.6591 | 0.7692 | 5 | 25 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/recent_cross_asset__deepseek_deepseek_v4_pro.json) |
+| Yahoo 2022 rates drawdown | poe | gpt-5.5 | 1.0000 | -0.1385 | -0.1854 | -3.5748 | 0.3437 | 0.5556 | 0.6107 | 0.7200 | 5 | 22 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_gpt_5_5.json) |
+| Yahoo 2022 rates drawdown | poe | gemini-3.1-pro | 1.0000 | -0.1385 | -0.1854 | -3.5741 | 0.2870 | 0.5694 | 0.5848 | 0.6800 | 6 | 21 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_gemini_3_1_pro.json) |
+| Yahoo 2022 rates drawdown | poe | kimi-k2.5 | 1.0000 | -0.1258 | -0.1755 | -3.2151 | 0.1495 | 0.6111 | 0.5859 | 0.6800 | 7 | 18 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_kimi_k2_5.json) |
+| Yahoo 2022 rates drawdown | poe | glm-5 | 1.0000 | -0.1385 | -0.1854 | -3.5754 | 0.2691 | 0.5417 | 0.6250 | 0.7200 | 5 | 23 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_glm_5.json) |
+| Yahoo 2022 rates drawdown | poe | claude-opus-4.7 | 1.0000 | -0.1385 | -0.1854 | -3.5748 | 0.3048 | 0.5556 | 0.6094 | 0.7200 | 5 | 22 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__poe_claude_opus_4_7.json) |
+| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-flash | 1.0000 | -0.1601 | -0.2058 | -4.1449 | 0.3898 | 0.6250 | 0.6462 | 0.7273 | 4 | 19 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__deepseek_deepseek_v4_flash.json) |
+| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-pro | 1.0000 | -0.1385 | -0.1854 | -3.5754 | 0.2878 | 0.5417 | 0.6250 | 0.7200 | 5 | 23 | [manifest](../../../examples/benchmark_submissions/real_market_matrix/rates_drawdown__deepseek_deepseek_v4_pro.json) |

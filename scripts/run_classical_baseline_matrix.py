@@ -44,6 +44,15 @@ CLASSICAL_BASELINES: dict[str, dict[str, str]] = {
         "family": "covariance_weighted",
     },
 }
+QUALITY_FIELDS = (
+    "alpha_pre_risk_total_return",
+    "alpha_pre_risk_sharpe",
+    "alpha_pre_risk_hit_rate",
+    "alpha_pre_risk_steps",
+    "alpha_quality_score",
+    "risk_discipline_score",
+    "execution_robustness_score",
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -224,6 +233,7 @@ def _row(
         "risk_clipped_decisions": int(metrics.get("risk_clipped_decisions", 0)),
         "risk_violation_count": int(metrics.get("risk_violation_count", 0)),
         "trajectory_reproducibility_coverage": float(metrics.get("trajectory_reproducibility_coverage", 0.0)),
+        **_quality_metrics(metrics),
     }
 
 
@@ -289,6 +299,9 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "avg_fill_rate": _avg(row["execution_fill_rate"] for row in group),
                 "total_rejected_orders": sum(int(row["rejected_order_count"]) for row in group),
                 "total_risk_edits": sum(int(row["risk_clipped_decisions"]) for row in group),
+                "avg_alpha_quality": _avg(row["alpha_quality_score"] for row in group),
+                "avg_risk_discipline": _avg(row["risk_discipline_score"] for row in group),
+                "avg_execution_robustness": _avg(row["execution_robustness_score"] for row in group),
             }
         )
     return sorted(aggregate, key=lambda row: (str(row["universe"]), -float(row["avg_return"])))
@@ -357,8 +370,8 @@ def _write_markdown(
             "",
             "## Classical Aggregate",
             "",
-            "| Universe | Baseline | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Rejected | Risk edits |",
-            "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+            "| Universe | Baseline | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Alpha | Risk | Execution | Rejected | Risk edits |",
+            "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
     for row in aggregate_rows:
@@ -373,6 +386,9 @@ def _write_markdown(
                     _fmt(row["worst_drawdown"]),
                     _fmt(row["avg_sharpe"]),
                     _fmt(row["avg_fill_rate"]),
+                    _fmt(row["avg_alpha_quality"]),
+                    _fmt(row["avg_risk_discipline"]),
+                    _fmt(row["avg_execution_robustness"]),
                     str(row["total_rejected_orders"]),
                     str(row["total_risk_edits"]),
                 ]
@@ -384,8 +400,8 @@ def _write_markdown(
             "",
             "## Scenario Rows",
             "",
-            "| Universe | Scenario | Baseline | Return | Max DD | Sharpe | Fill | Rejected | Risk edits |",
-            "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+            "| Universe | Scenario | Baseline | Return | Max DD | Sharpe | Alpha | Risk | Execution | Fill | Rejected | Risk edits |",
+            "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
     for row in rows:
@@ -399,6 +415,9 @@ def _write_markdown(
                     _fmt(row["total_return"]),
                     _fmt(row["max_drawdown"]),
                     _fmt(row["sharpe"]),
+                    _fmt(row["alpha_quality_score"]),
+                    _fmt(row["risk_discipline_score"]),
+                    _fmt(row["execution_robustness_score"]),
                     _fmt(row["execution_fill_rate"]),
                     str(row["rejected_order_count"]),
                     str(row["risk_clipped_decisions"]),
@@ -449,6 +468,18 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def _quality_metrics(metrics: dict[str, float | int | str]) -> dict[str, float | int]:
+    return {
+        "alpha_pre_risk_total_return": float(metrics.get("alpha_pre_risk_total_return", 0.0)),
+        "alpha_pre_risk_sharpe": float(metrics.get("alpha_pre_risk_sharpe", 0.0)),
+        "alpha_pre_risk_hit_rate": float(metrics.get("alpha_pre_risk_hit_rate", 0.0)),
+        "alpha_pre_risk_steps": int(metrics.get("alpha_pre_risk_steps", 0)),
+        "alpha_quality_score": float(metrics.get("alpha_quality_score", 0.0)),
+        "risk_discipline_score": float(metrics.get("risk_discipline_score", 0.0)),
+        "execution_robustness_score": float(metrics.get("execution_robustness_score", 0.0)),
+    }
 
 
 def _fmt(value: Any) -> str:

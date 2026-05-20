@@ -406,6 +406,8 @@ Open:
   [`docs/results/real_market_matrix/real_market_model_matrix.md`](docs/results/real_market_matrix/real_market_model_matrix.md)
 - Classical non-LLM baselines:
   [`docs/results/classical_baselines/classical_baselines.md`](docs/results/classical_baselines/classical_baselines.md)
+- Decision/execution quality decomposition:
+  [`docs/results/quality_decomposition/quality_decomposition.md`](docs/results/quality_decomposition/quality_decomposition.md)
 
 Rebuild:
 
@@ -414,12 +416,15 @@ python scripts/build_benchmark_page.py
 python scripts/run_leaderboard_model_matrix.py --update-registry
 python scripts/run_real_market_leaderboard.py --update-registry
 python scripts/run_classical_baseline_matrix.py
+python scripts/build_quality_decomposition.py
 ```
 
 The classical baseline matrix runs naive momentum, mean reversion, risk parity,
 and minimum-variance allocation on the same synthetic and Yahoo Finance
 leaderboard scenarios. It is included so comparisons answer whether an LLM
 policy beats strong non-LLM baselines, not only other LLMs.
+The quality decomposition separates pre-risk alpha quality, risk discipline,
+and execution robustness in a three-axis radar chart.
 
 ## Benchmark Maturity
 

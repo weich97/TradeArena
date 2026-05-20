@@ -12,6 +12,12 @@ def test_default_system_runs_and_records_trajectory():
     assert trajectory.steps[-1].portfolio["equity"] == metrics["final_equity"]
     assert "reasoning_consistency" in metrics
     assert "execution_fill_rate" in metrics
+    assert "alpha_quality_score" in metrics
+    assert "risk_discipline_score" in metrics
+    assert "execution_robustness_score" in metrics
+    assert 0.0 <= float(metrics["alpha_quality_score"]) <= 1.0
+    assert 0.0 <= float(metrics["risk_discipline_score"]) <= 1.0
+    assert 0.0 <= float(metrics["execution_robustness_score"]) <= 1.0
     assert "risk_audit_coverage" in metrics
     assert trajectory.steps[-1].risk_report
     assert trajectory.steps[-1].in_trade_report
@@ -42,6 +48,7 @@ def test_registry_lists_default_plugins():
     assert "risk-parity" in registry.names("strategy")
     assert "mean-variance" in registry.names("strategy")
     assert "performance" in registry.names("evaluator")
+    assert "decision-quality" in registry.names("evaluator")
     assert "realistic" in registry.names("simulator")
     assert "none" in registry.names("risk")
 

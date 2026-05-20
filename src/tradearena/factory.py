@@ -22,6 +22,7 @@ from tradearena.core.runner import TradeArena
 from tradearena.data import CsvMarketDataProvider, SyntheticMarketDataProvider
 from tradearena.evaluation import (
     BehavioralEvaluator,
+    DecisionQualityEvaluator,
     ExecutionRealismEvaluator,
     PerformanceEvaluator,
     ReasoningConsistencyEvaluator,
@@ -62,6 +63,7 @@ def default_registry() -> PluginRegistry:
     registry.register("memory", "in-memory", InMemoryResearchMemory)
     registry.register("evaluator", "performance", PerformanceEvaluator)
     registry.register("evaluator", "behavioral", BehavioralEvaluator)
+    registry.register("evaluator", "decision-quality", DecisionQualityEvaluator)
     registry.register("evaluator", "reasoning", ReasoningConsistencyEvaluator)
     registry.register("evaluator", "execution-realism", ExecutionRealismEvaluator)
     registry.register("evaluator", "risk-audit", RiskAuditEvaluator)
@@ -244,6 +246,7 @@ def build_default_system(
         evaluators=[
             PerformanceEvaluator(),
             BehavioralEvaluator(),
+            DecisionQualityEvaluator(),
             ReasoningConsistencyEvaluator(),
             ExecutionRealismEvaluator(),
             RiskAuditEvaluator(),

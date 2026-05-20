@@ -135,6 +135,7 @@ def main() -> int:
     if not args.reuse_existing:
         _run([sys.executable, "scripts/run_launch_demo.py", "--skip-paper-figures"], "Launch demo portal")
         _preserve_launch_portal()
+        _run([sys.executable, "scripts/build_quality_decomposition.py"], "Decision/execution quality radar")
         _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.1 result page")
         _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
         _run([sys.executable, "scripts/run_paper_design_demos.py"], "Experiment-design demo suite")
@@ -149,6 +150,7 @@ def main() -> int:
     else:
         _preserve_launch_portal()
         _maybe_render_agent_autopsy()
+        _run([sys.executable, "scripts/build_quality_decomposition.py"], "Decision/execution quality radar")
         _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.1 result page")
         _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
 

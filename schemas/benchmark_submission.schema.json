@@ -140,6 +140,28 @@
         "rejected_order_count": { "type": "integer", "minimum": 0 },
         "risk_clipped_decisions": { "type": "integer", "minimum": 0 },
         "risk_violation_count": { "type": "integer", "minimum": 0 },
+        "alpha_pre_risk_total_return": {
+          "type": "number",
+          "description": "Paper return of proposed target weights before risk edits and execution costs."
+        },
+        "alpha_quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Bounded diagnostic score for pre-risk, pre-cost intended alpha."
+        },
+        "risk_discipline_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Bounded diagnostic score penalizing blocked, clipped, and violating decisions."
+        },
+        "execution_robustness_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Bounded diagnostic score for fills, rejection, latency, partial fills, and costs."
+        },
         "trajectory_reproducibility_coverage": { "type": "number", "minimum": 0, "maximum": 1 }
       }
     },

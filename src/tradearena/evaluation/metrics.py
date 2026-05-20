@@ -101,6 +101,107 @@ class ExecutionRealismEvaluator:
 
 
 @dataclass
+class DecisionQualityEvaluator:
+    """Separate intended alpha, risk discipline, and execution robustness."""
+
+    name: str = "decision-quality-evaluator"
+    risk: RiskCalculator = field(default_factory=RiskCalculator)
+
+    def evaluate(self, trajectory: Trajectory) -> dict[str, float | int | str]:
+        intended_returns = self._intended_returns(trajectory)
+        if intended_returns:
+            alpha_curve = [1.0]
+            for value in intended_returns:
+                alpha_curve.append(alpha_curve[-1] * (1.0 + value))
+            alpha_total_return = alpha_curve[-1] - 1.0
+            alpha_sharpe = self.risk.sharpe(intended_returns)
+            alpha_hit_rate = sum(1 for value in intended_returns if value > 0) / len(intended_returns)
+        else:
+            alpha_total_return = 0.0
+            alpha_sharpe = 0.0
+            alpha_hit_rate = 0.0
+
+        proposed = sum(len(step.decisions) for step in trajectory.steps)
+        blocked = sum(int(step.risk_report.get("blocked_count", 0) or 0) for step in trajectory.steps)
+        clipped = sum(int(step.risk_report.get("clipped_count", 0) or 0) for step in trajectory.steps)
+        violations = sum(len(step.risk_violations) for step in trajectory.steps)
+        severe = sum(
+            1
+            for step in trajectory.steps
+            for violation in step.risk_violations
+            if violation.get("severity") == "error"
+        )
+        risk_penalty = blocked + 0.5 * clipped + violations + severe
+        risk_discipline = 1.0 - min(1.0, risk_penalty / max(1, proposed))
+
+        reports = [step.execution_report for step in trajectory.steps if step.execution_report]
+        fills = [fill for step in trajectory.steps for fill in step.fills]
+        submitted = sum(int(report.get("submitted_orders", 0) or 0) for report in reports)
+        filled = sum(int(report.get("filled_orders", 0) or 0) for report in reports)
+        partial = sum(int(report.get("partial_fills", 0) or 0) for report in reports)
+        rejected = sum(int(report.get("rejected_orders", 0) or 0) for report in reports)
+        pending = int(reports[-1].get("pending_orders", 0) or 0) if reports else 0
+        commission = sum(float(report.get("total_commission", 0.0) or 0.0) for report in reports)
+        slippage = sum(float(report.get("total_slippage", 0.0) or 0.0) for report in reports)
+        fill_rate = filled / submitted if submitted else 1.0
+        rejection_rate = rejected / submitted if submitted else 0.0
+        partial_rate = partial / filled if filled else 0.0
+        pending_rate = pending / submitted if submitted else 0.0
+        fill_ratios = [value for value in (_finite_float(fill.get("fill_ratio", 1.0)) for fill in fills) if value is not None]
+        avg_fill_ratio = sum(fill_ratios) / len(fill_ratios) if fill_ratios else 1.0
+        latencies = [value for value in (_finite_float(fill.get("latency_steps", 0.0)) for fill in fills) if value is not None]
+        avg_latency = sum(latencies) / len(latencies) if latencies else 0.0
+        first_equity = float(trajectory.steps[0].portfolio.get("equity", 0.0)) if trajectory.steps else 0.0
+        cost_rate = (commission + slippage) / first_equity if first_equity else 0.0
+        execution_robustness = _clamp01(
+            0.40 * fill_rate
+            + 0.20 * avg_fill_ratio
+            + 0.15 * (1.0 - rejection_rate)
+            + 0.10 * (1.0 - partial_rate)
+            + 0.10 * (1.0 - pending_rate)
+            + 0.05 * (1.0 - min(1.0, avg_latency / 5.0))
+            - min(0.25, cost_rate * 10.0)
+        )
+
+        alpha_quality = _clamp01(
+            0.45 * _clamp01(0.5 + alpha_total_return / 0.20)
+            + 0.35 * _clamp01((alpha_sharpe + 2.0) / 6.0)
+            + 0.20 * alpha_hit_rate
+        )
+        return {
+            "alpha_pre_risk_total_return": alpha_total_return,
+            "alpha_pre_risk_sharpe": alpha_sharpe,
+            "alpha_pre_risk_hit_rate": alpha_hit_rate,
+            "alpha_pre_risk_steps": len(intended_returns),
+            "alpha_quality_score": alpha_quality,
+            "risk_discipline_score": _clamp01(risk_discipline),
+            "execution_robustness_score": execution_robustness,
+        }
+
+    def _intended_returns(self, trajectory: Trajectory) -> list[float]:
+        returns: list[float] = []
+        for current, next_step in zip(trajectory.steps, trajectory.steps[1:]):
+            current_prices = current.observation.get("prices", {})
+            next_prices = next_step.observation.get("prices", {})
+            if not isinstance(current_prices, dict) or not isinstance(next_prices, dict):
+                continue
+            step_return = 0.0
+            gross_intent = 0.0
+            for decision in current.decisions:
+                symbol = decision.get("symbol")
+                target = _finite_float(decision.get("target_weight", 0.0))
+                current_price = _finite_float(current_prices.get(symbol)) if symbol else None
+                next_price = _finite_float(next_prices.get(symbol)) if symbol else None
+                if target is None or current_price is None or next_price is None or current_price <= 0:
+                    continue
+                step_return += target * ((next_price / current_price) - 1.0)
+                gross_intent += abs(target)
+            if gross_intent > 0:
+                returns.append(step_return)
+        return returns
+
+
+@dataclass
 class RiskAuditEvaluator:
     name: str = "risk-audit-evaluator"
 
@@ -195,3 +296,7 @@ def _finite_float(value: object) -> float | None:
     if not isfinite(parsed):
         return None
     return parsed
+
+
+def _clamp01(value: float) -> float:
+    return min(1.0, max(0.0, value))

@@ -4,6 +4,7 @@ from tradearena.evaluation.benchmarks import BenchmarkCase, BenchmarkRunner
 from tradearena.evaluation.audit import AuditManifest, export_audit_bundle
 from tradearena.evaluation.metrics import (
     BehavioralEvaluator,
+    DecisionQualityEvaluator,
     ExecutionRealismEvaluator,
     PerformanceEvaluator,
     ReasoningConsistencyEvaluator,
@@ -25,6 +26,7 @@ __all__ = [
     "BenchmarkRunner",
     "BenchmarkTask",
     "DataLeakagePolicy",
+    "DecisionQualityEvaluator",
     "ExecutionRealismEvaluator",
     "PerformanceEvaluator",
     "ReasoningConsistencyEvaluator",
