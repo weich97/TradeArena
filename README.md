@@ -119,8 +119,11 @@ target_weight = clip(5 * combined_score, -max_short_weight, max_long_weight)
 
 Small scores inside the deadband become `HOLD`. The optional
 [`MemoryAwareSignalWeightedStrategy`](src/tradearena/agents/strategy.py) applies
-a risk-off scale when recent memory contains drawdowns, rejected orders, or risk
-violations. Classical baselines are also available, including equal
+a decayed memory overlay when recent memory contains drawdowns, rejected orders,
+or risk violations. It records the configured `memory_decay_rate`, a weighted
+`memory_pollution_ratio` for noisy or invalid memory events, and
+`memory_driven_leverage_amplification`, the per-decision ratio between
+memory-adjusted and base target exposure. Classical baselines are also available, including equal
 buy-and-hold and a rolling minimum-variance strategy that estimates realized
 covariance from the current trajectory only.
 

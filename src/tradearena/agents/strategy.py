@@ -196,10 +196,11 @@ class MeanVarianceStrategy:
 
 @dataclass
 class MemoryAwareSignalWeightedStrategy:
-    """Signal-weighted strategy with a simple audit-memory risk-off overlay."""
+    """Signal-weighted strategy with an audit-memory exposure overlay."""
 
     base: SignalWeightedStrategy = field(default_factory=SignalWeightedStrategy)
     lookback_events: int = 5
+    memory_decay_rate: float = 0.85
     drawdown_threshold: float = -0.015
     risk_off_scale: float = 0.65
     recovery_boost: float = 1.08
@@ -207,19 +208,35 @@ class MemoryAwareSignalWeightedStrategy:
 
     def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
         decisions = self.base.decide(snapshot, signals, portfolio, memory)
-        scale, reason = self._memory_scale(memory)
+        memory_state = self._memory_state(memory)
+        scale = float(memory_state["scale"])
+        reason = str(memory_state["reason"])
         adjusted: list[Decision] = []
         for decision in decisions:
-            target = decision.target_weight
+            base_target = decision.target_weight
+            target = base_target
             if decision.side != Side.HOLD:
                 target *= scale
+            final_target = target if abs(target) > self.base.deadband else 0.0
+            amplification = abs(final_target) / abs(base_target) if abs(base_target) > 1e-12 else 0.0
             metadata = dict(decision.metadata)
-            metadata.update({"strategy": self.name, "memory_scale": scale, "memory_reason": reason})
+            metadata.update(
+                {
+                    "strategy": self.name,
+                    "memory_scale": scale,
+                    "memory_reason": reason,
+                    "memory_decay_rate": memory_state["memory_decay_rate"],
+                    "memory_pollution_ratio": memory_state["memory_pollution_ratio"],
+                    "memory_base_target_weight": base_target,
+                    "memory_adjusted_target_weight": final_target,
+                    "memory_driven_leverage_amplification": amplification,
+                }
+            )
             adjusted.append(
                 Decision(
                     symbol=decision.symbol,
-                    side=decision.side if abs(target) > self.base.deadband else Side.HOLD,
-                    target_weight=target if abs(target) > self.base.deadband else 0.0,
+                    side=decision.side if abs(final_target) > self.base.deadband else Side.HOLD,
+                    target_weight=final_target,
                     confidence=decision.confidence,
                     rationale=f"{decision.rationale} | memory overlay: {reason}",
                     metadata=metadata,
@@ -228,33 +245,97 @@ class MemoryAwareSignalWeightedStrategy:
         return adjusted
 
     def _memory_scale(self, memory: object) -> tuple[float, str]:
+        state = self._memory_state(memory)
+        return float(state["scale"]), str(state["reason"])
+
+    def _memory_state(self, memory: object) -> dict[str, float | str]:
+        decay_rate = self._decay_rate()
         recent_fn = getattr(memory, "recent", None)
         if not callable(recent_fn):
-            return 1.0, "memory unavailable"
+            return self._empty_memory_state("memory unavailable", decay_rate)
         recent = recent_fn("step", self.lookback_events)
         if len(recent) < 2:
-            return 1.0, "insufficient memory"
+            return self._empty_memory_state("insufficient memory", decay_rate)
 
-        equities = []
-        rejected_orders = 0
-        risk_violations = 0
-        for event in recent:
-            payload = event.get("payload", {})
+        equities: list[float] = []
+        total_weight = 0.0
+        polluted_weight = 0.0
+        weighted_rejections = 0.0
+        weighted_violations = 0.0
+        for index, event in enumerate(recent):
+            weight = decay_rate ** (len(recent) - index - 1)
+            total_weight += weight
+            payload = event.get("payload", {}) if isinstance(event, dict) else {}
+            if not isinstance(payload, dict):
+                payload = {}
             equity = payload.get("equity")
-            if isinstance(equity, (int, float)):
+            has_equity = isinstance(equity, (int, float)) and isfinite(float(equity))
+            if has_equity:
                 equities.append(float(equity))
             execution_report = payload.get("execution_report", {})
+            rejected_orders = 0
             if isinstance(execution_report, dict):
-                rejected_orders += int(execution_report.get("rejected_orders", 0))
-            risk_violations += len(payload.get("risk_violations", []) or [])
+                rejected_orders = int(execution_report.get("rejected_orders", 0) or 0)
+            raw_violations = payload.get("risk_violations", []) or []
+            risk_violations = len(raw_violations) if isinstance(raw_violations, (list, tuple)) else int(bool(raw_violations))
+            explicit_pollution = bool(payload.get("memory_pollution") or payload.get("polluted"))
+            polluted = explicit_pollution or not has_equity or rejected_orders > 0 or risk_violations > 0
+            if polluted:
+                polluted_weight += weight
+            weighted_rejections += weight * rejected_orders
+            weighted_violations += weight * risk_violations
 
         if len(equities) >= 2 and equities[0]:
             equity_change = (equities[-1] / equities[0]) - 1.0
         else:
             equity_change = 0.0
 
-        if equity_change <= self.drawdown_threshold or rejected_orders > self.lookback_events or risk_violations:
-            return self.risk_off_scale, f"risk-off after recent drawdown/rejections ({equity_change:.3f})"
-        if equity_change > abs(self.drawdown_threshold) and rejected_orders == 0:
-            return self.recovery_boost, f"modest recovery boost ({equity_change:.3f})"
-        return 1.0, f"neutral memory state ({equity_change:.3f})"
+        denominator = max(total_weight, 1e-12)
+        pollution_ratio = min(1.0, max(0.0, polluted_weight / denominator))
+        rejection_pressure = weighted_rejections / denominator
+        violation_pressure = weighted_violations / denominator
+
+        if equity_change <= self.drawdown_threshold or rejection_pressure > 1.0 or violation_pressure > 0:
+            scale = self.risk_off_scale
+            reason = f"risk-off after recent drawdown/rejections ({equity_change:.3f})"
+        elif equity_change > abs(self.drawdown_threshold) and rejection_pressure == 0 and violation_pressure == 0:
+            scale = self.recovery_boost
+            reason = f"modest recovery boost ({equity_change:.3f})"
+        else:
+            scale = 1.0
+            reason = f"neutral memory state ({equity_change:.3f})"
+
+        if pollution_ratio > 0.0:
+            if scale > 1.0:
+                scale = 1.0 + (scale - 1.0) * (1.0 - pollution_ratio)
+            else:
+                scale *= 1.0 - (0.5 * pollution_ratio)
+            reason = f"{reason}; memory pollution {pollution_ratio:.3f}"
+
+        return {
+            "scale": scale,
+            "reason": reason,
+            "memory_decay_rate": decay_rate,
+            "memory_pollution_ratio": pollution_ratio,
+            "memory_rejection_pressure": rejection_pressure,
+            "memory_violation_pressure": violation_pressure,
+        }
+
+    def _empty_memory_state(self, reason: str, decay_rate: float) -> dict[str, float | str]:
+        return {
+            "scale": 1.0,
+            "reason": reason,
+            "memory_decay_rate": decay_rate,
+            "memory_pollution_ratio": 0.0,
+            "memory_rejection_pressure": 0.0,
+            "memory_violation_pressure": 0.0,
+        }
+
+    def _decay_rate(self) -> float:
+        try:
+            parsed = float(self.memory_decay_rate)
+        except (TypeError, ValueError):
+            return 0.85
+        if not isfinite(parsed):
+            return 0.85
+        return min(1.0, max(0.0, parsed))

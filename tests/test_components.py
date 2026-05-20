@@ -1,6 +1,10 @@
-from tradearena.agents import MaxPositionRiskManager
-from tradearena.core.domain import Decision, Order, PortfolioState, Side
+from datetime import datetime, timezone
+
+from tradearena.agents import MaxPositionRiskManager, MemoryAwareSignalWeightedStrategy
+from tradearena.core.domain import Decision, Order, PortfolioState, Side, Signal
+from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.data import SyntheticMarketDataProvider
+from tradearena.evaluation import BehavioralEvaluator
 from tradearena.memory import InMemoryResearchMemory
 from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_execution_calibration
 from tradearena.tools import RealisticOrderSimulator, RiskCalculator, SimpleOrderSimulator
@@ -71,6 +75,68 @@ def test_drawdown_kill_switch_stays_inactive_inside_limit():
     assert "drawdown_kill_switch" not in approved[0].metadata
     assert risk.last_report is not None
     assert risk.last_report.passed is True
+
+
+def test_memory_aware_strategy_decays_polluted_memory_and_reports_amplification():
+    snapshot = SyntheticMarketDataProvider(symbols=("SYN",), periods=1, seed=1).stream()[0]
+    portfolio = PortfolioState(cash=100_000.0)
+    signal = Signal(symbol="SYN", score=0.08, horizon="1w", confidence=1.0, rationale="positive momentum")
+    memory = InMemoryResearchMemory()
+    memory.record("step", {"equity": 100_000.0, "memory_pollution": True})
+    memory.record("step", {"equity": 101_500.0})
+    memory.record("step", {"equity": 103_000.0})
+
+    low_decay = MemoryAwareSignalWeightedStrategy(lookback_events=3, memory_decay_rate=0.1)
+    high_decay = MemoryAwareSignalWeightedStrategy(lookback_events=3, memory_decay_rate=1.0)
+
+    low_metadata = low_decay.decide(snapshot, [signal], portfolio, memory)[0].metadata
+    high_metadata = high_decay.decide(snapshot, [signal], portfolio, memory)[0].metadata
+
+    assert low_metadata["memory_decay_rate"] == 0.1
+    assert low_metadata["memory_pollution_ratio"] < high_metadata["memory_pollution_ratio"]
+    assert low_metadata["memory_driven_leverage_amplification"] > high_metadata["memory_driven_leverage_amplification"]
+    assert low_metadata["memory_driven_leverage_amplification"] > 1.0
+
+
+def test_behavioral_evaluator_summarizes_memory_diagnostics():
+    trajectory = Trajectory(experiment_name="memory-diagnostics", seed=7)
+    trajectory.append(
+        StepRecord(
+            timestamp=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            observation={},
+            signals=[],
+            decisions=[],
+            approved_decisions=[
+                {
+                    "side": Side.BUY.value,
+                    "target_weight": 0.25,
+                    "metadata": {
+                        "memory_driven_leverage_amplification": 1.20,
+                        "memory_pollution_ratio": 0.10,
+                    },
+                },
+                {
+                    "side": Side.HOLD.value,
+                    "target_weight": 0.0,
+                    "metadata": {
+                        "memory_driven_leverage_amplification": 0.80,
+                        "memory_pollution_ratio": 0.30,
+                    },
+                },
+            ],
+            orders=[],
+            fills=[],
+            portfolio={"equity": 100_000.0},
+        )
+    )
+
+    metrics = BehavioralEvaluator().evaluate(trajectory)
+
+    assert metrics["memory_decision_count"] == 2
+    assert metrics["memory_driven_leverage_amplification"] == 1.0
+    assert metrics["max_memory_driven_leverage_amplification"] == 1.20
+    assert metrics["memory_pollution_ratio"] == 0.20
+    assert metrics["max_memory_pollution_ratio"] == 0.30
 
 
 def test_realistic_simulator_records_partial_fill_and_latency():

@@ -38,6 +38,9 @@ TradeArena treats an LLM trading agent as an auditable lifecycle, not a black-bo
 - thesis tracking
 - failure cases
 - digest for reproducibility checks
+- memory-aware strategy diagnostics: configured `memory_decay_rate`, weighted
+  `memory_pollution_ratio`, base and memory-adjusted target weights, and
+  `memory_driven_leverage_amplification`
 
 ## Tool Schema
 
@@ -67,7 +70,8 @@ Each step records:
 ## Evaluation Schema
 
 - performance: return, volatility, Sharpe, drawdown
-- behavior: orders, fills, hold ratio, turnover events
+- behavior: orders, fills, hold ratio, turnover events, memory-driven leverage
+  amplification, and memory pollution ratios
 - execution realism: fill rate, partial fill rate, rejected/pending orders, commission, slippage, latency
 - risk awareness: lifecycle coverage, blocked/clipped decisions, violations, warning/error checks
 - reproducibility: prompt/model/data/memory/tool/risk/portfolio/execution state coverage

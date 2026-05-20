@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from math import isfinite
 
 from tradearena.core.domain import Side
 from tradearena.core.trajectory import Trajectory
@@ -36,16 +37,36 @@ class BehavioralEvaluator:
         fill_count = sum(len(step.fills) for step in trajectory.steps)
         hold_decisions = 0
         decisions = 0
+        memory_amplifications: list[float] = []
+        memory_pollution_ratios: list[float] = []
         for step in trajectory.steps:
             for decision in step.approved_decisions:
                 decisions += 1
                 if decision.get("side") == Side.HOLD.value:
                     hold_decisions += 1
+                metadata = decision.get("metadata", {})
+                if not isinstance(metadata, dict):
+                    continue
+                amplification = _finite_float(metadata.get("memory_driven_leverage_amplification"))
+                if amplification is not None:
+                    memory_amplifications.append(amplification)
+                pollution_ratio = _finite_float(metadata.get("memory_pollution_ratio"))
+                if pollution_ratio is not None:
+                    memory_pollution_ratios.append(pollution_ratio)
         return {
             "order_count": order_count,
             "fill_count": fill_count,
             "turnover_events": fill_count,
             "hold_ratio": hold_decisions / decisions if decisions else 0.0,
+            "memory_decision_count": len(memory_amplifications),
+            "memory_driven_leverage_amplification": sum(memory_amplifications) / len(memory_amplifications)
+            if memory_amplifications
+            else 0.0,
+            "max_memory_driven_leverage_amplification": max(memory_amplifications) if memory_amplifications else 0.0,
+            "memory_pollution_ratio": sum(memory_pollution_ratios) / len(memory_pollution_ratios)
+            if memory_pollution_ratios
+            else 0.0,
+            "max_memory_pollution_ratio": max(memory_pollution_ratios) if memory_pollution_ratios else 0.0,
         }
 
 
@@ -164,3 +185,13 @@ class ReasoningConsistencyEvaluator:
             "reasoning_consistency": consistent / checked if checked else 1.0,
             "reasoning_checks": checked,
         }
+
+
+def _finite_float(value: object) -> float | None:
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not isfinite(parsed):
+        return None
+    return parsed

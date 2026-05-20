@@ -32,6 +32,16 @@ and the executable allocation after risk intervention. That distinction is what
 lets a user inspect whether results came from a model decision, a risk gate, or
 an execution assumption.
 
+The memory-aware strategy is deliberately small enough to audit. It scans the
+most recent step events with an exponential `memory_decay_rate`, so old
+rejections or invalid memory entries have less influence than fresh evidence.
+Each decision records a weighted `memory_pollution_ratio` for missing equity,
+explicitly polluted memory, rejected orders, or risk violations, and a
+`memory_driven_leverage_amplification` diagnostic comparing the memory-adjusted
+target exposure with the base signal-weighted target. These fields let a
+benchmark separate useful learning from leverage that was amplified by noisy
+memory.
+
 ## 2. Execution Simulation Model
 
 TradeArena has two execution simulators.

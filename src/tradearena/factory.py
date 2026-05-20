@@ -83,6 +83,8 @@ def build_default_system(
     max_drawdown: float = 0.20,
     drawdown_lookback: int = 5,
     drawdown_de_risk_weight: float = 0.0,
+    memory_lookback_events: int = 5,
+    memory_decay_rate: float = 0.85,
     analyst_names: tuple[str, ...] = ("momentum", "macro-news"),
     data_source: str = "synthetic",
     real_data_dir: str = "data/real/yahoo_daily_2021_2026",
@@ -115,7 +117,10 @@ def build_default_system(
     elif strategy_name in {"mock-rl-policy", "rl-policy", "deep-rl"}:
         strategy = DeterministicRLAllocationStrategy(max_long_weight=max_position_weight)
     elif strategy_name == "memory-aware":
-        strategy = MemoryAwareSignalWeightedStrategy()
+        strategy = MemoryAwareSignalWeightedStrategy(
+            lookback_events=memory_lookback_events,
+            memory_decay_rate=memory_decay_rate,
+        )
     else:
         strategy = SignalWeightedStrategy()
 
