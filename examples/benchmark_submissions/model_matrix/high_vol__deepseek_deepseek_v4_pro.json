@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:ab28baf636c641d3c61ab0e6a8831890af097909ec16e9f868353d35d23573f0",
+  "reproducibility_hash": "sha256:674c1e283be1acfaf01851d89d7df053a7d1a2ea5bf096b1fd572467816c3a0a",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:039570e3e7cd3f9412b2581585eae6bad2c11fcdc6580480e00852341f760ecc"
+      "redacted_summary": "sha256:e9c18e495e6eea2fa2aa7ff94b3d1ecfc197ecfc50493362ed1d3e02b1b3e4f6"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:039570e3e7cd3f9412b2581585eae6bad2c11fcdc6580480e00852341f760ecc",
+    "manifest_hash": "sha256:e9c18e495e6eea2fa2aa7ff94b3d1ecfc197ecfc50493362ed1d3e02b1b3e4f6",
     "path_or_uri": "docs/results/model_matrix/high_vol__deepseek_deepseek_v4_pro_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

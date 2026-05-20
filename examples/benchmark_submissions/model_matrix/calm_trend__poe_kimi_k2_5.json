@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:657372beb82d54f41b17eae2246090e69958614fe77785e09a85f45528e79cee",
+  "reproducibility_hash": "sha256:0a2d5e1874b22c20b3f08a4d73caa2fcd6bdae1615f07f1d013b2f0323eb3d3a",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:67b22095f9fa6bab10f76a990d4563f9e2c1c26e57553dae7b083eb5d53e114c"
+      "redacted_summary": "sha256:831bae627741b91dd3da5d83868f322ec6c12da9c7c940b9b0cb9bef4981bfa7"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:67b22095f9fa6bab10f76a990d4563f9e2c1c26e57553dae7b083eb5d53e114c",
+    "manifest_hash": "sha256:831bae627741b91dd3da5d83868f322ec6c12da9c7c940b9b0cb9bef4981bfa7",
     "path_or_uri": "docs/results/model_matrix/calm_trend__poe_kimi_k2_5_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:1924d80a1f015a060321f401457e0243fd3831cdaa1e8cfb50be8af156d6833b",
+  "reproducibility_hash": "sha256:c4aede11dc730789e4072a27a5da4feb3c26d733316c87b4e7d4acf394ae2ae2",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:5ec090bd3bf1647f98823fc70314613457ad9efc0c42606965e28e4c423ede32"
+      "redacted_summary": "sha256:05d68ced1fa5c3f906e4dc5a1211e6367756e7c4651d36a0030995ba570f89a5"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:5ec090bd3bf1647f98823fc70314613457ad9efc0c42606965e28e4c423ede32",
+    "manifest_hash": "sha256:05d68ced1fa5c3f906e4dc5a1211e6367756e7c4651d36a0030995ba570f89a5",
     "path_or_uri": "docs/results/model_matrix/calm_trend__deepseek_deepseek_v4_flash_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

@@ -369,8 +369,9 @@ The v0.1 benchmark card makes one limited claim:
 
 The public leaderboard includes two tracked model comparisons:
 
-- a 21-row synthetic matrix: seven LLMs across calm-trend, high-volatility,
-  and jump/tail scenarios;
+- a 42-row synthetic matrix: seven LLMs across calm-trend, high-volatility,
+  jump/tail, liquidity-collapse, spread-explosion, and latency-spike
+  scenarios;
 - a 14-row real-market matrix: the same seven models across Yahoo Finance
   `^GSPC`, `BTC-USD`, and CME Bitcoin futures (`BTC=F`) windows.
 

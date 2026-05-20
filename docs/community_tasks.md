@@ -34,7 +34,7 @@ fit in one focused PR with one validation command.
 | Add HK lot-size and trading-calendar demo | `help wanted`, `benchmark` | example run plus documented assumptions |
 | Add crypto fee-tier and spread-shock preset | `help wanted`, `execution` | stress example with changed fill costs |
 | Add an Almgren-Chriss impact stress plugin | `help wanted`, `execution`, `discussion` | compare modeled shortfall on a small fixture |
-| Add a black-swan liquidity halt scenario | `help wanted`, `risk`, `benchmark` | fixture with rejected or delayed orders |
+| Calibrate liquidity-shock presets against fill logs | `help wanted`, `risk`, `benchmark` | compare tracked shock rows with venue or broker fill data |
 
 ## Benchmark Flywheel
 

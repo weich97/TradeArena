@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:ee0a005f6c91c3bad8d0826b122b5d3a0b129968bb66f645b4371304ecc89361",
+  "reproducibility_hash": "sha256:49f5dafb2522bbf1de6e640b252387e9756ce8172941203b1031446351293cb1",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:36c1e75527b4250449d41dfd848e94178bde90e64f64942638d1dccf7302965c"
+      "redacted_summary": "sha256:b3c4f583ea1b98a09119476f3e304b96552c0301f03c098980ba27eeb78bf85c"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:36c1e75527b4250449d41dfd848e94178bde90e64f64942638d1dccf7302965c",
+    "manifest_hash": "sha256:b3c4f583ea1b98a09119476f3e304b96552c0301f03c098980ba27eeb78bf85c",
     "path_or_uri": "docs/results/model_matrix/calm_trend__poe_glm_5_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

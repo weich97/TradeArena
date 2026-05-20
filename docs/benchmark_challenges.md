@@ -32,6 +32,8 @@ The tracked leaderboard is generated from redacted manifests:
 - HTML: [`docs/results/community_registry.html`](results/community_registry.html)
 - Multi-scenario LLM model matrix:
   [`docs/results/model_matrix/leaderboard_model_matrix.md`](results/model_matrix/leaderboard_model_matrix.md)
+  with calm-trend, high-volatility, jump/tail, liquidity-collapse,
+  spread-explosion, and latency-spike scenarios.
 - Real-market Yahoo matrix:
   [`docs/results/real_market_matrix/real_market_model_matrix.md`](results/real_market_matrix/real_market_model_matrix.md)
 

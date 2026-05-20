@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:e1635368569cfca7d67fc84242a09128a29c810ccc4635173e70eeefc36212ad",
+  "reproducibility_hash": "sha256:38e8ccb0a173ba8e7ec767d08f26a8a00adf0760e58bc75caa05573db6853102",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:15a671912695d96bbd82def4285e45b226c2c0e07ad8bed8c198000a99e06779"
+      "redacted_summary": "sha256:07af8ffac190650b35f50af700d21115c353b674a6dd5cfe9306d2b6b02e3136"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:15a671912695d96bbd82def4285e45b226c2c0e07ad8bed8c198000a99e06779",
+    "manifest_hash": "sha256:07af8ffac190650b35f50af700d21115c353b674a6dd5cfe9306d2b6b02e3136",
     "path_or_uri": "docs/results/model_matrix/jump_tail__deepseek_deepseek_v4_pro_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

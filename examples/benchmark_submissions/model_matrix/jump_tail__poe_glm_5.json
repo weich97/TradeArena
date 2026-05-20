@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:004d1b457862184749807308e21e6f0e7c00528308a8bf094ba6fd1f034b0573",
+  "reproducibility_hash": "sha256:ef562b50bcb69155b4c7ecb1f661d59550290c4b0216b32e0813728977b0baae",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:9b94f243641ba724b373a5e0ec7e5a5a263f15d09779690c7a6cf00349188eff"
+      "redacted_summary": "sha256:bc4408e184c21594f1f038ac623601b62d2665ee0ab3607af9e78ac26501649a"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:9b94f243641ba724b373a5e0ec7e5a5a263f15d09779690c7a6cf00349188eff",
+    "manifest_hash": "sha256:bc4408e184c21594f1f038ac623601b62d2665ee0ab3607af9e78ac26501649a",
     "path_or_uri": "docs/results/model_matrix/jump_tail__poe_glm_5_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

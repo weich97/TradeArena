@@ -1,0 +1,71 @@
+{
+  "agent": {
+    "agent_commit": "redacted-or-local",
+    "agent_type": "llm_policy",
+    "model_display_name": "kimi-k2.5",
+    "model_family": "kimi-k2.5",
+    "model_identifier_redacted": false,
+    "parse_coverage": 1.0,
+    "prompt_mode": "rationale",
+    "prompt_version": "risk-feedback-v1",
+    "provider": "poe",
+    "response_format": "json_object",
+    "risk_feedback_mode": "true"
+  },
+  "data_source": {
+    "data_hash": "sha256:latency_spike-synthetic-seed-65-symbols-SYN-ALT-periods-8",
+    "frequency": "daily",
+    "name": "synthetic-market",
+    "symbols": [
+      "SYN",
+      "ALT"
+    ],
+    "timestamp_policy": "relative_masked"
+  },
+  "execution_config": {
+    "base_slippage_bps": 4.0,
+    "commission_bps": 1.0,
+    "latency_steps": 4,
+    "market_impact": 0.3,
+    "participation_rate": 0.03,
+    "spread_bps": 25.0
+  },
+  "metrics": {
+    "execution_fill_rate": 0.2727272727272727,
+    "max_drawdown": -0.01326271723652983,
+    "rejected_order_count": 1,
+    "risk_clipped_decisions": 9,
+    "risk_violation_count": 0,
+    "sharpe": 0.3667793375159909,
+    "total_return": 0.0010006922786887085,
+    "trajectory_reproducibility_coverage": 1.0
+  },
+  "redaction": {
+    "notes": "Leaderboard smoke manifest generated from a live or cache-backed provider run; raw prompts and responses remain in ignored local cache files.",
+    "provider_secrets_removed": true,
+    "raw_provider_text_removed": true,
+    "timestamps_masked": true
+  },
+  "reproducibility_hash": "sha256:55c793a2e667c6c4ee92b928e9d2f65f0e1161e6aee88f947f54ab1e3f8eea72",
+  "risk_config": {
+    "risk_budget": {
+      "max_gross_exposure": 1.0,
+      "max_position_weight": 0.35,
+      "max_single_step_turnover": 0.75,
+      "risk_feedback_mode": "true"
+    },
+    "risk_manager": "max-position"
+  },
+  "scenario_id": "leaderboard_llm_latency_spike_synthetic_v0_1",
+  "schema_version": "0.1",
+  "trajectory_manifest": {
+    "artifact_hashes": {
+      "redacted_summary": "sha256:9995eab8c93b6a19cc157a3502039cdb9cd6d8c33a89be80618a8775cac55cd2"
+    },
+    "format": "redacted_manifest",
+    "manifest_hash": "sha256:9995eab8c93b6a19cc157a3502039cdb9cd6d8c33a89be80618a8775cac55cd2",
+    "path_or_uri": "docs/results/model_matrix/latency_spike__poe_kimi_k2_5_summary.json",
+    "raw_prompts_included": false,
+    "raw_responses_included": false
+  }
+}

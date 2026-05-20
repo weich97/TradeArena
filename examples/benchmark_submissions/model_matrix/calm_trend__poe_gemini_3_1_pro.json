@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:43369d81d9708f699896e361e9b75ef063b11af40d706ac41e9b7e87c598c1f7",
+  "reproducibility_hash": "sha256:7a2583c38ab995c2e7dbc1727bfb42bfb8ce8b858bbf294d944e34bf7edcb86e",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:3bad96f5e04c2da044049a3dc5feb38b4f99932f115b0392c3807729148bd6be"
+      "redacted_summary": "sha256:361cd902d10d30417747ca3170b40fee56c025080ddec9f97abe1caf2682dd8e"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:3bad96f5e04c2da044049a3dc5feb38b4f99932f115b0392c3807729148bd6be",
+    "manifest_hash": "sha256:361cd902d10d30417747ca3170b40fee56c025080ddec9f97abe1caf2682dd8e",
     "path_or_uri": "docs/results/model_matrix/calm_trend__poe_gemini_3_1_pro_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

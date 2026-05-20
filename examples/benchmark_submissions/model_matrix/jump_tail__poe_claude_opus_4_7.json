@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:23a56b641e2392d16e6afca28fde70db94f534eeacdec104d77c3c1301bd41a5",
+  "reproducibility_hash": "sha256:ad141dae1467142e8b25153d50a36108a3a5be21b37721c8618a07a10550b281",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:96086fa7b49cf11750e01ab6c9d7f5c0c3a99eb71adb5856c7f86fb901ae3c19"
+      "redacted_summary": "sha256:733341a948d6799bc3aa17eb147e32eb5cf29fd24f9fc94a3652944c7c5ed874"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:96086fa7b49cf11750e01ab6c9d7f5c0c3a99eb71adb5856c7f86fb901ae3c19",
+    "manifest_hash": "sha256:733341a948d6799bc3aa17eb147e32eb5cf29fd24f9fc94a3652944c7c5ed874",
     "path_or_uri": "docs/results/model_matrix/jump_tail__poe_claude_opus_4_7_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

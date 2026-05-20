@@ -32,8 +32,11 @@ The browser-readable version is
 Challenge format, leaderboard badges, anonymous rows, and citation guidance are
 defined in [`docs/benchmark_challenges.md`](benchmark_challenges.md).
 
-The current registry also includes a 21-row LLM model matrix: seven models over
-three synthetic market scenarios. Regenerate it with:
+The current registry also includes a 42-row LLM model matrix: seven models over
+six synthetic market and execution-stress scenarios. The three execution shock
+rows are `liquidity_collapse`, `spread_explosion`, and `latency_spike`; they
+are intended to expose overconfident target weights through partial fills,
+crossing costs, pending orders, and rejections. Regenerate it with:
 
 ```bash
 python scripts/run_leaderboard_model_matrix.py --update-registry
@@ -41,6 +44,8 @@ python scripts/run_leaderboard_model_matrix.py --update-registry
 
 The matrix summary is tracked at
 [`docs/results/model_matrix/leaderboard_model_matrix.md`](results/model_matrix/leaderboard_model_matrix.md).
+The execution-shock slice is also tracked as
+[`docs/results/model_matrix/leaderboard_execution_shock_aggregate.csv`](results/model_matrix/leaderboard_execution_shock_aggregate.csv).
 Model rows live under
 [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/).
 

@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:a26229c4bfd18ff61fa73f217fa8bc4435273565a2e29d097c55cf7c3b18beea",
+  "reproducibility_hash": "sha256:a6e3d57b4115e22d87ddceee893d2d6551eb3a8cc010726b857ba0bf656cdec2",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:29d4dd4c6b9a28fb4c653869cb28acec2fa5d4902884fac102ba16de97955c7f"
+      "redacted_summary": "sha256:6f12dcadb3ba7e453849b8ada3acf2506218f072f5680eb3436a45947a590697"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:29d4dd4c6b9a28fb4c653869cb28acec2fa5d4902884fac102ba16de97955c7f",
+    "manifest_hash": "sha256:6f12dcadb3ba7e453849b8ada3acf2506218f072f5680eb3436a45947a590697",
     "path_or_uri": "docs/results/model_matrix/high_vol__poe_claude_opus_4_7_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

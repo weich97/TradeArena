@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:1429af5bf985803e5779760fada1f1a0b761d921e4c4a3abdbb7e6dbedbfec4d",
+  "reproducibility_hash": "sha256:2b0ad1cdc2320edcdad5e129e469b423da875d500954c8657f37ddc60355ab2f",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:b5dcc2f0f03cd49d6c4b692650880ce53e122af99096d68b10537d5538e037fb"
+      "redacted_summary": "sha256:b3a82fda9d68f039a3f5a72a89a16e9fc218e72e0475c4660af051c4d1c33a2f"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:b5dcc2f0f03cd49d6c4b692650880ce53e122af99096d68b10537d5538e037fb",
+    "manifest_hash": "sha256:b3a82fda9d68f039a3f5a72a89a16e9fc218e72e0475c4660af051c4d1c33a2f",
     "path_or_uri": "docs/results/model_matrix/jump_tail__poe_gemini_3_1_pro_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

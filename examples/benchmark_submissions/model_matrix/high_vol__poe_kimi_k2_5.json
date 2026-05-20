@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:d049a9252a5db2844a435a2503755cb0c4a8ad9b1302e232143b5e40b8086d1e",
+  "reproducibility_hash": "sha256:823812b637488af30058c3adc3f63b47c007fbf1335a3117823c5b86316918c6",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:eace7f896fcded3469ead8d8c2d71b098f1ad5f3cbdf99a7d0386a43eddf50d7"
+      "redacted_summary": "sha256:244db97c1337d38c5e55d08f79777e83853b9cee2fd2249f0e4a04df2c8ac3c3"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:eace7f896fcded3469ead8d8c2d71b098f1ad5f3cbdf99a7d0386a43eddf50d7",
+    "manifest_hash": "sha256:244db97c1337d38c5e55d08f79777e83853b9cee2fd2249f0e4a04df2c8ac3c3",
     "path_or_uri": "docs/results/model_matrix/high_vol__poe_kimi_k2_5_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

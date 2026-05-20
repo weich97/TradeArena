@@ -27,10 +27,20 @@ DEFAULT_MODELS = (
     "deepseek:deepseek-v4-pro",
 )
 
+DEFAULT_SCENARIOS = (
+    "calm_trend",
+    "high_vol",
+    "jump_tail",
+    "liquidity_collapse",
+    "spread_explosion",
+    "latency_spike",
+)
+
 SCENARIOS: dict[str, dict[str, Any]] = {
     "calm_trend": {
         "scenario_id": "leaderboard_llm_calm_trend_synthetic_v0_1",
         "label": "Calm trend",
+        "stress_family": "market",
         "seed_offset": 0,
         "synthetic": {
             "synthetic_volatility_scale": 1.0,
@@ -42,6 +52,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "high_vol": {
         "scenario_id": "leaderboard_llm_high_vol_synthetic_v0_1",
         "label": "High volatility",
+        "stress_family": "market",
         "seed_offset": 10,
         "synthetic": {
             "synthetic_volatility_scale": 2.25,
@@ -53,6 +64,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "jump_tail": {
         "scenario_id": "leaderboard_llm_jump_tail_synthetic_v0_1",
         "label": "Jump and tail risk",
+        "stress_family": "market",
         "seed_offset": 22,
         "synthetic": {
             "synthetic_volatility_scale": 1.65,
@@ -64,6 +76,78 @@ SCENARIOS: dict[str, dict[str, Any]] = {
             "synthetic_jump_scale": 0.08,
         },
     },
+    "liquidity_collapse": {
+        "scenario_id": "leaderboard_llm_liquidity_collapse_synthetic_v0_1",
+        "label": "Liquidity collapse",
+        "stress_family": "execution",
+        "seed_offset": 34,
+        "synthetic": {
+            "synthetic_volatility_scale": 1.85,
+            "synthetic_trend_scale": 0.45,
+            "synthetic_seasonal_scale": 1.35,
+            "synthetic_macro_scale": 1.6,
+            "synthetic_tail_df": 4,
+            "synthetic_jump_probability": 0.08,
+            "synthetic_jump_scale": 0.05,
+        },
+        "execution": {
+            "commission_bps": 1.0,
+            "slippage_bps": 4.0,
+            "spread_bps": 15.0,
+            "participation_rate": 0.005,
+            "latency_steps": 1,
+            "market_impact": 0.35,
+        },
+        "description": "Volume participation collapses to 0.5%, exposing overconfident target weights through partial fills and rejections.",
+    },
+    "spread_explosion": {
+        "scenario_id": "leaderboard_llm_spread_explosion_synthetic_v0_1",
+        "label": "Spread explosion",
+        "stress_family": "execution",
+        "seed_offset": 46,
+        "synthetic": {
+            "synthetic_volatility_scale": 1.6,
+            "synthetic_trend_scale": 0.55,
+            "synthetic_seasonal_scale": 1.4,
+            "synthetic_macro_scale": 1.5,
+            "synthetic_tail_df": 4,
+            "synthetic_jump_probability": 0.08,
+            "synthetic_jump_scale": 0.045,
+        },
+        "execution": {
+            "commission_bps": 1.0,
+            "slippage_bps": 6.0,
+            "spread_bps": 150.0,
+            "participation_rate": 0.05,
+            "latency_steps": 1,
+            "market_impact": 0.25,
+        },
+        "description": "Quoted spread widens to 150 bps, testing whether the model keeps trading despite high crossing costs.",
+    },
+    "latency_spike": {
+        "scenario_id": "leaderboard_llm_latency_spike_synthetic_v0_1",
+        "label": "Latency spike",
+        "stress_family": "execution",
+        "seed_offset": 58,
+        "synthetic": {
+            "synthetic_volatility_scale": 2.05,
+            "synthetic_trend_scale": 0.5,
+            "synthetic_seasonal_scale": 1.25,
+            "synthetic_macro_scale": 1.7,
+            "synthetic_tail_df": 4,
+            "synthetic_jump_probability": 0.1,
+            "synthetic_jump_scale": 0.055,
+        },
+        "execution": {
+            "commission_bps": 1.0,
+            "slippage_bps": 4.0,
+            "spread_bps": 25.0,
+            "participation_rate": 0.03,
+            "latency_steps": 4,
+            "market_impact": 0.3,
+        },
+        "description": "Orders wait four bars before eligibility, surfacing stale-intent and pending-order risk.",
+    },
 }
 
 
@@ -74,7 +158,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--models", default=",".join(DEFAULT_MODELS), help="Comma-separated provider:model entries.")
     parser.add_argument(
         "--scenarios",
-        default="calm_trend,high_vol,jump_tail",
+        default=",".join(DEFAULT_SCENARIOS),
         help=f"Comma-separated scenario presets. Available: {', '.join(SCENARIOS)}.",
     )
     parser.add_argument("--periods", type=int, default=8)
@@ -134,7 +218,9 @@ def main(argv: list[str] | None = None) -> int:
     _write_matrix_table(output_dir / "leaderboard_model_matrix.csv", rows)
     aggregate_rows = _aggregate_rows(rows)
     _write_aggregate_table(output_dir / "leaderboard_model_matrix_aggregate.csv", aggregate_rows)
-    _write_matrix_markdown(output_dir / "leaderboard_model_matrix.md", rows, aggregate_rows, failures)
+    shock_rows = _execution_shock_aggregate_rows(rows)
+    _write_shock_aggregate_table(output_dir / "leaderboard_execution_shock_aggregate.csv", shock_rows)
+    _write_matrix_markdown(output_dir / "leaderboard_model_matrix.md", rows, aggregate_rows, shock_rows, failures)
     if failures:
         (output_dir / "leaderboard_model_matrix_failures.json").write_text(
             json.dumps(failures, indent=2, sort_keys=True) + "\n",
@@ -180,6 +266,7 @@ def _run_one(
     scenario_key = str(scenario["key"])
     slug = f"{scenario_key}__{model_slug}"
     analyst_name = "poe-llm" if provider == "poe" else "deepseek-llm"
+    execution_config = _scenario_execution_config(scenario)
     trajectory, metrics = build_default_system(
         name=f"leaderboard_{slug}",
         symbols=symbols,
@@ -189,6 +276,12 @@ def _run_one(
         strategy_name="signal-weighted",
         risk_name="max-position",
         execution_mode="realistic",
+        commission_bps=float(execution_config["commission_bps"]),
+        slippage_bps=float(execution_config["base_slippage_bps"]),
+        spread_bps=float(execution_config["spread_bps"]),
+        participation_rate=float(execution_config["participation_rate"]),
+        latency_steps=int(execution_config["latency_steps"]),
+        market_impact=float(execution_config["market_impact"]),
         llm_model=model,
         llm_cache_path=str(cache_dir / f"{model_slug}.jsonl"),
         llm_mask_timestamps=True,
@@ -207,6 +300,9 @@ def _run_one(
         "symbols": list(symbols),
         "periods": periods,
         "seed": seed,
+        "stress_family": scenario.get("stress_family", "market"),
+        "scenario_description": scenario.get("description", ""),
+        "execution_config": execution_config,
         "parse_coverage": parse_coverage,
         "metrics": metrics,
         "redaction": {
@@ -246,14 +342,7 @@ def _run_one(
                     f"{'-'.join(symbols)}-periods-{periods}"
                 ),
             },
-            "execution_config": {
-                "commission_bps": 1.0,
-                "base_slippage_bps": 2.0,
-                "spread_bps": 0.0,
-                "latency_steps": 1,
-                "participation_rate": 0.05,
-                "market_impact": 0.15,
-            },
+            "execution_config": execution_config,
             "risk_config": {
                 "risk_manager": "max-position",
                 "risk_budget": {
@@ -303,6 +392,10 @@ def _run_one(
         "scenario_label": scenario["label"],
         "provider": provider,
         "model": model,
+        "stress_family": scenario.get("stress_family", "market"),
+        "participation_rate": execution_config["participation_rate"],
+        "spread_bps": execution_config["spread_bps"],
+        "latency_steps": execution_config["latency_steps"],
         "parse_coverage": parse_coverage,
         "total_return": submission["metrics"]["total_return"],
         "max_drawdown": submission["metrics"]["max_drawdown"],
@@ -337,7 +430,29 @@ def _scenario(name: str) -> dict[str, Any]:
     scenario = dict(SCENARIOS[key])
     scenario["key"] = key
     scenario["synthetic"] = dict(scenario["synthetic"])
+    scenario["execution"] = dict(scenario.get("execution", {}))
     return scenario
+
+
+def _default_execution_config() -> dict[str, float | int]:
+    return {
+        "commission_bps": 1.0,
+        "base_slippage_bps": 2.0,
+        "spread_bps": 0.0,
+        "latency_steps": 1,
+        "participation_rate": 0.05,
+        "market_impact": 0.15,
+    }
+
+
+def _scenario_execution_config(scenario: dict[str, Any]) -> dict[str, float | int]:
+    execution_config = _default_execution_config()
+    overrides = dict(scenario.get("execution", {}))
+    if "slippage_bps" in overrides:
+        overrides["base_slippage_bps"] = overrides.pop("slippage_bps")
+    execution_config.update(overrides)
+    execution_config["latency_steps"] = int(execution_config["latency_steps"])
+    return execution_config
 
 
 def _parse_coverage(trajectory: dict[str, Any], symbols: tuple[str, ...]) -> float:
@@ -358,6 +473,10 @@ def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "scenario_label",
         "provider",
         "model",
+        "stress_family",
+        "participation_rate",
+        "spread_bps",
+        "latency_steps",
         "parse_coverage",
         "total_return",
         "max_drawdown",
@@ -405,6 +524,36 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
 
 
+def _execution_shock_aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    execution_rows = [row for row in rows if row.get("stress_family") == "execution"]
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for row in execution_rows:
+        grouped.setdefault((str(row["provider"]), str(row["model"])), []).append(row)
+    shock_rows = []
+    for (provider, model), model_rows in sorted(grouped.items()):
+        shock_rows.append(
+            {
+                "provider": provider,
+                "model": model,
+                "shock_scenarios": len(model_rows),
+                "avg_return": _avg(row["total_return"] for row in model_rows),
+                "worst_drawdown": min(float(row["max_drawdown"]) for row in model_rows),
+                "avg_fill_rate": _avg(row["execution_fill_rate"] for row in model_rows),
+                "total_rejected_orders": sum(int(row["rejected_order_count"]) for row in model_rows),
+                "total_risk_edits": sum(int(row["risk_clipped_decisions"]) for row in model_rows),
+                "avg_parse_coverage": _avg(row["parse_coverage"] for row in model_rows),
+            }
+        )
+    return sorted(
+        shock_rows,
+        key=lambda row: (
+            -float(row["avg_fill_rate"]),
+            int(row["total_rejected_orders"]),
+            -float(row["avg_return"]),
+        ),
+    )
+
+
 def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
     fieldnames = [
         "provider",
@@ -424,10 +573,29 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
+def _write_shock_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
+    fieldnames = [
+        "provider",
+        "model",
+        "shock_scenarios",
+        "avg_return",
+        "worst_drawdown",
+        "avg_fill_rate",
+        "total_rejected_orders",
+        "total_risk_edits",
+        "avg_parse_coverage",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def _write_matrix_markdown(
     path: Path,
     rows: list[dict[str, Any]],
     aggregate_rows: list[dict[str, Any]],
+    shock_rows: list[dict[str, Any]],
     failures: list[dict[str, str]],
 ) -> None:
     lines = [
@@ -435,6 +603,7 @@ def _write_matrix_markdown(
         "",
         "This table is generated by `python scripts/run_leaderboard_model_matrix.py --update-registry`.",
         "It records redacted model manifests only; raw provider prompts and responses remain in ignored local caches.",
+        "Default scenarios include three market regimes and three execution shocks: liquidity collapse, spread explosion, and latency spike.",
         "",
         "## Cross-Scenario Aggregate",
         "",
@@ -461,13 +630,45 @@ def _write_matrix_markdown(
             )
             + " |"
         )
+    if shock_rows:
+        lines.extend(
+            [
+                "",
+                "## Execution-Shock Aggregate",
+                "",
+                "This slice uses only `liquidity_collapse`, `spread_explosion`, and `latency_spike` rows.",
+                "Lower fill and more rejections are direct symptoms of intent that failed to survive paper-execution stress.",
+                "",
+                "| Rank | Provider | Model | Shock rows | Avg return | Worst DD | Avg fill | Rejected | Risk edits | Parse |",
+                "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+            ]
+        )
+        for rank, row in enumerate(shock_rows, start=1):
+            lines.append(
+                "| "
+                + " | ".join(
+                    [
+                        str(rank),
+                        str(row["provider"]),
+                        str(row["model"]),
+                        str(row["shock_scenarios"]),
+                        _fmt(row["avg_return"]),
+                        _fmt(row["worst_drawdown"]),
+                        _fmt(row["avg_fill_rate"]),
+                        str(row["total_rejected_orders"]),
+                        str(row["total_risk_edits"]),
+                        _fmt(row["avg_parse_coverage"]),
+                    ]
+                )
+                + " |"
+            )
     lines.extend(
         [
             "",
             "## Scenario Rows",
-        "",
-            "| Scenario | Provider | Model | Parse | Return | Max DD | Sharpe | Fill | Rejected | Risk edits | Submission |",
-            "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+            "",
+            "| Scenario | Stress | Provider | Model | Participation | Spread bps | Latency | Parse | Return | Max DD | Sharpe | Fill | Rejected | Risk edits | Submission |",
+            "| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
         ]
     )
     for row in rows:
@@ -476,8 +677,12 @@ def _write_matrix_markdown(
             + " | ".join(
                 [
                     str(row["scenario_label"]),
+                    str(row["stress_family"]),
                     str(row["provider"]),
                     str(row["model"]),
+                    _fmt(row["participation_rate"]),
+                    _fmt(row["spread_bps"]),
+                    str(row["latency_steps"]),
                     _fmt(row["parse_coverage"]),
                     _fmt(row["total_return"]),
                     _fmt(row["max_drawdown"]),

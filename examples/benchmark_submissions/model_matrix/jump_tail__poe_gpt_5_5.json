@@ -46,7 +46,7 @@
     "raw_provider_text_removed": true,
     "timestamps_masked": true
   },
-  "reproducibility_hash": "sha256:2982046ca04d777c9b757d8f6d4b2084a034444203a4c02e8a0ddcdbe8b4f4ae",
+  "reproducibility_hash": "sha256:2528c83bacdd67ae1ff8cbb12f7f89cb11b0497cdd1ee4014245c5a18a2d824e",
   "risk_config": {
     "risk_budget": {
       "max_gross_exposure": 1.0,
@@ -60,10 +60,10 @@
   "schema_version": "0.1",
   "trajectory_manifest": {
     "artifact_hashes": {
-      "redacted_summary": "sha256:4add105164942d4f15353e87341d074b937ae8189bd0ee8f5ba9e90023873835"
+      "redacted_summary": "sha256:fcb9c80e32e03f39ceb378f2d621e70f3767bacea3d1ff7b1a0cfd419d99a7ef"
     },
     "format": "redacted_manifest",
-    "manifest_hash": "sha256:4add105164942d4f15353e87341d074b937ae8189bd0ee8f5ba9e90023873835",
+    "manifest_hash": "sha256:fcb9c80e32e03f39ceb378f2d621e70f3767bacea3d1ff7b1a0cfd419d99a7ef",
     "path_or_uri": "docs/results/model_matrix/jump_tail__poe_gpt_5_5_summary.json",
     "raw_prompts_included": false,
     "raw_responses_included": false

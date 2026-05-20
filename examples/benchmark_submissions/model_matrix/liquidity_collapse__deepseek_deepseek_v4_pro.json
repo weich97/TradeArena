@@ -1,0 +1,71 @@
+{
+  "agent": {
+    "agent_commit": "redacted-or-local",
+    "agent_type": "llm_policy",
+    "model_display_name": "deepseek-v4-pro",
+    "model_family": "deepseek-v4-pro",
+    "model_identifier_redacted": false,
+    "parse_coverage": 1.0,
+    "prompt_mode": "rationale",
+    "prompt_version": "risk-feedback-v1",
+    "provider": "deepseek",
+    "response_format": "json_object",
+    "risk_feedback_mode": "true"
+  },
+  "data_source": {
+    "data_hash": "sha256:liquidity_collapse-synthetic-seed-41-symbols-SYN-ALT-periods-8",
+    "frequency": "daily",
+    "name": "synthetic-market",
+    "symbols": [
+      "SYN",
+      "ALT"
+    ],
+    "timestamp_policy": "relative_masked"
+  },
+  "execution_config": {
+    "base_slippage_bps": 4.0,
+    "commission_bps": 1.0,
+    "latency_steps": 1,
+    "market_impact": 0.35,
+    "participation_rate": 0.005,
+    "spread_bps": 15.0
+  },
+  "metrics": {
+    "execution_fill_rate": 0.625,
+    "max_drawdown": -0.016678732212523473,
+    "rejected_order_count": 1,
+    "risk_clipped_decisions": 6,
+    "risk_violation_count": 8,
+    "sharpe": 4.317468239634305,
+    "total_return": 0.023637194586975108,
+    "trajectory_reproducibility_coverage": 1.0
+  },
+  "redaction": {
+    "notes": "Leaderboard smoke manifest generated from a live or cache-backed provider run; raw prompts and responses remain in ignored local cache files.",
+    "provider_secrets_removed": true,
+    "raw_provider_text_removed": true,
+    "timestamps_masked": true
+  },
+  "reproducibility_hash": "sha256:c16384f61ed48d6dccd7e8c18d7732958d321d6ee72003e7c1af46021380a700",
+  "risk_config": {
+    "risk_budget": {
+      "max_gross_exposure": 1.0,
+      "max_position_weight": 0.35,
+      "max_single_step_turnover": 0.75,
+      "risk_feedback_mode": "true"
+    },
+    "risk_manager": "max-position"
+  },
+  "scenario_id": "leaderboard_llm_liquidity_collapse_synthetic_v0_1",
+  "schema_version": "0.1",
+  "trajectory_manifest": {
+    "artifact_hashes": {
+      "redacted_summary": "sha256:a4ae0194dd5872b1a8cd36d3f92869d26bb7f918a1a3490d97cc0ab232f394db"
+    },
+    "format": "redacted_manifest",
+    "manifest_hash": "sha256:a4ae0194dd5872b1a8cd36d3f92869d26bb7f918a1a3490d97cc0ab232f394db",
+    "path_or_uri": "docs/results/model_matrix/liquidity_collapse__deepseek_deepseek_v4_pro_summary.json",
+    "raw_prompts_included": false,
+    "raw_responses_included": false
+  }
+}
