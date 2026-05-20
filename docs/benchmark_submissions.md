@@ -62,6 +62,18 @@ The real-market summary is tracked at
 Real-market rows live under
 [`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/).
 
+The same scenarios also have deterministic non-LLM baselines: naive momentum,
+mean reversion, risk parity, and minimum variance. These rows make the model
+matrix falsifiable against standard portfolio construction rules instead of
+only comparing LLMs with other LLMs:
+
+```bash
+python scripts/run_classical_baseline_matrix.py
+```
+
+The classical baseline summary is tracked at
+[`docs/results/classical_baselines/classical_baselines.md`](results/classical_baselines/classical_baselines.md).
+
 The registry format is designed for both deterministic baselines and redacted
 LLM policy runs. Public submissions can include provider family, public-safe
 model display name, prompt mode, risk-feedback mode, parse coverage, metrics,
@@ -72,6 +84,7 @@ See:
 - [`examples/benchmark_submissions/example_llm_redacted_submission.json`](../examples/benchmark_submissions/example_llm_redacted_submission.json)
 - [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/)
 - [`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/)
+- [`docs/results/classical_baselines/`](results/classical_baselines/)
 - [`schemas/benchmark_submission.schema.json`](../schemas/benchmark_submission.schema.json)
 
 ## Hash A Trajectory

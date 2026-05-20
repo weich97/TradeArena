@@ -14,6 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 CRISIS_CSV = ROOT / "docs/results/crisis/crisis_summary.csv"
 REPRESENTATION_CSV = ROOT / "docs/results/representation/embedding_robustness.csv"
 INTRADAY_CSV = ROOT / "docs/results/intraday/intraday_complex.csv"
+CLASSICAL_COMPARISON_CSV = ROOT / "docs/results/classical_baselines/classical_vs_llm_comparison.csv"
+CLASSICAL_AGGREGATE_CSV = ROOT / "docs/results/classical_baselines/classical_baseline_aggregate.csv"
 QUICKSTART_JSON = ROOT / "outputs/examples/quickstart_core_metrics.json"
 RELEASE_TAG = "v0.1.2"
 POLICY_LABELS = {
@@ -33,14 +35,32 @@ def main() -> int:
     crisis_rows = _read_csv(CRISIS_CSV)
     representation_rows = _read_csv(REPRESENTATION_CSV)
     intraday_rows = _read_csv(INTRADAY_CSV) if INTRADAY_CSV.exists() else []
+    classical_comparison_rows = _read_csv(CLASSICAL_COMPARISON_CSV) if CLASSICAL_COMPARISON_CSV.exists() else []
+    classical_aggregate_rows = _read_csv(CLASSICAL_AGGREGATE_CSV) if CLASSICAL_AGGREGATE_CSV.exists() else []
     quickstart_rows = _read_quickstart_rows(QUICKSTART_JSON) if QUICKSTART_JSON.exists() else []
 
     crisis_summary = _summarize_crisis(crisis_rows)
     crisis_true_rows = [row for row in crisis_rows if row.get("feedback") == "true"]
     representation_summary = _summarize_representation(representation_rows)
 
-    md = _markdown(quickstart_rows, crisis_summary, crisis_true_rows, intraday_rows, representation_summary)
-    html_text = _html(quickstart_rows, crisis_summary, crisis_true_rows, intraday_rows, representation_summary)
+    md = _markdown(
+        quickstart_rows,
+        crisis_summary,
+        crisis_true_rows,
+        intraday_rows,
+        classical_comparison_rows,
+        classical_aggregate_rows,
+        representation_summary,
+    )
+    html_text = _html(
+        quickstart_rows,
+        crisis_summary,
+        crisis_true_rows,
+        intraday_rows,
+        classical_comparison_rows,
+        classical_aggregate_rows,
+        representation_summary,
+    )
 
     markdown_path = ROOT / args.markdown
     html_path = ROOT / args.html
@@ -128,6 +148,8 @@ def _markdown(
     crisis_summary: list[dict[str, Any]],
     crisis_true_rows: list[dict[str, str]],
     intraday_rows: list[dict[str, str]],
+    classical_comparison_rows: list[dict[str, str]],
+    classical_aggregate_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
 ) -> str:
     provenance = _provenance_rows()
@@ -210,6 +232,58 @@ def _markdown(
                         _pct(row["audit_completeness"]),
                     ]
                     for row in quickstart_rows
+                ],
+            ),
+            "",
+        ]
+
+    if classical_comparison_rows:
+        lines += [
+            "## Non-LLM Classical Baseline Check",
+            "",
+            _wrap(
+                "The synthetic and real-market matrices include deterministic "
+                "non-LLM baselines so the benchmark can ask whether an LLM "
+                "policy beats classical strategies, not only other LLMs."
+            ),
+            "",
+            _md_table(
+                ["Universe", "Scenario", "Best classical", "Classical return", "Best LLM", "LLM return", "Return gap", "LLM wins?"],
+                [
+                    [
+                        row["universe"],
+                        row["scenario_label"],
+                        row["best_classical"],
+                        _pct(float(row["best_classical_return"])),
+                        f"{row['best_llm_provider']}:{row['best_llm_model']}" if row.get("best_llm_model") else "no LLM row",
+                        _pct(float(row["best_llm_return"])),
+                        _pct(float(row["llm_return_minus_classical"])) if row.get("llm_return_minus_classical") not in {"", None} else "",
+                        _yes_no(row["llm_outperforms_classical_return"]),
+                    ]
+                    for row in classical_comparison_rows
+                ],
+            ),
+            "",
+        ]
+    if classical_aggregate_rows:
+        lines += [
+            "## Classical Baseline Aggregate",
+            "",
+            _md_table(
+                ["Universe", "Baseline", "Scenarios", "Avg return", "Worst DD", "Avg Sharpe", "Avg fill", "Rejected", "Risk edits"],
+                [
+                    [
+                        row["universe"],
+                        row["baseline_label"],
+                        row["scenario_count"],
+                        _pct(float(row["avg_return"])),
+                        _pct(float(row["worst_drawdown"])),
+                        f"{float(row['avg_sharpe']):.3f}",
+                        _pct(float(row["avg_fill_rate"])),
+                        row["total_rejected_orders"],
+                        row["total_risk_edits"],
+                    ]
+                    for row in classical_aggregate_rows
                 ],
             ),
             "",
@@ -365,6 +439,8 @@ def _html(
     crisis_summary: list[dict[str, Any]],
     crisis_true_rows: list[dict[str, str]],
     intraday_rows: list[dict[str, str]],
+    classical_comparison_rows: list[dict[str, str]],
+    classical_aggregate_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
 ) -> str:
     provenance = _provenance_rows()
@@ -387,6 +463,52 @@ def _html(
                         _pct(row["audit_completeness"]),
                     ]
                     for row in quickstart_rows
+                ],
+            ),
+        )
+
+    classical = ""
+    if classical_comparison_rows:
+        classical = _section(
+            "Non-LLM Classical Baseline Check",
+            "Deterministic baselines answer whether LLM policies outperform classical strategies, not only other LLMs.",
+            _html_table(
+                ["Universe", "Scenario", "Best classical", "Classical return", "Best LLM", "LLM return", "Return gap", "LLM wins?"],
+                [
+                    [
+                        row["universe"],
+                        row["scenario_label"],
+                        row["best_classical"],
+                        _pct(float(row["best_classical_return"])),
+                        f"{row['best_llm_provider']}:{row['best_llm_model']}" if row.get("best_llm_model") else "no LLM row",
+                        _pct(float(row["best_llm_return"])),
+                        _pct(float(row["llm_return_minus_classical"])) if row.get("llm_return_minus_classical") not in {"", None} else "",
+                        _yes_no(row["llm_outperforms_classical_return"]),
+                    ]
+                    for row in classical_comparison_rows
+                ],
+            ),
+        )
+    classical_aggregate = ""
+    if classical_aggregate_rows:
+        classical_aggregate = _section(
+            "Classical Baseline Aggregate",
+            "Naive momentum, mean reversion, risk parity, and minimum variance across the benchmark scenarios.",
+            _html_table(
+                ["Universe", "Baseline", "Scenarios", "Avg return", "Worst DD", "Avg Sharpe", "Avg fill", "Rejected", "Risk edits"],
+                [
+                    [
+                        row["universe"],
+                        row["baseline_label"],
+                        row["scenario_count"],
+                        _pct(float(row["avg_return"])),
+                        _pct(float(row["worst_drawdown"])),
+                        f"{float(row['avg_sharpe']):.3f}",
+                        _pct(float(row["avg_fill_rate"])),
+                        row["total_rejected_orders"],
+                        row["total_risk_edits"],
+                    ]
+                    for row in classical_aggregate_rows
                 ],
             ),
         )
@@ -552,6 +674,8 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
   {provenance_section}
   {measured_section}
   {quickstart}
+  {classical}
+  {classical_aggregate}
   {risk_gate_section}
   {crisis}
   {true_feedback}
@@ -614,6 +738,10 @@ def _safe_ratio(numerator: float, denominator: float) -> float:
 
 def _pct(value: float) -> str:
     return f"{100.0 * value:.2f}%"
+
+
+def _yes_no(value: object) -> str:
+    return "yes" if str(value).strip().lower() in {"true", "yes", "1"} else "no"
 
 
 def _policy_label(model: str) -> str:

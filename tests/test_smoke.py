@@ -37,6 +37,9 @@ def test_registry_lists_default_plugins():
 
     assert "synthetic-market" in registry.names("data")
     assert "signal-weighted" in registry.names("strategy")
+    assert "naive-momentum" in registry.names("strategy")
+    assert "mean-reversion" in registry.names("strategy")
+    assert "risk-parity" in registry.names("strategy")
     assert "mean-variance" in registry.names("strategy")
     assert "performance" in registry.names("evaluator")
     assert "realistic" in registry.names("simulator")
@@ -63,3 +66,21 @@ def test_markowitz_baseline_runs_with_realistic_execution():
     assert metrics["final_equity"] > 0
     assert trajectory.steps[-1].decisions
     assert all(float(decision["target_weight"]) <= 0.2 for decision in trajectory.steps[-1].decisions)
+
+
+def test_classical_non_llm_baselines_run_with_realistic_execution():
+    for strategy_name in ("naive-momentum", "mean-reversion", "risk-parity", "min-var"):
+        system = build_default_system(
+            symbols=("SYN", "ALT", "DEF"),
+            periods=32,
+            seed=5,
+            strategy_name=strategy_name,
+            analyst_names=(),
+            max_position_weight=0.25,
+        )
+        trajectory, metrics = system.run()
+
+        assert len(trajectory.steps) == 32
+        assert metrics["final_equity"] > 0
+        assert trajectory.steps[-1].decisions
+        assert all(float(decision["target_weight"]) <= 0.25 for decision in trajectory.steps[-1].decisions)

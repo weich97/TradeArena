@@ -7,9 +7,12 @@ from tradearena.agents import (
     MacroNewsAnalyst,
     MaxPositionRiskManager,
     MeanVarianceStrategy,
+    MeanReversionStrategy,
     MemoryAwareSignalWeightedStrategy,
     MomentumAnalyst,
+    NaiveMomentumStrategy,
     NoRiskManager,
+    RiskParityStrategy,
     SignalWeightedStrategy,
     TargetWeightExecutionAgent,
 )
@@ -46,6 +49,9 @@ def default_registry() -> PluginRegistry:
     registry.register("strategy", "signal-weighted", SignalWeightedStrategy)
     registry.register("strategy", "memory-aware", MemoryAwareSignalWeightedStrategy)
     registry.register("strategy", "buy-and-hold", BuyAndHoldStrategy)
+    registry.register("strategy", "naive-momentum", NaiveMomentumStrategy)
+    registry.register("strategy", "mean-reversion", MeanReversionStrategy)
+    registry.register("strategy", "risk-parity", RiskParityStrategy)
     registry.register("strategy", "mean-variance", MeanVarianceStrategy)
     registry.register("strategy", "mock-rl-policy", DeterministicRLAllocationStrategy)
     registry.register("risk", "max-position", MaxPositionRiskManager)
@@ -112,7 +118,13 @@ def build_default_system(
 ) -> TradeArena:
     if strategy_name == "buy-and-hold":
         strategy = BuyAndHoldStrategy()
-    elif strategy_name in {"mean-variance", "markowitz", "mvo"}:
+    elif strategy_name in {"naive-momentum", "momentum-baseline"}:
+        strategy = NaiveMomentumStrategy(max_long_weight=max_position_weight)
+    elif strategy_name in {"mean-reversion", "contrarian"}:
+        strategy = MeanReversionStrategy(max_long_weight=max_position_weight)
+    elif strategy_name in {"risk-parity", "inverse-volatility"}:
+        strategy = RiskParityStrategy(max_long_weight=max_position_weight)
+    elif strategy_name in {"mean-variance", "markowitz", "mvo", "min-var", "minimum-variance"}:
         strategy = MeanVarianceStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"mock-rl-policy", "rl-policy", "deep-rl"}:
         strategy = DeterministicRLAllocationStrategy(max_long_weight=max_position_weight)

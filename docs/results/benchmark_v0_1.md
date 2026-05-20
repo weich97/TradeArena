@@ -52,8 +52,37 @@ reproduction.
 
 | Scenario | Agent / baseline | Return | Max drawdown | Fill rate | Rejection rate | Risk edits | Audit completeness |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| deterministic quickstart | buy_and_hold_realistic | 53.74% | -6.63% | 89.83% | 8.90% | 0 | 100.00% |
-| deterministic quickstart | risk_aware_realistic | 35.08% | -1.26% | 90.34% | 7.95% | 124 | 100.00% |
+| deterministic quickstart | buy_and_hold_realistic | 53.74% | -6.63% | 90.68% | 8.05% | 0 | 100.00% |
+| deterministic quickstart | risk_aware_realistic | 35.08% | -1.26% | 90.91% | 7.39% | 124 | 100.00% |
+
+## Non-LLM Classical Baseline Check
+
+The synthetic and real-market matrices include deterministic non-LLM baselines so the
+benchmark can ask whether an LLM policy beats classical strategies, not only other LLMs.
+
+| Universe | Scenario | Best classical | Classical return | Best LLM | LLM return | Return gap | LLM wins? |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| real_market | Yahoo 2022 rates drawdown | Risk parity | 4.77% | poe:kimi-k2.5 | -12.58% | -17.35% | no |
+| real_market | Yahoo recent GSPC/BTC/BTC futures | Risk parity | 10.45% | poe:gemini-3.1-pro | 4.86% | -5.58% | no |
+| synthetic | Calm trend | Minimum variance | 2.44% | poe:kimi-k2.5 | 3.19% | 0.76% | yes |
+| synthetic | High volatility | Mean reversion | 1.88% | poe:gemini-3.1-pro | 1.44% | -0.44% | no |
+| synthetic | Jump and tail risk | Minimum variance | 1.19% | poe:gpt-5.5 | 1.67% | 0.48% | yes |
+| synthetic | Latency spike | Risk parity | 2.76% | poe:gemini-3.1-pro | 3.29% | 0.53% | yes |
+| synthetic | Liquidity collapse | Minimum variance | 9.07% | poe:gpt-5.5 | 4.42% | -4.65% | no |
+| synthetic | Spread explosion | Minimum variance | 0.46% | deepseek:deepseek-v4-pro | 0.48% | 0.02% | yes |
+
+## Classical Baseline Aggregate
+
+| Universe | Baseline | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Rejected | Risk edits |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| real_market | Risk parity | 2 | 7.61% | -4.67% | 4.636 | 86.11% | 4 | 0 |
+| real_market | Minimum variance | 2 | 6.12% | -5.99% | 3.667 | 84.17% | 5 | 0 |
+| real_market | Mean reversion | 2 | -2.52% | -9.84% | -0.546 | 75.00% | 6 | 0 |
+| real_market | Naive momentum | 2 | -6.38% | -15.38% | -1.698 | 67.18% | 12 | 0 |
+| synthetic | Minimum variance | 6 | 2.72% | -3.82% | 4.885 | 71.88% | 9 | 0 |
+| synthetic | Risk parity | 6 | 1.85% | -3.42% | 3.759 | 71.88% | 9 | 0 |
+| synthetic | Naive momentum | 6 | 0.75% | -3.81% | 3.510 | 67.41% | 5 | 0 |
+| synthetic | Mean reversion | 6 | 0.15% | -5.21% | 1.670 | 74.44% | 3 | 0 |
 
 ## Key Result 1: Risk Gates Are Active, Not Cosmetic
 

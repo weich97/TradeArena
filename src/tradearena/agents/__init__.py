@@ -9,7 +9,10 @@ from tradearena.agents.rl import DeterministicRLAllocationStrategy
 from tradearena.agents.strategy import (
     BuyAndHoldStrategy,
     MeanVarianceStrategy,
+    MeanReversionStrategy,
     MemoryAwareSignalWeightedStrategy,
+    NaiveMomentumStrategy,
+    RiskParityStrategy,
     SignalWeightedStrategy,
 )
 
@@ -22,9 +25,12 @@ __all__ = [
     "MacroNewsAnalyst",
     "MaxPositionRiskManager",
     "MeanVarianceStrategy",
+    "MeanReversionStrategy",
     "MemoryAwareSignalWeightedStrategy",
     "MomentumAnalyst",
+    "NaiveMomentumStrategy",
     "NoRiskManager",
+    "RiskParityStrategy",
     "SignalWeightedStrategy",
     "TargetWeightExecutionAgent",
 ]

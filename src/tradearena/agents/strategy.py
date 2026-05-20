@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass, field
-from math import isfinite
+from math import isfinite, sqrt
 
 from tradearena.core.domain import Decision, MarketSnapshot, PortfolioState, Side, Signal
 
@@ -75,6 +75,138 @@ class BuyAndHoldStrategy:
             )
             for symbol in snapshot.bars
         ]
+
+
+@dataclass
+class NaiveMomentumStrategy:
+    """Long-only rolling return baseline with no LLM or text inputs."""
+
+    lookback: int = 5
+    max_long_weight: float = 0.35
+    name: str = "naive-momentum-strategy"
+    _history: dict[str, deque[float]] = field(default_factory=dict)
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        symbols = sorted(snapshot.bars)
+        for symbol in symbols:
+            self._history.setdefault(symbol, deque(maxlen=self.lookback + 1)).append(float(snapshot.bars[symbol].close))
+
+        scores = {
+            symbol: max(0.0, self._rolling_return(symbol))
+            for symbol in symbols
+        }
+        weights = _normalize_capped(scores, self.max_long_weight)
+        return [
+            _target_weight_decision(
+                symbol=symbol,
+                target=weights.get(symbol, 0.0),
+                confidence=min(1.0, len(self._history.get(symbol, ())) / max(1, self.lookback + 1)),
+                rationale="naive rolling-return momentum baseline",
+                metadata={
+                    "strategy": self.name,
+                    "lookback": self.lookback,
+                    "rolling_return": self._rolling_return(symbol),
+                    "max_long_weight": self.max_long_weight,
+                },
+            )
+            for symbol in symbols
+        ]
+
+    def _rolling_return(self, symbol: str) -> float:
+        history = list(self._history.get(symbol, ()))
+        if len(history) < 2 or history[0] <= 0:
+            return 0.0
+        return (history[-1] / history[0]) - 1.0
+
+
+@dataclass
+class MeanReversionStrategy:
+    """Long-only contrarian baseline that buys recent underperformers."""
+
+    lookback: int = 5
+    max_long_weight: float = 0.35
+    name: str = "mean-reversion-strategy"
+    _history: dict[str, deque[float]] = field(default_factory=dict)
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        symbols = sorted(snapshot.bars)
+        for symbol in symbols:
+            self._history.setdefault(symbol, deque(maxlen=self.lookback + 1)).append(float(snapshot.bars[symbol].close))
+
+        returns = {symbol: self._rolling_return(symbol) for symbol in symbols}
+        scores = {symbol: max(0.0, -value) for symbol, value in returns.items()}
+        weights = _normalize_capped(scores, self.max_long_weight)
+        return [
+            _target_weight_decision(
+                symbol=symbol,
+                target=weights.get(symbol, 0.0),
+                confidence=min(1.0, len(self._history.get(symbol, ())) / max(1, self.lookback + 1)),
+                rationale="naive mean-reversion baseline using recent underperformance",
+                metadata={
+                    "strategy": self.name,
+                    "lookback": self.lookback,
+                    "rolling_return": returns.get(symbol, 0.0),
+                    "max_long_weight": self.max_long_weight,
+                },
+            )
+            for symbol in symbols
+        ]
+
+    def _rolling_return(self, symbol: str) -> float:
+        history = list(self._history.get(symbol, ()))
+        if len(history) < 2 or history[0] <= 0:
+            return 0.0
+        return (history[-1] / history[0]) - 1.0
+
+
+@dataclass
+class RiskParityStrategy:
+    """Rolling inverse-volatility allocation baseline."""
+
+    lookback: int = 12
+    max_long_weight: float = 0.35
+    volatility_floor: float = 1e-4
+    name: str = "risk-parity-strategy"
+    _history: dict[str, deque[float]] = field(default_factory=dict)
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        symbols = sorted(snapshot.bars)
+        for symbol in symbols:
+            self._history.setdefault(symbol, deque(maxlen=self.lookback + 1)).append(float(snapshot.bars[symbol].close))
+
+        vols = {symbol: self._realized_volatility(symbol) for symbol in symbols}
+        if sum(vols.values()) <= 0:
+            weights = _equal_capped_weights(symbols, self.max_long_weight)
+        else:
+            scores = {symbol: 1.0 / max(self.volatility_floor, vol) for symbol, vol in vols.items()}
+            weights = _normalize_capped(scores, self.max_long_weight)
+        return [
+            _target_weight_decision(
+                symbol=symbol,
+                target=weights.get(symbol, 0.0),
+                confidence=min(1.0, len(self._history.get(symbol, ())) / max(1, self.lookback + 1)),
+                rationale="rolling inverse-volatility risk-parity baseline",
+                metadata={
+                    "strategy": self.name,
+                    "lookback": self.lookback,
+                    "realized_volatility": vols.get(symbol, 0.0),
+                    "max_long_weight": self.max_long_weight,
+                },
+            )
+            for symbol in symbols
+        ]
+
+    def _realized_volatility(self, symbol: str) -> float:
+        history = list(self._history.get(symbol, ()))
+        returns = [
+            (curr / prev) - 1.0
+            for prev, curr in zip(history, history[1:])
+            if prev > 0
+        ]
+        if len(returns) < 2:
+            return 0.0
+        mean = sum(returns) / len(returns)
+        return sqrt(sum((value - mean) ** 2 for value in returns) / max(1, len(returns) - 1))
 
 
 @dataclass
@@ -339,3 +471,38 @@ class MemoryAwareSignalWeightedStrategy:
         if not isfinite(parsed):
             return 0.85
         return min(1.0, max(0.0, parsed))
+
+
+def _target_weight_decision(
+    *,
+    symbol: str,
+    target: float,
+    confidence: float,
+    rationale: str,
+    metadata: dict[str, float | int | str],
+) -> Decision:
+    return Decision(
+        symbol=symbol,
+        side=Side.BUY if target > 1e-6 else Side.HOLD,
+        target_weight=target if target > 1e-6 else 0.0,
+        confidence=confidence if target > 1e-6 else 0.0,
+        rationale=rationale,
+        metadata=metadata,
+    )
+
+
+def _normalize_capped(scores: dict[str, float], max_long_weight: float) -> dict[str, float]:
+    positive = {symbol: max(0.0, value) for symbol, value in scores.items()}
+    total = sum(positive.values())
+    if total <= 1e-12:
+        return {symbol: 0.0 for symbol in scores}
+    weights = {symbol: value / total for symbol, value in positive.items()}
+    capped = {symbol: min(max_long_weight, value) for symbol, value in weights.items()}
+    return capped
+
+
+def _equal_capped_weights(symbols: list[str], max_long_weight: float) -> dict[str, float]:
+    if not symbols:
+        return {}
+    target = min(max_long_weight, 1.0 / len(symbols))
+    return {symbol: target for symbol in symbols}

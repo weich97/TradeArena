@@ -27,6 +27,16 @@ without reading the full source tree.
 - Shows: crisis scenes, intraday portfolio probes, execution-aware baselines,
   and representation robustness as a compact result page.
 
+### Classical Baseline Matrix
+
+- Run: `python scripts/run_classical_baseline_matrix.py`
+- Artifacts:
+  - `docs/results/classical_baselines/classical_baselines.md`
+  - `docs/results/classical_baselines/classical_vs_llm_comparison.csv`
+- Shows: naive momentum, mean reversion, risk parity, and minimum-variance
+  baselines on the same synthetic and Yahoo Finance scenarios as the model
+  leaderboard.
+
 ## Audit And Execution
 
 ### Auditable Trajectories
