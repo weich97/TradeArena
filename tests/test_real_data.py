@@ -56,6 +56,20 @@ def test_csv_market_provider_reads_hourly_snapshots(tmp_path: Path):
     assert snapshots[1].bars["AAPL"].close == 101
 
 
+def test_csv_market_provider_window_offset_selects_rolling_slice(tmp_path: Path):
+    for symbol in ("GSPC", "BTC-USD"):
+        rows = ["Date,Open,High,Low,Close,Volume"]
+        for day in range(1, 8):
+            rows.append(f"2026-01-0{day},100,101,99,{100 + day},1000")
+        (tmp_path / f"{symbol}_Daily_2021_2026.csv").write_text("\n".join(rows) + "\n", encoding="utf-8")
+
+    latest = CsvMarketDataProvider(tmp_path, ("GSPC", "BTC-USD"), max_periods=3).stream()
+    shifted = CsvMarketDataProvider(tmp_path, ("GSPC", "BTC-USD"), max_periods=3, window_offset=2).stream()
+
+    assert [snapshot.bars["GSPC"].close for snapshot in latest] == [105, 106, 107]
+    assert [snapshot.bars["GSPC"].close for snapshot in shifted] == [103, 104, 105]
+
+
 def test_csv_market_provider_loads_optional_research_sidecars(tmp_path: Path):
     (tmp_path / "SYN_Daily_2021_2026.csv").write_text(
         "\n".join(

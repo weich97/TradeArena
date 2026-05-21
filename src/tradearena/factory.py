@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from tradearena.agents import (
+    AlwaysHoldStrategy,
     BuyAndHoldStrategy,
     DeepSeekLLMAnalyst,
     DeterministicRLAllocationStrategy,
@@ -12,6 +13,7 @@ from tradearena.agents import (
     MomentumAnalyst,
     NaiveMomentumStrategy,
     NoRiskManager,
+    RandomAllocationStrategy,
     RiskParityStrategy,
     SignalWeightedStrategy,
     TargetWeightExecutionAgent,
@@ -50,6 +52,8 @@ def default_registry() -> PluginRegistry:
     registry.register("strategy", "signal-weighted", SignalWeightedStrategy)
     registry.register("strategy", "memory-aware", MemoryAwareSignalWeightedStrategy)
     registry.register("strategy", "buy-and-hold", BuyAndHoldStrategy)
+    registry.register("strategy", "always-hold", AlwaysHoldStrategy)
+    registry.register("strategy", "random-allocation", RandomAllocationStrategy)
     registry.register("strategy", "naive-momentum", NaiveMomentumStrategy)
     registry.register("strategy", "mean-reversion", MeanReversionStrategy)
     registry.register("strategy", "risk-parity", RiskParityStrategy)
@@ -100,6 +104,7 @@ def build_default_system(
     real_data_start: str | None = None,
     real_data_end: str | None = None,
     real_data_max_periods: int | None = None,
+    real_data_window_offset: int = 0,
     real_news_path: str | None = None,
     real_macro_path: str | None = None,
     real_filings_path: str | None = None,
@@ -120,6 +125,10 @@ def build_default_system(
 ) -> TradeArena:
     if strategy_name == "buy-and-hold":
         strategy = BuyAndHoldStrategy()
+    elif strategy_name in {"always-hold", "hold", "cash"}:
+        strategy = AlwaysHoldStrategy()
+    elif strategy_name in {"random-allocation", "random", "noise"}:
+        strategy = RandomAllocationStrategy(seed=seed, max_long_weight=max_position_weight)
     elif strategy_name in {"naive-momentum", "momentum-baseline"}:
         strategy = NaiveMomentumStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"mean-reversion", "contrarian"}:
@@ -214,6 +223,7 @@ def build_default_system(
             end=real_data_end,
             frequency=real_data_frequency,
             max_periods=real_data_max_periods,
+            window_offset=real_data_window_offset,
             name="yahoo-finance-csv",
             news_path=real_news_path,
             macro_path=real_macro_path,

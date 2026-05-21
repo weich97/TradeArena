@@ -312,11 +312,15 @@ def _read_llm_rows() -> list[dict[str, Any]]:
     synthetic_path = ROOT / "docs/results/model_matrix/leaderboard_model_matrix.csv"
     if synthetic_path.exists():
         for row in _read_csv(synthetic_path):
+            if row.get("provider") == "baseline":
+                continue
             row["universe"] = "synthetic"
             rows.append(row)
     real_path = ROOT / "docs/results/real_market_matrix/real_market_model_matrix.csv"
     if real_path.exists():
         for row in _read_csv(real_path):
+            if row.get("provider") == "baseline":
+                continue
             row["universe"] = "real_market"
             rows.append(row)
     return rows

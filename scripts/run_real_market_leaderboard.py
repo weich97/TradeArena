@@ -14,10 +14,11 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file, sha256_text  # noqa: E402
+from tradearena.evaluation.statistics import paired_bootstrap_difference, sample_std, summarize_metric  # noqa: E402
 from tradearena.factory import build_default_system  # noqa: E402
 
 
-DEFAULT_MODELS = (
+DEFAULT_LLM_MODELS = (
     "poe:gpt-5.5",
     "poe:gemini-3.1-pro",
     "poe:kimi-k2.5",
@@ -26,6 +27,12 @@ DEFAULT_MODELS = (
     "deepseek:deepseek-v4-flash",
     "deepseek:deepseek-v4-pro",
 )
+DEFAULT_BASELINES = (
+    "baseline:random",
+    "baseline:always-hold",
+)
+DEFAULT_MODELS = DEFAULT_LLM_MODELS + DEFAULT_BASELINES
+DEFAULT_SEEDS = (7, 11, 17, 23, 31)
 QUALITY_FIELDS = (
     "alpha_pre_risk_total_return",
     "alpha_pre_risk_sharpe",
@@ -66,6 +73,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--symbols", default="GSPC,BTC-USD,BTC=F")
     parser.add_argument("--frequency", default="weekly", choices=["daily", "weekly"])
     parser.add_argument("--max-periods", type=int, default=12)
+    parser.add_argument(
+        "--seeds",
+        default=",".join(str(seed) for seed in DEFAULT_SEEDS),
+        help="Comma-separated benchmark seeds. Real-market seeds are mapped to rolling window offsets.",
+    )
     parser.add_argument("--output-dir", default="docs/results/real_market_matrix")
     parser.add_argument("--submission-dir", default="examples/benchmark_submissions/real_market_matrix")
     parser.add_argument("--cache-dir", default="outputs/llm_cache/real_market_matrix")
@@ -85,47 +97,66 @@ def main(argv: list[str] | None = None) -> int:
     symbols = tuple(symbol.strip() for symbol in args.symbols.split(",") if symbol.strip())
     model_specs = [_parse_model_spec(item) for item in args.models.split(",") if item.strip()]
     scenarios = [_scenario(name) for name in args.scenarios.split(",") if name.strip()]
+    seeds = _parse_seeds(args.seeds)
     data_hash = _data_hash(data_dir, symbols)
 
     rows: list[dict[str, Any]] = []
     failures: list[dict[str, str]] = []
     for scenario in scenarios:
         for provider, model in model_specs:
-            try:
-                row = _run_one(
-                    provider=provider,
-                    model=model,
-                    scenario=scenario,
-                    symbols=symbols,
-                    frequency=args.frequency,
-                    max_periods=args.max_periods,
-                    data_dir=data_dir,
-                    data_hash=data_hash,
-                    output_dir=output_dir,
-                    submission_dir=submission_dir,
-                    cache_dir=cache_dir,
-                )
-                rows.append(row)
-                print(f"OK {row['scenario_key']} {provider}:{model} -> {row['submission']}", flush=True)
-            except Exception as exc:  # pragma: no cover - live provider/data failures
-                failures.append(
-                    {
-                        "scenario": str(scenario["key"]),
-                        "provider": provider,
-                        "model": model,
-                        "error": type(exc).__name__,
-                    }
-                )
-                print(
-                    f"FAILED {scenario['key']} {provider}:{model}: {type(exc).__name__}: {exc}",
-                    file=sys.stderr,
-                    flush=True,
-                )
+            for seed_index, seed in enumerate(seeds):
+                try:
+                    row = _run_one(
+                        provider=provider,
+                        model=model,
+                        scenario=scenario,
+                        symbols=symbols,
+                        frequency=args.frequency,
+                        max_periods=args.max_periods,
+                        seed=int(seed),
+                        window_offset=seed_index,
+                        data_dir=data_dir,
+                        data_hash=data_hash,
+                        output_dir=output_dir,
+                        submission_dir=submission_dir,
+                        cache_dir=cache_dir,
+                    )
+                    rows.append(row)
+                    print(
+                        f"OK {row['scenario_key']} seed={row['seed']} {provider}:{model} -> {row['submission']}",
+                        flush=True,
+                    )
+                except Exception as exc:  # pragma: no cover - live provider/data failures
+                    failures.append(
+                        {
+                            "scenario": str(scenario["key"]),
+                            "seed": str(seed),
+                            "provider": provider,
+                            "model": model,
+                            "error": type(exc).__name__,
+                        }
+                    )
+                    print(
+                        f"FAILED {scenario['key']} seed={seed} {provider}:{model}: {type(exc).__name__}: {exc}",
+                        file=sys.stderr,
+                        flush=True,
+                    )
 
     _write_matrix_table(output_dir / "real_market_model_matrix.csv", rows)
     aggregate_rows = _aggregate_rows(rows)
     _write_aggregate_table(output_dir / "real_market_model_matrix_aggregate.csv", aggregate_rows)
-    _write_matrix_markdown(output_dir / "real_market_model_matrix.md", rows, aggregate_rows, failures)
+    scenario_rows = _scenario_aggregate_rows(rows)
+    _write_scenario_aggregate_table(output_dir / "real_market_model_matrix_scenario_aggregate.csv", scenario_rows)
+    significance_rows = _significance_rows(rows)
+    _write_significance_table(output_dir / "real_market_model_matrix_significance.csv", significance_rows)
+    _write_matrix_markdown(
+        output_dir / "real_market_model_matrix.md",
+        rows,
+        aggregate_rows,
+        scenario_rows,
+        significance_rows,
+        failures,
+    )
     if failures:
         (output_dir / "real_market_model_matrix_failures.json").write_text(
             json.dumps(failures, indent=2, sort_keys=True) + "\n",
@@ -163,6 +194,8 @@ def _run_one(
     symbols: tuple[str, ...],
     frequency: str,
     max_periods: int,
+    seed: int,
+    window_offset: int,
     data_dir: Path,
     data_hash: str,
     output_dir: Path,
@@ -171,15 +204,16 @@ def _run_one(
 ) -> dict[str, Any]:
     model_slug = _slug(f"{provider}-{model}")
     scenario_key = str(scenario["key"])
-    slug = f"{scenario_key}__{model_slug}"
-    analyst_name = "poe-llm" if provider == "poe" else "deepseek-llm"
+    slug = f"{scenario_key}__{model_slug}__seed_{seed}"
+    analyst_name = _analyst_name(provider)
+    strategy_name = _strategy_name(provider, model)
     trajectory, metrics = build_default_system(
         name=f"real_leaderboard_{slug}",
         symbols=symbols,
         periods=max_periods,
-        seed=7,
-        analyst_names=(analyst_name,),
-        strategy_name="signal-weighted",
+        seed=seed,
+        analyst_names=(analyst_name,) if analyst_name else (),
+        strategy_name=strategy_name,
         risk_name="max-position",
         execution_mode="realistic",
         data_source="csv",
@@ -188,14 +222,15 @@ def _run_one(
         real_data_start=str(scenario["start"]),
         real_data_end=str(scenario["end"]),
         real_data_max_periods=max_periods,
+        real_data_window_offset=window_offset,
         llm_model=model,
-        llm_cache_path=str(cache_dir / f"{slug}.jsonl"),
+        llm_cache_path=str(cache_dir / f"{scenario_key}__{model_slug}.jsonl"),
         llm_mask_timestamps=True,
         llm_use_risk_feedback=True,
         llm_risk_feedback_mode="true",
     ).run()
 
-    parse_coverage = _parse_coverage(trajectory.to_dict(), symbols)
+    parse_coverage = 1.0 if provider == "baseline" else _parse_coverage(trajectory.to_dict(), symbols)
     metrics_payload = {
         "total_return": float(metrics.get("total_return", 0.0)),
         "max_drawdown": float(metrics.get("max_drawdown", 0.0)),
@@ -218,6 +253,8 @@ def _run_one(
         "start": scenario["start"],
         "end": scenario["end"],
         "max_periods": max_periods,
+        "seed": seed,
+        "window_offset": window_offset,
         "parse_coverage": parse_coverage,
         "metrics": metrics_payload,
         "redaction": {
@@ -236,7 +273,7 @@ def _run_one(
             "scenario_id": scenario["scenario_id"],
             "agent": {
                 "provider": provider,
-                "agent_type": "llm_policy",
+                "agent_type": "control_policy" if provider == "baseline" else "llm_policy",
                 "model_family": model,
                 "model_display_name": model,
                 "model_identifier_redacted": False,
@@ -303,6 +340,8 @@ def _run_one(
         "scenario_label": scenario["label"],
         "provider": provider,
         "model": model,
+        "seed": seed,
+        "window_offset": window_offset,
         "parse_coverage": parse_coverage,
         **metrics_payload,
         "reproducibility_hash": submission["reproducibility_hash"],
@@ -318,11 +357,31 @@ def _parse_model_spec(value: str) -> tuple[str, str]:
         provider, model = "poe", value
     provider = provider.strip().lower()
     model = model.strip()
-    if provider not in {"poe", "deepseek"}:
+    if provider not in {"poe", "deepseek", "baseline"}:
         raise ValueError(f"Unsupported provider in model spec: {value}")
     if not model:
         raise ValueError(f"Missing model name in model spec: {value}")
+    if provider == "baseline" and model not in {"random", "always-hold"}:
+        raise ValueError(f"Unsupported baseline model: {model}")
     return provider, model
+
+
+def _parse_seeds(value: str) -> tuple[int, ...]:
+    return tuple(int(seed.strip()) for seed in value.split(",") if seed.strip())
+
+
+def _analyst_name(provider: str) -> str:
+    if provider == "poe":
+        return "poe-llm"
+    if provider == "deepseek":
+        return "deepseek-llm"
+    return ""
+
+
+def _strategy_name(provider: str, model: str) -> str:
+    if provider != "baseline":
+        return "signal-weighted"
+    return "random-allocation" if model == "random" else "always-hold"
 
 
 def _scenario(name: str) -> dict[str, Any]:
@@ -376,14 +435,25 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         grouped.setdefault((str(row["provider"]), str(row["model"])), []).append(row)
     aggregate_rows = []
     for (provider, model), model_rows in sorted(grouped.items()):
+        return_stats = summarize_metric((row["total_return"] for row in model_rows), prefix="return")
+        sharpe_stats = summarize_metric((row["sharpe"] for row in model_rows), prefix="sharpe")
+        hold_test = _baseline_test(rows, model_rows, baseline_model="always-hold")
+        random_test = _baseline_test(rows, model_rows, baseline_model="random")
         aggregate_rows.append(
             {
                 "provider": provider,
                 "model": model,
-                "scenario_count": len(model_rows),
-                "avg_return": _avg(row["total_return"] for row in model_rows),
+                "scenario_count": len({row["scenario_key"] for row in model_rows}),
+                "run_count": len(model_rows),
+                "avg_return": return_stats["return_mean"],
+                "std_return": return_stats["return_std"],
+                "return_ci_low": return_stats["return_ci_low"],
+                "return_ci_high": return_stats["return_ci_high"],
                 "worst_drawdown": min(float(row["max_drawdown"]) for row in model_rows),
-                "avg_sharpe": _avg(row["sharpe"] for row in model_rows),
+                "avg_sharpe": sharpe_stats["sharpe_mean"],
+                "std_sharpe": sharpe_stats["sharpe_std"],
+                "sharpe_ci_low": sharpe_stats["sharpe_ci_low"],
+                "sharpe_ci_high": sharpe_stats["sharpe_ci_high"],
                 "avg_fill_rate": _avg(row["execution_fill_rate"] for row in model_rows),
                 "total_rejected_orders": sum(int(row["rejected_order_count"]) for row in model_rows),
                 "total_risk_edits": sum(int(row["risk_clipped_decisions"]) for row in model_rows),
@@ -391,6 +461,14 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "avg_alpha_quality": _avg(row["alpha_quality_score"] for row in model_rows),
                 "avg_risk_discipline": _avg(row["risk_discipline_score"] for row in model_rows),
                 "avg_execution_robustness": _avg(row["execution_robustness_score"] for row in model_rows),
+                "delta_return_vs_hold": hold_test["mean_delta"],
+                "delta_return_vs_hold_ci_low": hold_test["delta_ci_low"],
+                "delta_return_vs_hold_ci_high": hold_test["delta_ci_high"],
+                "p_value_vs_hold": hold_test["p_value"],
+                "paired_n_vs_hold": hold_test["paired_n"],
+                "delta_return_vs_random": random_test["mean_delta"],
+                "p_value_vs_random": random_test["p_value"],
+                "paired_n_vs_random": random_test["paired_n"],
             }
         )
     return sorted(
@@ -403,6 +481,78 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
 
 
+def _scenario_aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault((str(row["scenario_key"]), str(row["provider"]), str(row["model"])), []).append(row)
+    output = []
+    for (scenario_key, provider, model), model_rows in sorted(grouped.items()):
+        return_stats = summarize_metric((row["total_return"] for row in model_rows), prefix="return")
+        output.append(
+            {
+                "scenario_key": scenario_key,
+                "scenario_label": model_rows[0]["scenario_label"],
+                "provider": provider,
+                "model": model,
+                "run_count": len(model_rows),
+                "avg_return": return_stats["return_mean"],
+                "std_return": return_stats["return_std"],
+                "return_ci_low": return_stats["return_ci_low"],
+                "return_ci_high": return_stats["return_ci_high"],
+                "worst_drawdown": min(float(row["max_drawdown"]) for row in model_rows),
+                "avg_sharpe": _avg(row["sharpe"] for row in model_rows),
+                "std_sharpe": sample_std(row["sharpe"] for row in model_rows),
+                "avg_fill_rate": _avg(row["execution_fill_rate"] for row in model_rows),
+                "avg_alpha_quality": _avg(row["alpha_quality_score"] for row in model_rows),
+                "avg_risk_discipline": _avg(row["risk_discipline_score"] for row in model_rows),
+                "avg_execution_robustness": _avg(row["execution_robustness_score"] for row in model_rows),
+            }
+        )
+    return sorted(output, key=lambda row: (str(row["scenario_key"]), -float(row["avg_return"])))
+
+
+def _significance_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault((str(row["provider"]), str(row["model"])), []).append(row)
+    output = []
+    for (provider, model), model_rows in sorted(grouped.items()):
+        for baseline_model in ("always-hold", "random"):
+            result = _baseline_test(rows, model_rows, baseline_model=baseline_model)
+            output.append(
+                {
+                    "provider": provider,
+                    "model": model,
+                    "baseline_provider": "baseline",
+                    "baseline_model": baseline_model,
+                    "paired_n": result["paired_n"],
+                    "mean_return_delta": result["mean_delta"],
+                    "delta_ci_low": result["delta_ci_low"],
+                    "delta_ci_high": result["delta_ci_high"],
+                    "bootstrap_p_value": result["p_value"],
+                }
+            )
+    return output
+
+
+def _baseline_test(
+    all_rows: list[dict[str, Any]],
+    candidate_rows: list[dict[str, Any]],
+    *,
+    baseline_model: str,
+) -> dict[str, float | int | None]:
+    candidate = {
+        (row["scenario_key"], row["seed"]): float(row["total_return"])
+        for row in candidate_rows
+    }
+    baseline = {
+        (row["scenario_key"], row["seed"]): float(row["total_return"])
+        for row in all_rows
+        if row.get("provider") == "baseline" and row.get("model") == baseline_model
+    }
+    return paired_bootstrap_difference(candidate, baseline)
+
+
 def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
     fieldnames = [
         "scenario_key",
@@ -410,6 +560,8 @@ def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "scenario_label",
         "provider",
         "model",
+        "seed",
+        "window_offset",
         "parse_coverage",
         "total_return",
         "max_drawdown",
@@ -435,9 +587,16 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "provider",
         "model",
         "scenario_count",
+        "run_count",
         "avg_return",
+        "std_return",
+        "return_ci_low",
+        "return_ci_high",
         "worst_drawdown",
         "avg_sharpe",
+        "std_sharpe",
+        "sharpe_ci_low",
+        "sharpe_ci_high",
         "avg_fill_rate",
         "total_rejected_orders",
         "total_risk_edits",
@@ -445,6 +604,57 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "avg_alpha_quality",
         "avg_risk_discipline",
         "avg_execution_robustness",
+        "delta_return_vs_hold",
+        "delta_return_vs_hold_ci_low",
+        "delta_return_vs_hold_ci_high",
+        "p_value_vs_hold",
+        "paired_n_vs_hold",
+        "delta_return_vs_random",
+        "p_value_vs_random",
+        "paired_n_vs_random",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _write_scenario_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
+    fieldnames = [
+        "scenario_key",
+        "scenario_label",
+        "provider",
+        "model",
+        "run_count",
+        "avg_return",
+        "std_return",
+        "return_ci_low",
+        "return_ci_high",
+        "worst_drawdown",
+        "avg_sharpe",
+        "std_sharpe",
+        "avg_fill_rate",
+        "avg_alpha_quality",
+        "avg_risk_discipline",
+        "avg_execution_robustness",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _write_significance_table(path: Path, rows: list[dict[str, Any]]) -> None:
+    fieldnames = [
+        "provider",
+        "model",
+        "baseline_provider",
+        "baseline_model",
+        "paired_n",
+        "mean_return_delta",
+        "delta_ci_low",
+        "delta_ci_high",
+        "bootstrap_p_value",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -456,6 +666,8 @@ def _write_matrix_markdown(
     path: Path,
     rows: list[dict[str, Any]],
     aggregate_rows: list[dict[str, Any]],
+    scenario_rows: list[dict[str, Any]],
+    significance_rows: list[dict[str, Any]],
     failures: list[dict[str, str]],
 ) -> None:
     lines = [
@@ -464,11 +676,12 @@ def _write_matrix_markdown(
         "This table is generated by `python scripts/run_real_market_leaderboard.py --update-registry`.",
         "It uses Yahoo Finance daily CSVs for `GSPC`, `BTC-USD`, and `BTC=F` and records redacted manifests only.",
         "Raw provider prompts and responses remain in ignored local caches.",
+        "The default protocol evaluates five rolling-window seeds per `(model, scenario)` and reports mean, sample standard deviation, 95% bootstrap confidence intervals, and paired bootstrap tests against `always-hold` and `random` anchors.",
         "",
         "## Cross-Scenario Aggregate",
         "",
-        "| Rank | Provider | Model | Scenarios | Avg return | Worst DD | Avg Sharpe | Avg fill | Alpha | Risk | Execution | Rejected | Risk edits | Parse |",
-        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Rank | Provider | Model | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | p vs hold | p vs random | Parse |",
+        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(aggregate_rows, start=1):
         lines.append(
@@ -479,15 +692,17 @@ def _write_matrix_markdown(
                     str(row["provider"]),
                     str(row["model"]),
                     str(row["scenario_count"]),
-                    _fmt(row["avg_return"]),
+                    str(row["run_count"]),
+                    _fmt_pm(row["avg_return"], row["std_return"]),
+                    _fmt_ci(row["return_ci_low"], row["return_ci_high"]),
                     _fmt(row["worst_drawdown"]),
-                    _fmt(row["avg_sharpe"]),
+                    _fmt_pm(row["avg_sharpe"], row["std_sharpe"]),
                     _fmt(row["avg_fill_rate"]),
                     _fmt(row["avg_alpha_quality"]),
                     _fmt(row["avg_risk_discipline"]),
                     _fmt(row["avg_execution_robustness"]),
-                    str(row["total_rejected_orders"]),
-                    str(row["total_risk_edits"]),
+                    _fmt(row["p_value_vs_hold"]),
+                    _fmt(row["p_value_vs_random"]),
                     _fmt(row["avg_parse_coverage"]),
                 ]
             )
@@ -496,13 +711,13 @@ def _write_matrix_markdown(
     lines.extend(
         [
             "",
-            "## Scenario Rows",
+            "## Scenario Aggregates",
             "",
-            "| Scenario | Provider | Model | Parse | Return | Max DD | Sharpe | Alpha | Risk | Execution | Fill | Rejected | Risk edits | Submission |",
-            "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+            "| Scenario | Provider | Model | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Alpha | Risk | Execution | Fill |",
+            "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
-    for row in rows:
+    for row in scenario_rows:
         lines.append(
             "| "
             + " | ".join(
@@ -510,21 +725,55 @@ def _write_matrix_markdown(
                     str(row["scenario_label"]),
                     str(row["provider"]),
                     str(row["model"]),
-                    _fmt(row["parse_coverage"]),
-                    _fmt(row["total_return"]),
-                    _fmt(row["max_drawdown"]),
-                    _fmt(row["sharpe"]),
-                    _fmt(row["alpha_quality_score"]),
-                    _fmt(row["risk_discipline_score"]),
-                    _fmt(row["execution_robustness_score"]),
-                    _fmt(row["execution_fill_rate"]),
-                    str(row["rejected_order_count"]),
-                    str(row["risk_clipped_decisions"]),
-                    f"[manifest](../../../{row['submission']})",
+                    str(row["run_count"]),
+                    _fmt_pm(row["avg_return"], row["std_return"]),
+                    _fmt_ci(row["return_ci_low"], row["return_ci_high"]),
+                    _fmt(row["worst_drawdown"]),
+                    _fmt_pm(row["avg_sharpe"], row["std_sharpe"]),
+                    _fmt(row["avg_alpha_quality"]),
+                    _fmt(row["avg_risk_discipline"]),
+                    _fmt(row["avg_execution_robustness"]),
+                    _fmt(row["avg_fill_rate"]),
                 ]
             )
             + " |"
         )
+    if significance_rows:
+        lines.extend(
+            [
+                "",
+                "## Paired Bootstrap Tests",
+                "",
+                "Positive deltas mean the model beat the named anchor on matched `(scenario, seed)` rolling-window runs.",
+                "",
+                "| Provider | Model | Baseline | Paired n | Mean return delta | 95% CI | p-value |",
+                "| --- | --- | --- | ---: | ---: | ---: | ---: |",
+            ]
+        )
+        for row in significance_rows:
+            lines.append(
+                "| "
+                + " | ".join(
+                    [
+                        str(row["provider"]),
+                        str(row["model"]),
+                        str(row["baseline_model"]),
+                        str(row["paired_n"]),
+                        _fmt(row["mean_return_delta"]),
+                        _fmt_ci(row["delta_ci_low"], row["delta_ci_high"]),
+                        _fmt(row["bootstrap_p_value"]),
+                    ]
+                )
+                + " |"
+            )
+    lines.extend(
+        [
+            "",
+            "## Raw Seed Rows",
+            "",
+            "Per-seed rows, manifest links, and reproducibility hashes are stored in `real_market_model_matrix.csv`.",
+        ]
+    )
     if failures:
         lines.extend(["", "## Provider Failures", ""])
         for failure in failures:
@@ -563,7 +812,19 @@ def _rel(path: Path) -> str:
 
 
 def _fmt(value: Any) -> str:
+    if value is None or value == "":
+        return ""
     return f"{float(value):.4f}"
+
+
+def _fmt_pm(mean_value: Any, std_value: Any) -> str:
+    return f"{_fmt(mean_value)} +- {_fmt(std_value)}"
+
+
+def _fmt_ci(low: Any, high: Any) -> str:
+    if low is None or high is None:
+        return ""
+    return f"[{_fmt(low)}, {_fmt(high)}]"
 
 
 def _avg(values: Any) -> float:

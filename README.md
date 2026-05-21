@@ -405,18 +405,24 @@ The v0.1 benchmark card makes one limited claim:
 > Autonomous financial-agent results can change materially once risk gates and
 > paper-execution costs are included.
 
-The public leaderboard includes two tracked model comparisons:
+The public leaderboard includes two model-comparison generators:
 
-- a 42-row synthetic matrix: seven LLMs across calm-trend, high-volatility,
-  jump/tail, liquidity-collapse, spread-explosion, and latency-spike
-  scenarios;
-- a 14-row real-market matrix: the same seven models across Yahoo Finance
-  `^GSPC`, `BTC-USD`, and CME Bitcoin futures (`BTC=F`) windows.
+- a synthetic matrix: seven LLMs plus `random` and `always-hold` anchors across
+  calm-trend, high-volatility, jump/tail, liquidity-collapse,
+  spread-explosion, and latency-spike scenarios;
+- a real-market matrix: the same model set across Yahoo Finance `^GSPC`,
+  `BTC-USD`, and CME Bitcoin futures (`BTC=F`) rolling windows.
 
 Models include Poe-hosted `gpt-5.5`, `gemini-3.1-pro`, `kimi-k2.5`, `glm-5`,
 `claude-opus-4.7`, plus direct `deepseek-v4-flash` and `deepseek-v4-pro`.
 The rows are redacted benchmark manifests; raw provider prompts and responses
 remain in ignored local caches.
+
+The leaderboard scripts now default to five seeds per `(model, scenario)` and
+write raw seed rows plus aggregate tables with mean, sample standard deviation,
+95% bootstrap confidence intervals, and paired bootstrap tests against the
+`always-hold` and `random` anchors. Full live refreshes can be provider-costly;
+use a smaller `--models`, `--scenarios`, or `--seeds` slice for smoke tests.
 
 Open:
 
@@ -439,8 +445,8 @@ Rebuild:
 
 ```bash
 python scripts/build_benchmark_page.py
-python scripts/run_leaderboard_model_matrix.py --update-registry
-python scripts/run_real_market_leaderboard.py --update-registry
+python scripts/run_leaderboard_model_matrix.py --seeds 7,11,17,23,31 --update-registry
+python scripts/run_real_market_leaderboard.py --seeds 7,11,17,23,31 --update-registry
 python scripts/run_classical_baseline_matrix.py
 python scripts/build_quality_decomposition.py
 ```

@@ -12,6 +12,7 @@ Each challenge should publish:
 - execution and risk configuration;
 - allowed agent classes;
 - required metrics;
+- the seed set or rolling-window offsets used for uncertainty estimates;
 - redaction rules;
 - the command used to validate submissions.
 
@@ -36,6 +37,12 @@ The tracked leaderboard is generated from redacted manifests:
   spread-explosion, and latency-spike scenarios.
 - Real-market Yahoo matrix:
   [`docs/results/real_market_matrix/real_market_model_matrix.md`](results/real_market_matrix/real_market_model_matrix.md)
+
+Challenge leaderboards should report raw seed rows and aggregate statistics:
+mean, sample standard deviation, 95% bootstrap confidence intervals, and a
+paired test against at least `always-hold` and `random` anchors. Real-market
+challenges should use rolling windows or another explicit resampling protocol
+when deterministic model calls would make repeated seeds identical.
 
 The HTML page supports search, sortable columns, and row details. Each accepted
 row carries a reproducibility badge when its manifest passes schema validation

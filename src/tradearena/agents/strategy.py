@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from collections import deque
 from dataclasses import dataclass, field
 from math import isfinite, sqrt
@@ -74,6 +75,59 @@ class BuyAndHoldStrategy:
                 metadata={"strategy": self.name},
             )
             for symbol in snapshot.bars
+        ]
+
+
+@dataclass
+class AlwaysHoldStrategy:
+    name: str = "always-hold"
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        return [
+            Decision(
+                symbol=symbol,
+                side=Side.HOLD,
+                target_weight=0.0,
+                confidence=1.0,
+                rationale="always-hold lower-anchor baseline",
+                metadata={"strategy": self.name},
+            )
+            for symbol in snapshot.bars
+        ]
+
+
+@dataclass
+class RandomAllocationStrategy:
+    seed: int = 7
+    max_long_weight: float = 0.35
+    cash_probability: float = 0.20
+    name: str = "random-allocation"
+    _rng: random.Random = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._rng = random.Random(self.seed)
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        symbols = sorted(snapshot.bars)
+        if not symbols or self._rng.random() < self.cash_probability:
+            weights = {symbol: 0.0 for symbol in symbols}
+        else:
+            scores = {symbol: self._rng.random() for symbol in symbols}
+            weights = _normalize_capped(scores, self.max_long_weight)
+        return [
+            _target_weight_decision(
+                symbol=symbol,
+                target=weights.get(symbol, 0.0),
+                confidence=0.25 if weights.get(symbol, 0.0) > 0 else 0.0,
+                rationale="random allocation lower-anchor baseline",
+                metadata={
+                    "strategy": self.name,
+                    "seed": self.seed,
+                    "max_long_weight": self.max_long_weight,
+                    "cash_probability": self.cash_probability,
+                },
+            )
+            for symbol in symbols
         ]
 
 

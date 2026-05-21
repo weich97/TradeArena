@@ -19,6 +19,7 @@ class CsvMarketDataProvider:
     end: str | None = None
     frequency: str = "daily"
     max_periods: int | None = None
+    window_offset: int = 0
     name: str = "csv-market"
     news_path: str | Path | None = None
     macro_path: str | Path | None = None
@@ -41,7 +42,10 @@ class CsvMarketDataProvider:
         elif self.frequency not in {"daily", "hourly", "5m", "15m", "intraday"}:
             raise ValueError(f"Unsupported frequency: {self.frequency}")
         if self.max_periods is not None:
-            common_dates = common_dates[-self.max_periods :]
+            offset = max(0, int(self.window_offset))
+            end_index = len(common_dates) - offset if offset else len(common_dates)
+            start_index = max(0, end_index - self.max_periods)
+            common_dates = common_dates[start_index:end_index]
 
         news_by_day = self._load_news()
         macro_by_day = self._load_macro()

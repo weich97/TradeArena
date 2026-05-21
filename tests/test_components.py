@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from tradearena.agents import MaxPositionRiskManager, MemoryAwareSignalWeightedStrategy
+from tradearena.agents import AlwaysHoldStrategy, MaxPositionRiskManager, MemoryAwareSignalWeightedStrategy, RandomAllocationStrategy
 from tradearena.core.domain import Decision, Order, PortfolioState, Side, Signal
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.data import SyntheticMarketDataProvider
@@ -137,6 +137,19 @@ def test_behavioral_evaluator_summarizes_memory_diagnostics():
     assert metrics["max_memory_driven_leverage_amplification"] == 1.20
     assert metrics["memory_pollution_ratio"] == 0.20
     assert metrics["max_memory_pollution_ratio"] == 0.30
+
+
+def test_lower_anchor_strategies_are_deterministic_and_distinct():
+    snapshot = SyntheticMarketDataProvider(symbols=("SYN", "ALT"), periods=1, seed=1).stream()[0]
+    portfolio = PortfolioState(cash=100_000.0)
+
+    hold_decisions = AlwaysHoldStrategy().decide(snapshot, [], portfolio, memory=None)
+    first_random = RandomAllocationStrategy(seed=13).decide(snapshot, [], portfolio, memory=None)
+    second_random = RandomAllocationStrategy(seed=13).decide(snapshot, [], portfolio, memory=None)
+
+    assert all(decision.target_weight == 0.0 for decision in hold_decisions)
+    assert [decision.target_weight for decision in first_random] == [decision.target_weight for decision in second_random]
+    assert any(decision.target_weight > 0.0 for decision in first_random)
 
 
 def test_realistic_simulator_records_partial_fill_and_latency():

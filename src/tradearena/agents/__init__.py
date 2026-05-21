@@ -7,16 +7,19 @@ from tradearena.agents.portfolio import EqualWeightPortfolioManager
 from tradearena.agents.risk import MaxPositionRiskManager, NoRiskManager
 from tradearena.agents.rl import DeterministicRLAllocationStrategy
 from tradearena.agents.strategy import (
+    AlwaysHoldStrategy,
     BuyAndHoldStrategy,
     MeanVarianceStrategy,
     MeanReversionStrategy,
     MemoryAwareSignalWeightedStrategy,
     NaiveMomentumStrategy,
+    RandomAllocationStrategy,
     RiskParityStrategy,
     SignalWeightedStrategy,
 )
 
 __all__ = [
+    "AlwaysHoldStrategy",
     "BuyAndHoldStrategy",
     "ChatCompletionsLLMAnalyst",
     "DeepSeekLLMAnalyst",
@@ -30,6 +33,7 @@ __all__ = [
     "MomentumAnalyst",
     "NaiveMomentumStrategy",
     "NoRiskManager",
+    "RandomAllocationStrategy",
     "RiskParityStrategy",
     "SignalWeightedStrategy",
     "TargetWeightExecutionAgent",

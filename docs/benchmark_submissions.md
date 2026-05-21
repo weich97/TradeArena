@@ -32,14 +32,18 @@ The browser-readable version is
 Challenge format, leaderboard badges, anonymous rows, and citation guidance are
 defined in [`docs/benchmark_challenges.md`](benchmark_challenges.md).
 
-The current registry also includes a 42-row LLM model matrix: seven models over
-six synthetic market and execution-stress scenarios. The three execution shock
-rows are `liquidity_collapse`, `spread_explosion`, and `latency_spike`; they
-are intended to expose overconfident target weights through partial fills,
-crossing costs, pending orders, and rejections. Regenerate it with:
+The current registry also includes an LLM model matrix generator: seven models
+plus `random` and `always-hold` anchors over six synthetic market and
+execution-stress scenarios. The three execution shock rows are
+`liquidity_collapse`, `spread_explosion`, and `latency_spike`; they are
+intended to expose overconfident target weights through partial fills, crossing
+costs, pending orders, and rejections. The default protocol runs five seeds per
+`(model, scenario)` and reports mean, sample standard deviation, 95% bootstrap
+confidence intervals, and paired bootstrap p-values against the anchors.
+Regenerate it with:
 
 ```bash
-python scripts/run_leaderboard_model_matrix.py --update-registry
+python scripts/run_leaderboard_model_matrix.py --seeds 7,11,17,23,31 --update-registry
 ```
 
 The matrix summary is tracked at
@@ -49,12 +53,14 @@ The execution-shock slice is also tracked as
 Model rows live under
 [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/).
 
-The registry also includes a 14-row real-market matrix over Yahoo Finance
-`^GSPC`, `BTC-USD`, and CME Bitcoin futures (`BTC=F`) data. It compares the
-same seven models over a recent cross-asset window and a 2022 drawdown window:
+The registry also includes a real-market matrix over Yahoo Finance `^GSPC`,
+`BTC-USD`, and CME Bitcoin futures (`BTC=F`) data. It compares the same model
+set over a recent cross-asset window and a 2022 drawdown window. Here the seed
+dimension maps to rolling-window offsets so repeated runs do not merely reuse
+the same historical slice:
 
 ```bash
-python scripts/run_real_market_leaderboard.py --update-registry
+python scripts/run_real_market_leaderboard.py --seeds 7,11,17,23,31 --update-registry
 ```
 
 The real-market summary is tracked at
