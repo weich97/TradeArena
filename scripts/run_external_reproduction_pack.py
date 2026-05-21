@@ -97,8 +97,8 @@ def main() -> int:
     manifest_path = output_dir / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     (output_dir / "README.md").write_text(_render_readme(manifest), encoding="utf-8")
-    print(f"Wrote {manifest_path.relative_to(ROOT)}")
-    print(f"Wrote {(output_dir / 'README.md').relative_to(ROOT)}")
+    print(f"Wrote {_display_path(manifest_path)}")
+    print(f"Wrote {_display_path(output_dir / 'README.md')}")
     return 0 if all(result.get("returncode") in {0, None} for result in command_results) else 1
 
 
@@ -139,6 +139,13 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return "sha256:" + digest.hexdigest()
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
 
 
 def _git(args: list[str]) -> str:
