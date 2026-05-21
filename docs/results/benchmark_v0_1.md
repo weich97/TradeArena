@@ -95,7 +95,7 @@ and execution robustness.
 
 | Family | Rows | Alpha | Risk | Execution | Pre-risk alpha return | Realized return | Fill rate |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LLM synthetic | 42 | 0.729 | 0.572 | 0.685 | 4.64% | 1.33% | 67.73% |
+| LLM synthetic | 102 | 0.623 | 0.653 | 0.778 | 2.89% | 0.88% | 48.37% |
 | LLM real-market | 90 | 0.489 | 0.412 | 0.687 | 0.48% | -4.38% | 65.10% |
 | Classical synthetic | 24 | 0.743 | 0.458 | 0.731 | 3.12% | 1.37% | 71.40% |
 | Classical real-market | 8 | 0.694 | 0.212 | 0.722 | 4.18% | 1.21% | 78.12% |

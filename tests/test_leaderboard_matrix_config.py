@@ -90,6 +90,8 @@ def test_model_matrix_aggregate_reports_uncertainty_and_baseline_tests():
     assert model_row["return_ci_low"] is not None
     assert model_row["paired_n_vs_hold"] == 2
     assert model_row["p_value_vs_hold"] is not None
+    assert model_row["bootstrap_p_value_vs_hold"] == model_row["p_value_vs_hold"]
+    assert model_row["permutation_p_value_vs_hold"] is not None
 
 
 def test_real_market_matrix_defaults_to_rolling_seed_protocol():
@@ -99,6 +101,47 @@ def test_real_market_matrix_defaults_to_rolling_seed_protocol():
     assert "baseline:random" in module.DEFAULT_MODELS
     assert "baseline:always-hold" in module.DEFAULT_MODELS
     assert module._parse_model_spec("baseline:random") == ("baseline", "random")
+
+    rows = [
+        {
+            "scenario_key": "recent_cross_asset",
+            "scenario_label": "Recent",
+            "provider": "poe",
+            "model": "gpt-test",
+            "seed": 7,
+            "window_offset": 0,
+            "frequency": "weekly",
+            "start": "2025-05-01",
+            "end": "2026-05-14",
+            "max_periods": 12,
+            "total_return": 0.01,
+            "cache_policy": "live_or_cache_backed_raw_cache_ignored",
+            "provider_call_policy": "provider_api_or_frozen_cache",
+            "timestamp_policy": "relative_masked",
+        },
+        {
+            "scenario_key": "recent_cross_asset",
+            "scenario_label": "Recent",
+            "provider": "poe",
+            "model": "gpt-test",
+            "seed": 11,
+            "window_offset": 1,
+            "frequency": "weekly",
+            "start": "2025-05-01",
+            "end": "2026-05-14",
+            "max_periods": 12,
+            "total_return": 0.02,
+            "cache_policy": "live_or_cache_backed_raw_cache_ignored",
+            "provider_call_policy": "provider_api_or_frozen_cache",
+            "timestamp_policy": "relative_masked",
+        },
+    ]
+    walk_rows = module._walk_forward_rows(rows)
+
+    assert walk_rows[0]["seed_count"] == 2
+    assert walk_rows[0]["window_offsets"] == "0,1"
+    assert walk_rows[0]["return_std"] > 0
+    assert walk_rows[0]["provider_call_policy"] == "provider_api_or_frozen_cache"
 
 
 def test_classical_matrix_includes_non_llm_strong_baselines():

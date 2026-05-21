@@ -39,7 +39,8 @@ execution-stress scenarios. The three execution shock rows are
 intended to expose overconfident target weights through partial fills, crossing
 costs, pending orders, and rejections. The default protocol runs five seeds per
 `(model, scenario)` and reports mean, sample standard deviation, 95% bootstrap
-confidence intervals, and paired bootstrap p-values against the anchors.
+confidence intervals, paired bootstrap p-values, and paired sign-flip
+permutation p-values against the anchors.
 Regenerate it with:
 
 ```bash
@@ -57,7 +58,10 @@ The registry also includes a real-market matrix over Yahoo Finance `^GSPC`,
 `BTC-USD`, and CME Bitcoin futures (`BTC=F`) data. It compares the same model
 set over a recent cross-asset window and a 2022 drawdown window. Here the seed
 dimension maps to rolling-window offsets so repeated runs do not merely reuse
-the same historical slice:
+the same historical slice. The script also writes
+`docs/results/real_market_matrix/real_market_walk_forward.csv`, which records
+the exact seed/window-offset mapping, timestamp policy, cache policy, and
+provider-call provenance for audit:
 
 ```bash
 python scripts/run_real_market_leaderboard.py --seeds 7,11,17,23,31 --update-registry

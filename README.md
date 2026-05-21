@@ -37,6 +37,7 @@
   <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark card</a> |
   <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
+  <a href="docs/evaluation_rigor.md">Rigor</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
   <a href="docs/community_tasks.md">First issues</a> |
@@ -435,9 +436,12 @@ remain in ignored local caches.
 
 The leaderboard scripts now default to five seeds per `(model, scenario)` and
 write raw seed rows plus aggregate tables with mean, sample standard deviation,
-95% bootstrap confidence intervals, and paired bootstrap tests against the
-`always-hold` and `random` anchors. Full live refreshes can be provider-costly;
-use a smaller `--models`, `--scenarios`, or `--seeds` slice for smoke tests.
+95% bootstrap confidence intervals, paired bootstrap tests, and paired
+sign-flip permutation tests against the `always-hold` and `random` anchors.
+The real-market matrix also treats seeds as rolling window offsets and writes a
+walk-forward provenance table so cache-backed runs and provider drift remain
+auditable. Full live refreshes can be provider-costly; use a smaller `--models`,
+`--scenarios`, or `--seeds` slice for smoke tests.
 
 Open:
 
@@ -593,6 +597,7 @@ Useful entry points:
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
 - Execution model: [`docs/execution_model.md`](docs/execution_model.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
+- Evaluation rigor: [`docs/evaluation_rigor.md`](docs/evaluation_rigor.md)
 - Related work: [`docs/related_work.md`](docs/related_work.md)
 - Retail planning sandbox: [`docs/retail_planning.md`](docs/retail_planning.md)
 - Research protocol: [`docs/research_protocol.md`](docs/research_protocol.md)

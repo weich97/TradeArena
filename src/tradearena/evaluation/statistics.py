@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import random
 from collections.abc import Iterable, Mapping
+from itertools import product
 from typing import Any
 
 
@@ -70,6 +71,8 @@ def paired_bootstrap_difference(
             "mean_delta": None,
             "delta_ci_low": None,
             "delta_ci_high": None,
+            "bootstrap_p_value": None,
+            "permutation_p_value": None,
             "p_value": None,
         }
     ci_low, ci_high = bootstrap_ci(differences, confidence=confidence, draws=draws, seed=seed)
@@ -80,12 +83,49 @@ def paired_bootstrap_difference(
         boot_means.append(mean(sample))
     less_or_equal_zero = sum(1 for value in boot_means if value <= 0.0) / len(boot_means)
     greater_or_equal_zero = sum(1 for value in boot_means if value >= 0.0) / len(boot_means)
-    p_value = min(1.0, 2.0 * min(less_or_equal_zero, greater_or_equal_zero))
+    bootstrap_p_value = min(1.0, 2.0 * min(less_or_equal_zero, greater_or_equal_zero))
+    permutation_p_value = paired_permutation_p_value(differences, draws=draws, seed=seed + 2)
     return {
         "paired_n": len(differences),
         "mean_delta": mean(differences),
         "delta_ci_low": ci_low,
         "delta_ci_high": ci_high,
-        "p_value": p_value,
+        "bootstrap_p_value": bootstrap_p_value,
+        "permutation_p_value": permutation_p_value,
+        "p_value": bootstrap_p_value,
     }
 
+
+def paired_permutation_p_value(
+    differences: Iterable[float],
+    *,
+    draws: int = 2000,
+    seed: int = 2028,
+) -> float | None:
+    """Two-sided paired sign-flip permutation p-value for matched run deltas."""
+
+    numbers = [float(value) for value in differences]
+    if not numbers:
+        return None
+    observed = abs(mean(numbers))
+    if observed == 0.0:
+        return 1.0
+    tolerance = 1e-15
+    if len(numbers) <= 16:
+        total = 0
+        extreme = 0
+        for signs in product((-1.0, 1.0), repeat=len(numbers)):
+            value = abs(mean(value * sign for value, sign in zip(numbers, signs)))
+            total += 1
+            if value + tolerance >= observed:
+                extreme += 1
+        return extreme / total
+
+    rng = random.Random(seed)
+    total = max(1, draws)
+    extreme = 0
+    for _ in range(total):
+        value = abs(mean(value if rng.random() < 0.5 else -value for value in numbers))
+        if value + tolerance >= observed:
+            extreme += 1
+    return extreme / total

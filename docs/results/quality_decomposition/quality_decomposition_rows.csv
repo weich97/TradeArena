@@ -41,6 +41,66 @@ llm_synthetic,LLM synthetic,latency_spike,Latency spike,poe:glm-5,0.782969624723
 llm_synthetic,LLM synthetic,latency_spike,Latency spike,poe:claude-opus-4.7,0.719496494549613,0.71875,0.47756919422352473,0.028665108688716856,0.0010006922786887085,-0.01326271723652983,0.2727272727272727,9,0
 llm_synthetic,LLM synthetic,latency_spike,Latency spike,deepseek:deepseek-v4-flash,0.6981551226892679,0.71875,0.47756919422352473,0.026720910436958345,0.0010006922786887085,-0.01326271723652983,0.2727272727272727,9,0
 llm_synthetic,LLM synthetic,latency_spike,Latency spike,deepseek:deepseek-v4-pro,0.6981551226892679,0.71875,0.47756919422352473,0.026720910436958345,0.0010006922786887085,-0.01326271723652983,0.2727272727272727,9,0
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:random,0.7594327657540915,0.0,0.8000886235333456,0.015303451446262883,0.003080719323935943,-0.0068718417700183165,0.7857142857142857,0,6
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:random,0.8458513767877158,0.25,0.7657865341930714,0.03148950079454038,0.017418439695072507,-0.0017880795386072679,0.7333333333333333,0,4
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:random,0.8011398033154018,0.625,0.7842556666403444,0.026432505177215626,0.009781589597230411,-0.0022751373298405264,0.7333333333333333,0,2
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:random,0.809284829705855,0.0,0.7398393199893523,0.015237702091491112,0.036200178068567235,-0.0011904137430697181,0.6666666666666666,0,10
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:random,0.8353917055722184,0.0,0.8623917391178978,0.026840758032097067,0.01945410550079929,-0.0012027506997969173,0.7777777777777778,0,6
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,calm_trend,Calm trend,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:random,0.7198450372380572,0.625,0.7755675331647508,0.01993112766135874,-0.014136171350726534,-0.014136171350726534,0.7333333333333333,0,2
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:random,0.7251650609479315,0.0,0.7320292213148054,0.013406693754636212,0.013896993283889936,-0.002228078501003483,0.75,0,7
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:random,0.8922393243605009,0.1875,0.8050138102540382,0.05210636638244481,-0.02375828862128171,-0.026208920987119466,0.7857142857142857,0,5
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:random,0.9075269987098356,0.9375,0.8132507474477806,0.07159930101389511,0.0204013440015538,-0.017890318445910935,0.8125,0,1
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:random,0.7884748016335741,0.5625,0.8023825365076059,0.03561843035566259,0.0383126450784772,-0.0009179051196320787,0.8125,0,3
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,high_vol,High volatility,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:random,0.7658211094167784,0.3125,0.7447680605004656,0.04036493751856818,0.010414665671663936,-0.034183216265984195,0.75,0,7
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:random,0.7042183529762427,0.875,0.8178587955417678,0.019335141005314194,0.02688572318413618,-0.008717652949116528,0.8125,0,2
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:random,0.20502010052045047,0.0625,0.7467841240115144,-0.0444355108797998,-0.04374925202705282,-0.05419278898103341,0.8125,0,7
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:random,0.6100807164503643,0.3125,0.684173694608039,0.015161248870248167,-0.02861666548389097,-0.04784163109347794,0.8125,0,7
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:random,0.9284171507942948,0.0,0.6249041416698196,0.08596317813079768,0.09417669856058541,-0.004271932929534761,0.75,0,9
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,jump_tail,Jump and tail risk,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:random,0.7789590073454955,0.625,0.7239769382273649,0.031389188449849836,0.009373420711710878,-0.016527338195478802,0.8125,0,2
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:random,0.9660672890447854,0.5,0.6813603108473258,0.09973360994583058,0.057426268902998734,-0.005681619672119553,0.8125,0,4
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:random,0.8382916507850413,0.625,0.7992979104728867,0.04294443738594422,0.030357862688837,-0.008818344701494452,0.8666666666666667,0,2
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:random,0.7447884333030124,0.625,0.8125656616005501,0.01620226665319069,-0.0012192846339352803,-0.014058658977125993,0.8571428571428571,0,2
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:random,0.8153436764662441,0.5625,0.6647050043833942,0.04756015250351586,0.029742581526559286,-0.00902929962287502,0.7333333333333333,0,3
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,liquidity_collapse,Liquidity collapse,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:random,0.8568203240496394,0.125,0.5269256191616599,0.054142366244284146,-0.0007107580610568043,-0.03919855744781997,0.75,0,6
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:random,0.75708550993162,0.625,0.6673222006026469,0.021667634043682993,-0.010828212595973996,-0.013703204292481952,0.8571428571428571,0,2
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:random,0.5699964846524117,0.625,0.6198745667451651,0.00963748383311458,-0.026294916958730208,-0.04576832298067035,0.875,0,2
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:random,0.7116985734631099,0.25,0.6837371663658173,0.01631047709471556,0.014068962157788967,-0.012184219274175234,0.875,0,4
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:random,0.4417306892413037,0.5625,0.5595131845091238,0.002205999352914656,0.013659345768162634,-0.017696045913057734,0.75,0,3
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,spread_explosion,Spread explosion,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:random,0.8102279713068041,0.625,0.45591455346773463,0.04528650576598703,0.019712078721168425,-0.010992481763758666,0.21428571428571427,0,2
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:random,0.8147809282006322,0.125,0.46890078743170616,0.032495227348429134,0.0033069864105768065,-0.003914409851032752,0.1875,0,6
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:random,0.8784762434753626,1.0,0.45758743900725296,0.058687854243018256,-0.020251005847438774,-0.03459088806653532,0.25,0,0
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:random,0.9714285714285715,1.0,0.43954012441601,0.10711329325006291,0.04751807345339354,-0.003328734489197127,0.1875,0,0
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:random,0.3576723060526355,0.0,0.5390707580002797,-0.007701197309939789,-0.007008492925911547,-0.007008492925911547,0.3333333333333333,0,6
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
+llm_synthetic,LLM synthetic,latency_spike,Latency spike,baseline:always-hold,0.3416666666666667,1.0,1.0,0.0,0.0,0.0,0.0,0,0
 llm_real_market,LLM real-market,recent_cross_asset,Yahoo recent GSPC/BTC/BTC futures,poe:gpt-5.5,0.9400000000000001,0.29166666666666663,0.6869416743573207,0.23914407278596594,0.009544787382853137,-0.056618626037848285,0.8333333333333334,37,7
 llm_real_market,LLM real-market,recent_cross_asset,Yahoo recent GSPC/BTC/BTC futures,poe:gpt-5.5,0.9555555555555556,0.26388888888888884,0.6797847023636334,0.15296397105853599,-0.008230550353412136,-0.056727803567805934,0.7931034482758621,37,8
 llm_real_market,LLM real-market,recent_cross_asset,Yahoo recent GSPC/BTC/BTC futures,poe:gpt-5.5,0.9500000000000001,0.33333333333333337,0.684136850322847,0.18807783183579074,0.0053205025420861585,-0.056891569876605375,0.8076923076923077,32,8

@@ -40,9 +40,12 @@ The tracked leaderboard is generated from redacted manifests:
 
 Challenge leaderboards should report raw seed rows and aggregate statistics:
 mean, sample standard deviation, 95% bootstrap confidence intervals, and a
-paired test against at least `always-hold` and `random` anchors. Real-market
-challenges should use rolling windows or another explicit resampling protocol
-when deterministic model calls would make repeated seeds identical.
+paired bootstrap plus paired sign-flip permutation test against at least
+`always-hold` and `random` anchors. Real-market challenges should use rolling
+windows or another explicit resampling protocol when deterministic model calls
+would make repeated seeds identical, and should publish a provenance table that
+records the seed/window mapping, provider-call policy, cache policy, and data
+hashes.
 
 The HTML page supports search, sortable columns, and row details. Each accepted
 row carries a reproducibility badge when its manifest passes schema validation

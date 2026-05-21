@@ -149,12 +149,15 @@ def main(argv: list[str] | None = None) -> int:
     _write_scenario_aggregate_table(output_dir / "real_market_model_matrix_scenario_aggregate.csv", scenario_rows)
     significance_rows = _significance_rows(rows)
     _write_significance_table(output_dir / "real_market_model_matrix_significance.csv", significance_rows)
+    walk_forward_rows = _walk_forward_rows(rows)
+    _write_walk_forward_table(output_dir / "real_market_walk_forward.csv", walk_forward_rows)
     _write_matrix_markdown(
         output_dir / "real_market_model_matrix.md",
         rows,
         aggregate_rows,
         scenario_rows,
         significance_rows,
+        walk_forward_rows,
         failures,
     )
     if failures:
@@ -255,8 +258,16 @@ def _run_one(
         "max_periods": max_periods,
         "seed": seed,
         "window_offset": window_offset,
+        "walk_forward_unit": "rolling_window_offset",
         "parse_coverage": parse_coverage,
         "metrics": metrics_payload,
+        "evaluation_protocol": {
+            "repeat_unit": "seed_mapped_to_window_offset",
+            "cache_policy": _cache_policy(provider),
+            "provider_call_policy": _provider_call_policy(provider),
+            "provider_drift_guard": _provider_drift_guard(provider),
+            "statistical_tests": ["bootstrap_ci", "paired_bootstrap", "paired_sign_flip_permutation"],
+        },
         "redaction": {
             "raw_prompts_included": False,
             "raw_responses_included": False,
@@ -290,6 +301,14 @@ def _run_one(
                 "symbols": list(symbols),
                 "timestamp_policy": "relative_masked",
                 "data_hash": data_hash,
+            },
+            "evaluation_protocol": {
+                "repeat_unit": "seed_mapped_to_window_offset",
+                "window_offset": window_offset,
+                "cache_policy": _cache_policy(provider),
+                "provider_call_policy": _provider_call_policy(provider),
+                "provider_drift_guard": _provider_drift_guard(provider),
+                "statistical_tests": ["bootstrap_ci", "paired_bootstrap", "paired_sign_flip_permutation"],
             },
             "execution_config": {
                 "commission_bps": 1.0,
@@ -342,6 +361,16 @@ def _run_one(
         "model": model,
         "seed": seed,
         "window_offset": window_offset,
+        "frequency": frequency,
+        "start": scenario["start"],
+        "end": scenario["end"],
+        "max_periods": max_periods,
+        "walk_forward_unit": "rolling_window_offset",
+        "cache_policy": _cache_policy(provider),
+        "provider_call_policy": _provider_call_policy(provider),
+        "provider_drift_guard": _provider_drift_guard(provider),
+        "timestamp_policy": "relative_masked",
+        "data_hash": data_hash,
         "parse_coverage": parse_coverage,
         **metrics_payload,
         "reproducibility_hash": submission["reproducibility_hash"],
@@ -465,9 +494,13 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "delta_return_vs_hold_ci_low": hold_test["delta_ci_low"],
                 "delta_return_vs_hold_ci_high": hold_test["delta_ci_high"],
                 "p_value_vs_hold": hold_test["p_value"],
+                "bootstrap_p_value_vs_hold": hold_test["bootstrap_p_value"],
+                "permutation_p_value_vs_hold": hold_test["permutation_p_value"],
                 "paired_n_vs_hold": hold_test["paired_n"],
                 "delta_return_vs_random": random_test["mean_delta"],
                 "p_value_vs_random": random_test["p_value"],
+                "bootstrap_p_value_vs_random": random_test["bootstrap_p_value"],
+                "permutation_p_value_vs_random": random_test["permutation_p_value"],
                 "paired_n_vs_random": random_test["paired_n"],
             }
         )
@@ -511,6 +544,45 @@ def _scenario_aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]
     return sorted(output, key=lambda row: (str(row["scenario_key"]), -float(row["avg_return"])))
 
 
+def _walk_forward_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault((str(row["scenario_key"]), str(row["provider"]), str(row["model"])), []).append(row)
+    output = []
+    for (scenario_key, provider, model), model_rows in sorted(grouped.items()):
+        return_stats = summarize_metric((row["total_return"] for row in model_rows), prefix="return")
+        offsets = sorted({int(row.get("window_offset", 0)) for row in model_rows})
+        seeds = sorted({int(row.get("seed", 0)) for row in model_rows})
+        scenario = REAL_SCENARIOS.get(scenario_key, {})
+        output.append(
+            {
+                "scenario_key": scenario_key,
+                "scenario_label": model_rows[0].get("scenario_label", scenario.get("label", "")),
+                "provider": provider,
+                "model": model,
+                "run_count": len(model_rows),
+                "seed_count": len(seeds),
+                "seeds": ",".join(str(seed) for seed in seeds),
+                "window_offsets": ",".join(str(offset) for offset in offsets),
+                "frequency": _collapse_values(row.get("frequency", "weekly") for row in model_rows),
+                "start": _collapse_values(row.get("start", scenario.get("start", "")) for row in model_rows),
+                "end": _collapse_values(row.get("end", scenario.get("end", "")) for row in model_rows),
+                "max_periods": _collapse_values(row.get("max_periods", "") for row in model_rows),
+                "return_mean": return_stats["return_mean"],
+                "return_std": return_stats["return_std"],
+                "return_ci_low": return_stats["return_ci_low"],
+                "return_ci_high": return_stats["return_ci_high"],
+                "provider_call_policy": _collapse_values(
+                    row.get("provider_call_policy", _provider_call_policy(provider)) for row in model_rows
+                ),
+                "cache_policy": _collapse_values(row.get("cache_policy", _cache_policy(provider)) for row in model_rows),
+                "timestamp_policy": _collapse_values(row.get("timestamp_policy", "relative_masked") for row in model_rows),
+                "provider_drift_guard": _provider_drift_guard(provider),
+            }
+        )
+    return output
+
+
 def _significance_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     grouped: dict[tuple[str, str], list[dict[str, Any]]] = {}
     for row in rows:
@@ -529,7 +601,8 @@ def _significance_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "mean_return_delta": result["mean_delta"],
                     "delta_ci_low": result["delta_ci_low"],
                     "delta_ci_high": result["delta_ci_high"],
-                    "bootstrap_p_value": result["p_value"],
+                    "bootstrap_p_value": result["bootstrap_p_value"],
+                    "permutation_p_value": result["permutation_p_value"],
                 }
             )
     return output
@@ -542,11 +615,11 @@ def _baseline_test(
     baseline_model: str,
 ) -> dict[str, float | int | None]:
     candidate = {
-        (row["scenario_key"], row["seed"]): float(row["total_return"])
+        (str(row["scenario_key"]), str(row["seed"])): float(row["total_return"])
         for row in candidate_rows
     }
     baseline = {
-        (row["scenario_key"], row["seed"]): float(row["total_return"])
+        (str(row["scenario_key"]), str(row["seed"])): float(row["total_return"])
         for row in all_rows
         if row.get("provider") == "baseline" and row.get("model") == baseline_model
     }
@@ -562,6 +635,16 @@ def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "model",
         "seed",
         "window_offset",
+        "frequency",
+        "start",
+        "end",
+        "max_periods",
+        "walk_forward_unit",
+        "cache_policy",
+        "provider_call_policy",
+        "provider_drift_guard",
+        "timestamp_policy",
+        "data_hash",
         "parse_coverage",
         "total_return",
         "max_drawdown",
@@ -608,9 +691,13 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "delta_return_vs_hold_ci_low",
         "delta_return_vs_hold_ci_high",
         "p_value_vs_hold",
+        "bootstrap_p_value_vs_hold",
+        "permutation_p_value_vs_hold",
         "paired_n_vs_hold",
         "delta_return_vs_random",
         "p_value_vs_random",
+        "bootstrap_p_value_vs_random",
+        "permutation_p_value_vs_random",
         "paired_n_vs_random",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
@@ -655,6 +742,36 @@ def _write_significance_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "delta_ci_low",
         "delta_ci_high",
         "bootstrap_p_value",
+        "permutation_p_value",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _write_walk_forward_table(path: Path, rows: list[dict[str, Any]]) -> None:
+    fieldnames = [
+        "scenario_key",
+        "scenario_label",
+        "provider",
+        "model",
+        "run_count",
+        "seed_count",
+        "seeds",
+        "window_offsets",
+        "frequency",
+        "start",
+        "end",
+        "max_periods",
+        "return_mean",
+        "return_std",
+        "return_ci_low",
+        "return_ci_high",
+        "provider_call_policy",
+        "cache_policy",
+        "timestamp_policy",
+        "provider_drift_guard",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -668,6 +785,7 @@ def _write_matrix_markdown(
     aggregate_rows: list[dict[str, Any]],
     scenario_rows: list[dict[str, Any]],
     significance_rows: list[dict[str, Any]],
+    walk_forward_rows: list[dict[str, Any]],
     failures: list[dict[str, str]],
 ) -> None:
     lines = [
@@ -676,7 +794,7 @@ def _write_matrix_markdown(
         "This table is generated by `python scripts/run_real_market_leaderboard.py --update-registry`.",
         "It uses Yahoo Finance daily CSVs for `GSPC`, `BTC-USD`, and `BTC=F` and records redacted manifests only.",
         "Raw provider prompts and responses remain in ignored local caches.",
-        "The default protocol evaluates five rolling-window seeds per `(model, scenario)` and reports mean, sample standard deviation, 95% bootstrap confidence intervals, and paired bootstrap tests against `always-hold` and `random` anchors.",
+        "The default protocol evaluates five rolling-window seeds per `(model, scenario)` and reports mean, sample standard deviation, 95% bootstrap confidence intervals, paired bootstrap tests, and paired sign-flip permutation tests against `always-hold` and `random` anchors.",
         "",
         "## Result Interpretation",
         "",
@@ -684,8 +802,8 @@ def _write_matrix_markdown(
         "",
         "## Cross-Scenario Aggregate",
         "",
-        "| Rank | Provider | Model | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | p vs hold | p vs random | Parse |",
-        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Rank | Provider | Model | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | boot p vs hold | perm p vs hold | boot p vs random | perm p vs random | Parse |",
+        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(aggregate_rows, start=1):
         lines.append(
@@ -705,8 +823,10 @@ def _write_matrix_markdown(
                     _fmt(row["avg_alpha_quality"]),
                     _fmt(row["avg_risk_discipline"]),
                     _fmt(row["avg_execution_robustness"]),
-                    _fmt(row["p_value_vs_hold"]),
-                    _fmt(row["p_value_vs_random"]),
+                    _fmt(row["bootstrap_p_value_vs_hold"]),
+                    _fmt(row["permutation_p_value_vs_hold"]),
+                    _fmt(row["bootstrap_p_value_vs_random"]),
+                    _fmt(row["permutation_p_value_vs_random"]),
                     _fmt(row["avg_parse_coverage"]),
                 ]
             )
@@ -748,10 +868,10 @@ def _write_matrix_markdown(
                 "",
                 "## Paired Bootstrap Tests",
                 "",
-                "Positive deltas mean the model beat the named anchor on matched `(scenario, seed)` rolling-window runs.",
+                "Positive deltas mean the model beat the named anchor on matched `(scenario, seed)` rolling-window runs. The permutation column is a paired sign-flip test, which is less sensitive to bootstrap distribution shape when only a few windows are available.",
                 "",
-                "| Provider | Model | Baseline | Paired n | Mean return delta | 95% CI | p-value |",
-                "| --- | --- | --- | ---: | ---: | ---: | ---: |",
+                "| Provider | Model | Baseline | Paired n | Mean return delta | 95% CI | Bootstrap p | Permutation p |",
+                "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |",
             ]
         )
         for row in significance_rows:
@@ -766,6 +886,39 @@ def _write_matrix_markdown(
                         _fmt(row["mean_return_delta"]),
                         _fmt_ci(row["delta_ci_low"], row["delta_ci_high"]),
                         _fmt(row["bootstrap_p_value"]),
+                        _fmt(row["permutation_p_value"]),
+                    ]
+                )
+                + " |"
+            )
+    if walk_forward_rows:
+        lines.extend(
+            [
+                "",
+                "## Walk-Forward / Provenance Checks",
+                "",
+                "Each real-market seed maps to a rolling window offset. Provider-backed rows keep raw text in ignored caches and publish redacted manifests with provider/model labels, masked timestamps, and data hashes; this reduces cache-bias ambiguity and makes provider drift auditable without exposing prompts.",
+                "",
+                "| Scenario | Provider | Model | Runs | Seeds | Window offsets | Period | Return mean +- std | 95% CI | Provider policy | Cache policy |",
+                "| --- | --- | --- | ---: | ---: | --- | --- | ---: | ---: | --- | --- |",
+            ]
+        )
+        for row in walk_forward_rows:
+            lines.append(
+                "| "
+                + " | ".join(
+                    [
+                        str(row["scenario_label"]),
+                        str(row["provider"]),
+                        str(row["model"]),
+                        str(row["run_count"]),
+                        str(row["seed_count"]),
+                        str(row["window_offsets"]),
+                        f"{row['start']} to {row['end']} ({row['frequency']}, max {row['max_periods']})",
+                        _fmt_pm(row["return_mean"], row["return_std"]),
+                        _fmt_ci(row["return_ci_low"], row["return_ci_high"]),
+                        str(row["provider_call_policy"]),
+                        str(row["cache_policy"]),
                     ]
                 )
                 + " |"
@@ -893,6 +1046,29 @@ def _fmt_ci(low: Any, high: Any) -> str:
 def _avg(values: Any) -> float:
     numbers = [float(value) for value in values]
     return sum(numbers) / len(numbers) if numbers else 0.0
+
+
+def _cache_policy(provider: str) -> str:
+    if provider == "baseline":
+        return "deterministic_no_provider_cache"
+    return "live_or_cache_backed_raw_cache_ignored"
+
+
+def _provider_call_policy(provider: str) -> str:
+    if provider == "baseline":
+        return "deterministic_baseline"
+    return "provider_api_or_frozen_cache"
+
+
+def _provider_drift_guard(provider: str) -> str:
+    if provider == "baseline":
+        return "not_applicable"
+    return "record_provider_model_data_hash_and_redacted_manifest"
+
+
+def _collapse_values(values: Any) -> str:
+    unique = sorted({str(value) for value in values if value is not None and str(value) != ""})
+    return ",".join(unique)
 
 
 if __name__ == "__main__":

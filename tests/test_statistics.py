@@ -1,4 +1,9 @@
-from tradearena.evaluation.statistics import paired_bootstrap_difference, sample_std, summarize_metric
+from tradearena.evaluation.statistics import (
+    paired_bootstrap_difference,
+    paired_permutation_p_value,
+    sample_std,
+    summarize_metric,
+)
 
 
 def test_summarize_metric_reports_mean_std_and_ci():
@@ -19,6 +24,16 @@ def test_paired_bootstrap_difference_uses_matched_keys():
     assert result["paired_n"] == 2
     assert round(float(result["mean_delta"]), 6) == 0.02
     assert result["p_value"] is not None
+    assert result["bootstrap_p_value"] == result["p_value"]
+    assert result["permutation_p_value"] is not None
+
+
+def test_paired_permutation_p_value_is_exact_for_small_samples():
+    p_value = paired_permutation_p_value([0.03, 0.02, 0.04])
+
+    assert p_value is not None
+    assert 0.0 <= p_value <= 1.0
+    assert p_value < 0.5
 
 
 def test_sample_std_singleton_is_zero():
