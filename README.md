@@ -38,6 +38,7 @@
   <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
   <a href="docs/evaluation_rigor.md">Rigor</a> |
+  <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
   <a href="docs/community_tasks.md">First issues</a> |
@@ -229,6 +230,17 @@ This writes `docs/results/execution_calibration_intraday_1h.json` and
 [`docs/execution_model.md`](docs/execution_model.md), including the
 `scripts/compare_execution_to_fills.py` workflow for comparing private or
 licensed historical fills against the simulator equation.
+
+For quote/fill calibration, run the reproducible microstructure fixture:
+
+```bash
+python scripts/calibrate_quote_fill_model.py
+```
+
+This writes `docs/results/execution_quote_fill_calibration_sample.json` and
+`docs/results/execution_quote_fill_calibration_sample.md`. Treat the checked-in
+fixture as a pipeline test; publishable calibrated claims should replace it with
+public exchange quote/order-book data, licensed data, or broker fills.
 
 Risk control runs before, during, and after simulated execution.
 [`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:
@@ -443,6 +455,15 @@ walk-forward provenance table so cache-backed runs and provider drift remain
 auditable. Full live refreshes can be provider-costly; use a smaller `--models`,
 `--scenarios`, or `--seeds` slice for smoke tests.
 
+The frozen comparison contract for the next benchmark card is
+[`benchmarks/v0.2/spec.json`](benchmarks/v0.2/spec.json), with a human-readable
+summary in [`docs/benchmark_v0_2_spec.md`](docs/benchmark_v0_2_spec.md). Validate
+and hash it with:
+
+```bash
+python scripts/validate_benchmark_spec.py benchmarks/v0.2/spec.json
+```
+
 Open:
 
 - Static page:
@@ -598,6 +619,11 @@ Useful entry points:
 - Execution model: [`docs/execution_model.md`](docs/execution_model.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
 - Evaluation rigor: [`docs/evaluation_rigor.md`](docs/evaluation_rigor.md)
+- v0.2 benchmark spec: [`docs/benchmark_v0_2_spec.md`](docs/benchmark_v0_2_spec.md)
+- Execution calibration priority:
+  [`docs/execution_calibration_priority.md`](docs/execution_calibration_priority.md)
+- External reproduction pack:
+  [`docs/reproduction_pack_v0_2.md`](docs/reproduction_pack_v0_2.md)
 - Related work: [`docs/related_work.md`](docs/related_work.md)
 - Retail planning sandbox: [`docs/retail_planning.md`](docs/retail_planning.md)
 - Research protocol: [`docs/research_protocol.md`](docs/research_protocol.md)

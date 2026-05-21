@@ -30,6 +30,16 @@ tradearena --benchmark tradearena-core
 python scripts/check_release_readiness.py
 ```
 
+For the v0.2 no-key reproduction pack, run:
+
+```bash
+python scripts/run_external_reproduction_pack.py
+```
+
+This writes `outputs/reproduction/v0_2/manifest.json` with commit, Python
+version, commands, output hashes, trajectory hash, and whether live APIs,
+downloaded market data, or private fills were used.
+
 Report:
 
 - commit hash or release tag;

@@ -107,3 +107,15 @@ Validate it after building the showcase:
 ```bash
 python scripts/validate_demo_artifacts.py
 ```
+
+## Reproduction Report Schema
+
+The external reproduction report schema lives at
+[`../schemas/reproduction_report.schema.json`](../schemas/reproduction_report.schema.json).
+It records commit/tag, Python environment, commands, output hashes, trajectory
+hash, and whether live APIs, downloaded market data, or private fills were used.
+Generate a no-key report with:
+
+```bash
+python scripts/run_external_reproduction_pack.py
+```

@@ -37,6 +37,14 @@ following minimum evidence exists:
 | Execution realism | At least one quote/fill-log comparison using `scripts/compare_execution_to_fills.py` |
 | LLM benchmark value | At least one provider-backed baseline and one independently submitted redacted LLM benchmark row |
 
+The v0.2 hardening work starts with three concrete gates:
+
+- frozen comparison contract: `benchmarks/v0.2/spec.json`;
+- quote/fill calibration entry point:
+  `scripts/calibrate_quote_fill_model.py`;
+- external no-key reproduction pack:
+  `scripts/run_external_reproduction_pack.py`.
+
 ## Roadmap
 
 ### 1. Academic Report

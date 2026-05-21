@@ -153,6 +153,27 @@ conservative for those fills. Report residual mean, residual MAE, sample size,
 asset universe, venue, broker, order type, and date range before making any
 claim that the simulator is calibrated.
 
+## Quote/Fill Fit
+
+The strongest public calibration path is a quote/fill fit. It uses top-of-book
+bid/ask observations and realized fills to estimate median spread, latency,
+base slippage, participation, and a linear market-impact coefficient.
+
+Run the reproducible fixture:
+
+```bash
+python scripts/calibrate_quote_fill_model.py
+```
+
+This writes:
+
+- `docs/results/execution_quote_fill_calibration_sample.json`
+- `docs/results/execution_quote_fill_calibration_sample.md`
+
+The checked-in fixture under `data/public/microstructure_sample/` is only a
+pipeline test. Replace it with public exchange quote/order-book data, licensed
+data, or broker fills before making a calibrated transaction-cost claim.
+
 ## Quote And Fill Replay Inputs
 
 `QuoteReplayOrderSimulator` reads quote data from `MarketSnapshot.alt_data`.
