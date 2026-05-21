@@ -5,6 +5,14 @@ It uses Yahoo Finance daily CSVs for `GSPC`, `BTC-USD`, and `BTC=F` and records 
 Raw provider prompts and responses remain in ignored local caches.
 The default protocol evaluates five rolling-window seeds per `(model, scenario)` and reports mean, sample standard deviation, 95% bootstrap confidence intervals, and paired bootstrap tests against `always-hold` and `random` anchors.
 
+## Result Interpretation
+
+- The tracked snapshot contains 90 real-market runs across 9 policies. Each policy is evaluated on matched rolling-window seeds, so the paired tests compare like-for-like market windows rather than isolated point estimates.
+- The strongest anchor is `baseline:random` with mean return 0.0017 and 95% CI [-0.0435, 0.0452]. This anchor is intentionally reported beside LLM policies so the leaderboard asks whether model reasoning adds signal after risk and execution costs.
+- The best provider-backed LLM is `poe:claude-opus-4.7` with mean return -0.0409 +- 0.0653, worst drawdown -0.1963, and average fill rate 0.7408. 0 LLM policies have a positive paired mean return delta versus `always-hold`, and 0 beat the `random` anchor at p < 0.05 in this snapshot.
+- The current result is therefore a reliability finding, not a profitability claim: the LLM policies still produce active risk edits and execution exposure, but their realized returns do not consistently dominate simple anchors on these two Yahoo windows.
+- Scenario-level diagnostics show `Yahoo 2022 rates drawdown` as the hardest LLM window (mean provider-backed return -0.0790), while `Yahoo recent GSPC/BTC/BTC futures` is less severe (mean provider-backed return -0.0340). This separation is why the report keeps scenario aggregates in addition to the cross-scenario rank.
+
 ## Cross-Scenario Aggregate
 
 | Rank | Provider | Model | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | p vs hold | p vs random | Parse |

@@ -678,6 +678,10 @@ def _write_matrix_markdown(
         "Raw provider prompts and responses remain in ignored local caches.",
         "The default protocol evaluates five rolling-window seeds per `(model, scenario)` and reports mean, sample standard deviation, 95% bootstrap confidence intervals, and paired bootstrap tests against `always-hold` and `random` anchors.",
         "",
+        "## Result Interpretation",
+        "",
+        *_interpretation_lines(aggregate_rows, scenario_rows),
+        "",
         "## Cross-Scenario Aggregate",
         "",
         "| Rank | Provider | Model | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | p vs hold | p vs random | Parse |",
@@ -781,6 +785,65 @@ def _write_matrix_markdown(
                 f"- `{failure['scenario']}:{failure['provider']}:{failure['model']}` failed with `{failure['error']}`."
             )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _interpretation_lines(
+    aggregate_rows: list[dict[str, Any]],
+    scenario_rows: list[dict[str, Any]],
+) -> list[str]:
+    baseline_rows = [row for row in aggregate_rows if row.get("provider") == "baseline"]
+    llm_rows = [row for row in aggregate_rows if row.get("provider") != "baseline"]
+    total_runs = sum(int(row["run_count"]) for row in aggregate_rows)
+    lines = [
+        f"- The tracked snapshot contains {total_runs} real-market runs across {len(aggregate_rows)} policies. "
+        "Each policy is evaluated on matched rolling-window seeds, so the paired tests compare like-for-like market windows rather than isolated point estimates.",
+    ]
+    if baseline_rows:
+        best_baseline = max(baseline_rows, key=lambda row: float(row["avg_return"]))
+        lines.append(
+            f"- The strongest anchor is `{best_baseline['provider']}:{best_baseline['model']}` with mean return "
+            f"{_fmt(best_baseline['avg_return'])} and 95% CI {_fmt_ci(best_baseline['return_ci_low'], best_baseline['return_ci_high'])}. "
+            "This anchor is intentionally reported beside LLM policies so the leaderboard asks whether model reasoning adds signal after risk and execution costs."
+        )
+    if llm_rows:
+        best_llm = max(llm_rows, key=lambda row: float(row["avg_return"]))
+        positive_vs_hold = [
+            row for row in llm_rows if float(row.get("delta_return_vs_hold") or 0.0) > 0.0
+        ]
+        significant_vs_random = [
+            row
+            for row in llm_rows
+            if float(row.get("delta_return_vs_random") or 0.0) > 0.0
+            and float(row.get("p_value_vs_random") or 1.0) < 0.05
+        ]
+        lines.append(
+            f"- The best provider-backed LLM is `{best_llm['provider']}:{best_llm['model']}` with mean return "
+            f"{_fmt(best_llm['avg_return'])} +- {_fmt(best_llm['std_return'])}, worst drawdown "
+            f"{_fmt(best_llm['worst_drawdown'])}, and average fill rate {_fmt(best_llm['avg_fill_rate'])}. "
+            f"{len(positive_vs_hold)} LLM policies have a positive paired mean return delta versus `always-hold`, "
+            f"and {len(significant_vs_random)} beat the `random` anchor at p < 0.05 in this snapshot."
+        )
+        lines.append(
+            "- The current result is therefore a reliability finding, not a profitability claim: the LLM policies still produce active risk edits and execution exposure, but their realized returns do not consistently dominate simple anchors on these two Yahoo windows."
+        )
+    scenario_groups: dict[str, list[dict[str, Any]]] = {}
+    for row in scenario_rows:
+        if row.get("provider") == "baseline":
+            continue
+        scenario_groups.setdefault(str(row["scenario_label"]), []).append(row)
+    if scenario_groups:
+        scenario_means = [
+            (label, _avg(row["avg_return"] for row in rows))
+            for label, rows in scenario_groups.items()
+        ]
+        hardest_label, hardest_return = min(scenario_means, key=lambda item: item[1])
+        easiest_label, easiest_return = max(scenario_means, key=lambda item: item[1])
+        lines.append(
+            f"- Scenario-level diagnostics show `{hardest_label}` as the hardest LLM window "
+            f"(mean provider-backed return {_fmt(hardest_return)}), while `{easiest_label}` is less severe "
+            f"(mean provider-backed return {_fmt(easiest_return)}). This separation is why the report keeps scenario aggregates in addition to the cross-scenario rank."
+        )
+    return lines
 
 
 def _write_registry_csv(rows: list[dict[str, object]], path: Path) -> None:
