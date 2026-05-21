@@ -163,19 +163,19 @@ def _markdown(
         "# TradeArena v0.1 Benchmark Card",
         "",
         _wrap(
-            "TradeArena is a benchmark and audit framework, not a profitability "
-            "claim. This page gives a compact, citable snapshot of what the "
-            "v0.1 artifacts show under execution realism, risk gates, and "
-            "replayable trajectories."
+            "TradeArena is a financial-agent reliability benchmark and audit "
+            "framework, not a profitability claim. This page gives a compact, "
+            "citable snapshot of what the v0.1 artifacts show under execution "
+            "realism, risk gates, and replayable intent-to-execution trajectories."
         ),
         "",
         "## One-Sentence Finding",
         "",
         _wrap(
-            "Execution realism and risk gates materially change LLM "
-            "trading-agent evaluation: intended allocations can look very "
-            "different after spread, slippage, latency, liquidity limits, partial "
-            "fills, rejected orders, and pre-trade risk edits."
+            "Execution realism and risk gates materially change autonomous "
+            "financial-agent evaluation: intended allocations can look very "
+            "different after spread, slippage, latency, liquidity limits, "
+            "partial fills, rejected orders, and pre-trade risk edits."
         ),
         "",
         "## Result Provenance",
@@ -194,7 +194,7 @@ def _markdown(
         "- Data: tracked synthetic, timestamp-masked, and redacted artifacts.",
         "- Live model calls: not required for first-run reproduction.",
         "- Raw prompt/response caches: not included.",
-        "- Intended use: benchmark and audit research, not trading advice.",
+        "- Intended use: agent reliability and audit research, not trading advice.",
         "",
         "## What Is Measured",
         "",
@@ -725,7 +725,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
 <main>
   <div class="hero">
     <h1>TradeArena v0.1 Benchmark Card</h1>
-    <p class="lead">Execution realism and risk gates materially change LLM trading-agent evaluation. This is a compact, citable result page for auditable agent evaluation, not a profitability claim or financial advice.</p>
+    <p class="lead">Execution realism and risk gates materially change autonomous financial-agent evaluation. This is a compact, citable result page for agent reliability and intent-to-execution audit, not a profitability claim or financial advice.</p>
     <div class="links">
       <a href="showcase.html">Showcase</a>
       <a href="audit_report.html">Audit report</a>
@@ -787,7 +787,7 @@ def _provenance_rows() -> list[list[str]]:
         ["Data", "tracked synthetic / timestamp-masked / redacted artifacts under `docs/results/`"],
         ["Live model calls", "not required for first-run reproduction"],
         ["Raw prompt/response caches", "not included"],
-        ["Intended use", "benchmark and audit research, not trading advice"],
+        ["Intended use", "agent reliability and audit research, not trading advice"],
     ]
 
 

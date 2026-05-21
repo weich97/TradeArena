@@ -1,15 +1,17 @@
 # TradeArena Technical White Paper
 
-TradeArena is an early-stage research prototype for studying whether
-LLM-assisted trading agents can be evaluated through replayable trajectories,
-explicit execution assumptions, and auditable risk gates. This white paper
-documents the current engineering model. It is not financial advice, not a live
-trading system, and not a claim that the default parameters are calibrated to a
-specific broker or venue.
+TradeArena is an early-stage research prototype for agent reliability,
+risk-aware AI systems, and intent-to-execution audits in financial decision
+settings. It studies whether LLM-assisted trading agents, AI portfolio-manager
+prototypes, and multi-agent finance systems can be evaluated through replayable
+trajectories, explicit execution assumptions, and auditable risk gates. This
+white paper documents the current engineering model. It is not financial
+advice, not a live trading system, and not a claim that the default parameters
+are calibrated to a specific broker or venue.
 
 ## 1. System Scope
 
-The runner treats each timestamp as an explicit decision lifecycle:
+The runner treats each timestamp as an explicit reliability lifecycle:
 
 ```text
 observation -> analyst signal -> target-weight decision -> risk gate
@@ -31,6 +33,11 @@ The primary design choice is to preserve both the model's intended allocation
 and the executable allocation after risk intervention. That distinction is what
 lets a user inspect whether results came from a model decision, a risk gate, or
 an execution assumption.
+
+The same lifecycle can host several research objects: a single autonomous
+trading agent, a deterministic portfolio rule, an LLM analyst feeding a
+portfolio manager, or a multi-agent finance stack whose recommendations must be
+collapsed into auditable target weights before execution.
 
 The memory-aware strategy is deliberately small enough to audit. It scans the
 most recent step events with an exponential `memory_decay_rate`, so old

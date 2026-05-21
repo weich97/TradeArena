@@ -1,14 +1,15 @@
 # TradeArena v0.1 Benchmark Card
 
-TradeArena is a benchmark and audit framework, not a profitability claim. This page
-gives a compact, citable snapshot of what the v0.1 artifacts show under execution
-realism, risk gates, and replayable trajectories.
+TradeArena is a financial-agent reliability benchmark and audit framework, not a
+profitability claim. This page gives a compact, citable snapshot of what the v0.1
+artifacts show under execution realism, risk gates, and replayable intent-to-execution
+trajectories.
 
 ## One-Sentence Finding
 
-Execution realism and risk gates materially change LLM trading-agent evaluation:
-intended allocations can look very different after spread, slippage, latency, liquidity
-limits, partial fills, rejected orders, and pre-trade risk edits.
+Execution realism and risk gates materially change autonomous financial-agent
+evaluation: intended allocations can look very different after spread, slippage,
+latency, liquidity limits, partial fills, rejected orders, and pre-trade risk edits.
 
 ## Result Provenance
 
@@ -26,7 +27,7 @@ limits, partial fills, rejected orders, and pre-trade risk edits.
 - Data: tracked synthetic, timestamp-masked, and redacted artifacts.
 - Live model calls: not required for first-run reproduction.
 - Raw prompt/response caches: not included.
-- Intended use: benchmark and audit research, not trading advice.
+- Intended use: agent reliability and audit research, not trading advice.
 
 ## What Is Measured
 

@@ -61,8 +61,8 @@ Discussions.
 For LLM agents or financial AI labs, use a reproducibility-first pitch:
 
 ```text
-We maintain TradeArena, an early-stage paper-only benchmark harness for
-auditing LLM trading-agent decisions under risk gates and execution stress.
+We maintain TradeArena, an early-stage paper-only reliability harness for
+auditing financial-agent intent under risk gates and execution stress.
 If your group has an agent or prompt policy, we can help package a redacted
 benchmark manifest and reproducibility report without exposing raw prompts,
 responses, credentials, or private holdings.

@@ -1,6 +1,8 @@
 # TradeArena Schemas
 
-TradeArena treats an LLM trading agent as an auditable lifecycle, not a black-box signal generator. A benchmark step records the following protocol surfaces.
+TradeArena treats a financial AI agent as an auditable reliability lifecycle,
+not a black-box signal generator. A benchmark step records the following
+protocol surfaces.
 
 ## Observation Schema
 

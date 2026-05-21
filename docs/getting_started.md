@@ -1,9 +1,10 @@
 # Getting Started
 
-TradeArena is easiest to evaluate as a sequence of explicit run modes. The
-first run is a deterministic smoke test for the runner, trajectory schema, risk
-gate, execution simulator, and metric stack. It is not a live LLM call. LLM
-agent runs are opt-in once you configure a provider key or a local cache.
+TradeArena is easiest to evaluate as a sequence of explicit run modes. Treat it
+as an early-stage reliability lab for financial AI agents: the first run checks
+the runner, trajectory schema, risk gate, execution simulator, and metric stack.
+It is not a live LLM call. LLM agent runs are opt-in once you configure a
+provider key or a local cache.
 
 ## Five-Minute Path
 
@@ -33,7 +34,8 @@ outputs/examples/agent_autopsy_dashboard.html
 
 Use this page as the first quality check. Inspect the generated reports, charts,
 trajectories, and demo pages before deciding whether to invest time in live LLM
-keys, real-market downloads, or broker-facing extensions.
+keys, real-market downloads, AI portfolio-manager prototypes, multi-agent
+finance systems, or broker-facing extensions.
 
 The first-run path does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare,
 or Yahoo Finance. It uses tracked data, deterministic synthetic markets, and

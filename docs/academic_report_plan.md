@@ -8,9 +8,14 @@ and limitations that a reviewer can audit.
 
 Recommended framing:
 
-> We study how LLM trading-agent intent changes when structured risk feedback
+> We study how autonomous financial-agent intent changes when structured risk feedback
 > and execution frictions are made observable, replayable, and externally
 > auditable.
+
+The broader project framing should be agent reliability, risk-aware AI systems,
+and intent-to-execution audit. Trading is the current high-stakes experimental
+domain, but the research object is how autonomous financial agents transform
+intent into constrained, executable actions.
 
 Avoid framing the paper as "we built a tool" unless the venue is explicitly an
 artifact, systems, or benchmark track. The framework is the experimental
@@ -23,7 +28,7 @@ calibration limits, and reproducibility.
 | --- | --- |
 | Abstract and introduction | One scientific claim, one benchmark claim, one limitation sentence |
 | Related work | Trading backtesters, execution simulation, agent benchmarks, LLM evaluation, financial RL |
-| System description | Architecture diagram, risk lifecycle, execution equation, trajectory schema |
+| System description | Architecture diagram, reliability lifecycle, risk lifecycle, execution equation, trajectory schema |
 | Experiments | Deterministic baseline, provider-backed LLM baseline, risk-feedback ablation, execution stress, representation diagnostics |
 | External validation | Independent reproduction or calibration reports, not only maintainer-generated artifacts |
 | Limitations | Provider routing, synthetic data, OHLCV-only execution calibration, private-fill availability |

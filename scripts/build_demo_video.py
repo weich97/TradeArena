@@ -25,7 +25,7 @@ SLIDES = [
         "id": "title",
         "duration": 12,
         "title": "TradeArena in 3 Minutes",
-        "subtitle": "Auditable LLM trading-agent benchmarks under realistic execution and risk constraints.",
+        "subtitle": "Agent reliability, risk-aware AI systems, and intent-to-execution audit for financial decision agents.",
         "bullets": [
             "Every decision becomes a replayable trajectory.",
             "Risk gates, execution friction, memory, and diagnostics are first-class artifacts.",
@@ -112,7 +112,7 @@ SLIDES = [
         "id": "outro",
         "duration": 18,
         "title": "What TradeArena is for",
-        "subtitle": "Not another black-box trading bot: a benchmark and audit layer for agent behavior.",
+        "subtitle": "Not another black-box trading bot: a benchmark and audit layer for financial-agent reliability.",
         "bullets": [
             "Reproduce decisions, not just returns.",
             "Compare agents under the same execution and risk lifecycle.",

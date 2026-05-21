@@ -19,6 +19,7 @@ REQUIRED_FILES = [
     "docs/community_participation.md",
     "docs/community_tasks.md",
     "docs/community_operations.md",
+    "docs/narrative_positioning.md",
     "docs/plugin_development.md",
     "docs/benchmark_challenges.md",
     "docs/market_rules.md",

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
   <title id="title">TradeArena motivation</title>
-  <desc id="desc">A paper-style motivation diagram contrasting narrow trading-agent evaluation with TradeArena's auditable, execution-realistic benchmark.</desc>
+  <desc id="desc">A paper-style motivation diagram contrasting narrow return-only evaluation with TradeArena's agent reliability and intent-to-execution audit framing.</desc>
   <defs>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
       <path d="M2,2 L10,6 L2,10 Z" fill="#24415f"/>
@@ -31,8 +31,8 @@
   </defs>
 
   <rect class="bg" width="1200" height="560"/>
-  <text class="title" x="600" y="50" text-anchor="middle">From Leaderboard Returns to Accountable Trading Decisions</text>
-  <text class="subtitle" x="600" y="80" text-anchor="middle">LLM trading agents need evaluation that captures decisions, constraints, execution, and auditability.</text>
+  <text class="title" x="600" y="50" text-anchor="middle">From Leaderboard Returns to Agent Reliability</text>
+  <text class="subtitle" x="600" y="80" text-anchor="middle">Financial AI agents need evaluation that captures intent, constraints, execution, and auditability.</text>
 
   <rect class="panel" x="55" y="120" width="435" height="330" fill="url(#leftPanel)"/>
   <text class="label" x="85" y="160">Common evaluation shortcut</text>

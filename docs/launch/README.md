@@ -3,21 +3,21 @@
 Use this page for repository setup, project listings, and quickstart links.
 TradeArena's public positioning is:
 
-> We make every LLM trading-agent decision reproducible, auditable, risk-gated,
-> execution-realistic, and stress-testable.
+> We audit how autonomous financial agents move from intent to risk-aware,
+> execution-realistic actions.
 
 ## Repository Positioning
 
 Use this one-liner in GitHub, package metadata, and project listings:
 
 ```text
-Open-source benchmark and audit framework for evaluating LLM trading agents under realistic execution, risk, and replayability constraints.
+Open-source research prototype for financial-agent reliability, risk-aware AI systems, and intent-to-execution audit.
 ```
 
 Longer description:
 
 ```text
-TradeArena turns every trading decision into a traceable trajectory:
+TradeArena turns every financial-agent decision into a traceable trajectory:
 observation -> signal -> intended allocation -> risk gate -> order ->
 fill/rejection -> portfolio state -> diagnostic report. It ships quickstart demos
 for audit reports, execution realism, risk gates, extension paths, A-share
@@ -77,5 +77,5 @@ https://weich97.github.io/TradeArena/demo_video.html
 ## Suggested Repository Description
 
 ```text
-Auditable, execution-realistic benchmark framework for LLM trading agents with replayable trajectories, risk gates, paper planning, and quickstart demos.
+Auditable financial-agent reliability framework with replayable trajectories, risk gates, paper execution, and quickstart demos.
 ```

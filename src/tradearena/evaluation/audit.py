@@ -12,8 +12,8 @@ from tradearena.core.trajectory import Trajectory
 class AuditManifest:
     framework: str = "TradeArena"
     claim: str = (
-        "AI trading agents should be studied as auditable decision-making systems "
-        "operating under realistic market constraints."
+        "Financial AI agents should be studied as auditable decision-making systems "
+        "whose intent must survive risk and execution constraints."
     )
     design_goals: tuple[str, ...] = (
         "modularity",

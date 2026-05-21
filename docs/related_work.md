@@ -2,7 +2,8 @@
 
 TradeArena is designed to complement, not replace, existing financial AI and
 agent frameworks. Its niche is auditability, realistic execution, risk gates,
-and replayable benchmark artifacts for LLM trading agents.
+and replayable benchmark artifacts for financial-agent reliability: LLM trading
+agents, AI portfolio-manager prototypes, and multi-agent finance systems.
 
 ## Trading-Agent Frameworks
 

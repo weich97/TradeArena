@@ -155,7 +155,7 @@ h1 {{ margin: 0 0 8px; font-size: 34px; letter-spacing: 0; }}
 </style>
 <main>
   <h1>TradeArena Demo Portal</h1>
-  <p class="lead">One offline launch path for auditable LLM trading agents: lifecycle traces, execution realism, hard market rules, crisis-scene visuals, and cached model replay metadata.</p>
+  <p class="lead">One offline launch path for financial-agent reliability: lifecycle traces, execution realism, hard market rules, crisis-scene visuals, and cached model replay metadata.</p>
   <section class="grid">
     {card_html}
   </section>

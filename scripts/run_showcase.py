@@ -22,7 +22,7 @@ SECTIONS = [
     ),
     (
         "Benchmark v0.1 snapshot",
-        "A compact result page for crisis scenes, execution-aware baselines, intraday portfolio probes, and representation robustness.",
+        "A compact result page for agent reliability, execution-aware baselines, intraday portfolio probes, and representation robustness.",
         "benchmark-v0.1.html",
         "python scripts/build_benchmark_page.py",
     ),
@@ -304,8 +304,8 @@ h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.06; letter-spacing: 0; }
 <main>
   <section class="hero">
     <div>
-      <h1>TradeArena: Offline Smoke Showcase And LLM Benchmark Harness</h1>
-      <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TradeArena also includes opt-in live or cache-backed LLM analyst runs through the same audit lifecycle: observation -> signal -> intended allocation -> risk gate -> order -> fill/rejection -> portfolio state -> diagnostic report.</p>
+      <h1>TradeArena: Agent Reliability And Intent-to-Execution Audit</h1>
+      <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TradeArena also includes opt-in live or cache-backed LLM analyst runs through the same reliability lifecycle: observation -> signal -> intended allocation -> risk gate -> order -> fill/rejection -> portfolio state -> diagnostic report.</p>
       <div class="cta">
         <a href="showcase.html">Open showcase</a>
         <a href="benchmark-v0.1.html">Benchmark v0.1</a>
@@ -321,9 +321,9 @@ python scripts/run_showcase.py
 # tracked snapshots, and no live provider calls.</pre>
   </section>
   <section class="strip" aria-label="Use cases">
-    <div class="panel"><h2>Opt-In LLM Agent Evaluation</h2><p>Run live or cache-backed model analysts after configuring provider keys, then compare return, drawdown, risk edits, rejection rate, reproducibility, and audit coverage.</p></div>
-    <div class="panel"><h2>Stress-Test Execution Assumptions</h2><p>Inspect how spread, slippage, latency, liquidity limits, partial fills, and rejected orders change realized exposure.</p></div>
-    <div class="panel"><h2>Build Auditable Workflows</h2><p>Plug in data adapters, analysts, strategies, risk gates, execution simulators, memory, and evaluators.</p></div>
+    <div class="panel"><h2>Agent Reliability</h2><p>Run deterministic, live, or cache-backed agents, then compare return, drawdown, risk edits, rejection rate, reproducibility, and audit coverage.</p></div>
+    <div class="panel"><h2>Risk-aware AI Systems</h2><p>Inspect how structured risk reports, spread, slippage, latency, liquidity limits, partial fills, and rejected orders change realized exposure.</p></div>
+    <div class="panel"><h2>Intent-to-Execution Audit</h2><p>Plug in data adapters, analysts, strategies, risk gates, execution simulators, memory, and evaluators while preserving the full action trail.</p></div>
   </section>
   <section class="flow">
     <div class="flow-row">
@@ -336,14 +336,14 @@ python scripts/run_showcase.py
     </div>
   </section>
   <section class="grid">
-    <a class="card" href="benchmark-v0.1.html"><strong>Benchmark result page</strong><span>Crisis scenes, intraday portfolio probes, and representation robustness in one compact snapshot.</span></a>
+    <a class="card" href="benchmark-v0.1.html"><strong>Benchmark result page</strong><span>Agent reliability, intraday portfolio probes, and representation robustness in one compact snapshot.</span></a>
     <a class="card" href="community_registry.html"><strong>Community registry</strong><span>Validate redacted benchmark submissions and compare runs without raw provider text.</span></a>
     <a class="card" href="audit_report.html"><strong>Replayable audit report</strong><span>Trace one decision through observation, proposal, risk revision, execution, memory, and reproducibility fields.</span></a>
     <a class="card" href="agent_autopsy_dashboard.html"><strong>Agent Autopsy Dashboard</strong><span>Compare intent, risk-approved exposure, executed weights, slippage attribution, and intervention timing.</span></a>
     <a class="card" href="crisis_snapshot_gallery.html"><strong>Crisis-scene visual probes</strong><span>Inspect representation trajectories, correlation/intent heatmaps, feedback curves, and exposure waterfalls.</span></a>
     <a class="card" href="extension_walkthrough.svg"><strong>Contributor extension path</strong><span>See how custom analysts, risk managers, and evaluators plug into the fixed protocol stack.</span></a>
   </section>
-  <p class="note"><strong>What TradeArena is not:</strong> it is not financial advice, not a live trading bot, and not a promise of profitable trading. It is an audit and benchmark layer for financial AI agent behavior.</p>
+  <p class="note"><strong>What TradeArena is not:</strong> it is not financial advice, not a live trading bot, and not a promise of profitable trading. It is an audit and benchmark layer for financial AI agent reliability.</p>
 </main>
 </html>
 """
@@ -383,7 +383,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 </style>
 <main>
   <h1>TradeArena Showcase: Quickstart Tour</h1>
-  <p class="lead">Run one command, open one page, and inspect the artifacts that demonstrate auditable trajectories, realistic execution, risk gates, diagnostic visuals, and extensible plugins. Each card names the artifact and the command that regenerates it; the first-run path uses deterministic agents, tracked snapshots, and no live provider calls.</p>
+  <p class="lead">Run one command, open one page, and inspect the artifacts that demonstrate agent reliability, realistic execution, risk-aware action filters, diagnostic visuals, and extensible plugins. Each card names the artifact and the command that regenerates it; the first-run path uses deterministic agents, tracked snapshots, and no live provider calls.</p>
   <div class="strip">
     <span class="pill">First run: no provider key</span>
     <span class="pill">Execution realism</span>

@@ -2,7 +2,7 @@
 
 Use these after enabling GitHub Discussions.
 
-## General: What Should A Reproducible Trading-Agent Trajectory Include?
+## General: What Should A Reproducible Financial-Agent Trajectory Include?
 
 Prompt:
 
@@ -11,7 +11,7 @@ TradeArena currently records observation, signals, proposed decisions, approved
 decisions, risk reports, orders, fills, portfolio state, memory events,
 execution simulator state, and random seed.
 
-What fields would you add before trusting an LLM trading-agent benchmark?
+What fields would you add before trusting a financial-agent reliability benchmark?
 
 Call to action:
 
@@ -23,7 +23,7 @@ Reply with one field you would require in a public benchmark submission.
 Prompt:
 
 ```text
-Which execution assumptions matter most for LLM trading-agent evaluation:
+Which execution assumptions matter most for financial-agent evaluation:
 slippage, latency, order participation, partial fills, rejected orders, market
 impact, spread, or something else?
 

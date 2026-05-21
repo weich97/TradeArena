@@ -1,6 +1,6 @@
 # Contributor Roadmap
 
-TradeArena grows best when contributions make LLM trading agents easier to
+TradeArena grows best when contributions make financial AI agents easier to
 evaluate, audit, reproduce, or extend. This roadmap groups good issues and
 research extensions by contributor profile so newcomers do not need to infer
 where they fit.

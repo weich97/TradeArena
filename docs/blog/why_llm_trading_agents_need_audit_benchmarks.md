@@ -1,14 +1,14 @@
-# Why LLM Trading Agents Need Audit Benchmarks, Not Just Return Curves
+# Why Financial Agents Need Audit Benchmarks, Not Just Return Curves
 
-Most trading-agent demos answer one question: did the agent make money?
+Most financial-agent demos answer one question: did the agent make money?
 
-That is not enough for LLM agents. A model-backed trading decision depends on
+That is not enough for autonomous agents. A model-backed financial decision depends on
 prompt version, model version, retrieved context, tool outputs, memory state,
 portfolio state, risk constraints, market timestamp, execution assumptions, and
 random seed. If those surfaces are not recorded, a return curve is hard to
 audit and harder to reproduce.
 
-TradeArena takes a different view. It treats an LLM trading agent as an
+TradeArena takes a different view. It treats a financial AI agent as an
 auditable decision-making system:
 
 ```text
@@ -32,7 +32,7 @@ completeness alongside return and drawdown.
 
 ## Why Risk Gates Matter
 
-LLM agents can produce confident allocations that violate risk budgets or
+LLM-backed agents can produce confident allocations that violate risk budgets or
 market rules. TradeArena makes the intervention explicit:
 
 - intended decisions
@@ -77,5 +77,5 @@ GitHub Pages:
 - <https://weich97.github.io/TradeArena/benchmark-v0.1.html>
 
 TradeArena is not financial advice and not a live trading bot. It is an
-open-source benchmark and audit framework for studying whether LLM trading
-agents are reproducible, risk-aware, and execution-realistic.
+open-source research prototype for studying whether autonomous financial agents
+are reproducible, risk-aware, and execution-realistic.

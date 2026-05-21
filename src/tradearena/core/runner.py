@@ -28,7 +28,7 @@ from tradearena.core.trajectory import StepRecord, Trajectory
 
 
 class TradeArena:
-    """Composable experiment runner for one trading-agent stack."""
+    """Composable experiment runner for one financial-agent stack."""
 
     def __init__(
         self,

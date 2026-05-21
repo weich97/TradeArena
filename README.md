@@ -6,8 +6,8 @@
 
 <p align="center">
   <strong>
-    Research code for testing LLM trading agents with paper execution,
-    risk checks, and reproducible logs.
+    Research code for agent reliability, risk-aware AI systems,
+    and intent-to-execution audits in financial decision settings.
   </strong>
 </p>
 
@@ -41,6 +41,7 @@
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
   <a href="docs/community_tasks.md">First issues</a> |
   <a href="docs/contributor_roadmap.md">Roadmap</a> |
+  <a href="docs/narrative_positioning.md">Positioning</a> |
   <a href="SECURITY.md">Security</a>
 </p>
 
@@ -65,9 +66,9 @@
 
 # TradeArena
 
-TradeArena runs paper-trading experiments for LLM and deterministic agents. For
-each step it records the market input, proposed weights, risk edits, simulated
-fills, portfolio state, and metrics.
+TradeArena runs paper-only financial-agent experiments for LLM and deterministic
+policies. For each step it records the market input, proposed weights, risk
+edits, simulated fills, portfolio state, and metrics.
 
 <p align="center">
   <img src="docs/assets/readme_audit_lifecycle.gif"
@@ -82,21 +83,45 @@ fills, portfolio state, and metrics.
 </p>
 
 TradeArena only runs paper experiments. The default examples never submit live
-orders. The benchmark is still early; the repo is most useful for checking how
-agent intent changes after risk checks and paper-execution costs.
+orders. The project is still an early-stage research prototype; the repo is
+most useful for checking how autonomous financial-agent intent changes after
+risk checks and paper-execution costs.
+
+## Research Framing
+
+TradeArena is best read as an agent-reliability substrate, not only as a trading
+benchmark. Finance supplies a high-stakes testbed where autonomous agents must
+turn uncertain observations into portfolio intent, survive explicit risk
+constraints, and face execution frictions before their actions become realized
+state.
+
+The current narrative has three pillars:
+
+- Agent Reliability: do autonomous or multi-agent policies remain stable,
+  calibrated, and inspectable under market stress?
+- Risk-aware AI Systems: can structured risk reports act as external
+  constraints and feedback for model behavior?
+- Intent-to-Execution Audit: where does performance change between proposed
+  weights, risk-approved weights, orders, fills, and final portfolio state?
+
+This makes the benchmark relevant to LLM trading agents, AI portfolio managers,
+multi-agent finance systems, and broader autonomous-agent evaluation. The
+included tasks are paper-only and research-oriented; they are not live trading
+recommendations.
 
 ## Why TradeArena?
 
 TradeArena is not a replacement for mature backtesting engines. It is a small
-audit harness for asking what happened between an agent's stated intent and the
-paper order that survived risk and execution stress.
+audit harness for asking what happened between an agent's stated intent, the
+risk-aware action that was allowed, and the paper order that survived execution
+stress.
 
 | Tool | Best fit | TradeArena relationship |
 | --- | --- | --- |
 | Backtrader | Event-driven strategy backtests and broker-style order workflows | Use when the main object is a classical strategy backtest; TradeArena focuses on agent traces, risk edits, and redacted LLM manifests. |
 | vectorbt | Fast vectorized research over many parameter settings | Use when large array sweeps matter most; TradeArena trades speed for step-level audit records and execution/risk reports. |
 | FinRL | Reinforcement-learning market environments and policy training | Use for RL policy development; TradeArena can wrap learned or deterministic policies as agents and compare their risk/execution behavior. |
-| TradeArena | Paper-only LLM/deterministic agent evaluation with reproducible trajectories | Use when prompts, decisions, risk gates, fills, memory, and benchmark manifests need to be inspected together. |
+| TradeArena | Paper-only financial-agent reliability evaluation with reproducible trajectories | Use when prompts, decisions, risk gates, fills, memory, and benchmark manifests need to be inspected together. |
 
 ## How A Run Works
 
@@ -376,7 +401,7 @@ tradearena --benchmark tradearena-core
 
 The v0.1 benchmark card makes one limited claim:
 
-> LLM trading-agent results can change materially once risk gates and
+> Autonomous financial-agent results can change materially once risk gates and
 > paper-execution costs are included.
 
 The public leaderboard includes two tracked model comparisons:
