@@ -128,7 +128,8 @@ The repo distinguishes three claims:
 Model rows that mix redaction, provider drift, cache-first behavior, and live
 calls should be read as benchmark evidence, not as broad claims that one model
 is generally better at trading. See
-[`docs/claim_boundaries.md`](docs/claim_boundaries.md).
+[`docs/claim_boundaries.md`](docs/claim_boundaries.md) and
+[`docs/evidence_labels.md`](docs/evidence_labels.md).
 
 ## Why TradeArena?
 
@@ -487,6 +488,12 @@ remain in ignored local caches. These rows are suitable for reliability and
 audit benchmarking; they should not be described as model-level trading-skill
 claims unless the model also beats the fixed non-LLM baselines under the frozen
 protocol.
+
+Each leaderboard row is evidence-labeled. Typical provider rows carry
+`stress-only`, `cached-provider`, and `redacted-prompt`; deterministic anchors
+carry `stress-only` and `deterministic-baseline`; calibration reports use
+`quote-calibrated` or `fill-replay-validated` only when quote/fill provenance is
+attached. See [`docs/evidence_labels.md`](docs/evidence_labels.md).
 
 The leaderboard scripts now default to five seeds per `(model, scenario)` and
 write raw seed rows plus aggregate tables with mean, sample standard deviation,

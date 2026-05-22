@@ -50,6 +50,17 @@
     "risk_violation_count": 0,
     "trajectory_reproducibility_coverage": 1.0
   },
+  "evidence": {
+    "tags": [
+      "stress-only",
+      "deterministic-baseline"
+    ],
+    "claim_scope": "deterministic baseline under stress-only execution",
+    "tag_definitions": {
+      "stress-only": "Execution uses shared stress assumptions, not venue-calibrated transaction-cost prediction.",
+      "deterministic-baseline": "Policy is deterministic or seeded local code, not an LLM provider."
+    }
+  },
   "trajectory_manifest": {
     "format": "redacted_manifest",
     "path_or_uri": "outputs/examples/quickstart_core_metrics.json",

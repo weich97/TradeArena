@@ -43,6 +43,8 @@ def _write_csv(rows: list[dict[str, object]], path: str | Path) -> None:
         "model_family",
         "prompt_mode",
         "risk_feedback_mode",
+        "evidence_tags",
+        "claim_scope",
         "parse_coverage",
         "model_redacted",
         "data_source",
@@ -63,6 +65,7 @@ def _write_csv(rows: list[dict[str, object]], path: str | Path) -> None:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

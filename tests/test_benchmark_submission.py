@@ -19,6 +19,7 @@ def test_example_redacted_submission_validates_and_hash_matches():
     assert errors == []
     assert payload["reproducibility_hash"] == compute_reproducibility_hash(payload)
     assert payload["redaction"]["raw_provider_text_removed"] is True
+    assert payload["evidence"]["tags"] == ["stress-only", "deterministic-baseline"]
 
 
 def test_example_llm_redacted_submission_includes_model_audit_fields():
@@ -31,6 +32,7 @@ def test_example_llm_redacted_submission_includes_model_audit_fields():
     assert payload["agent"]["risk_feedback_mode"] == "true"
     assert 0 <= payload["agent"]["parse_coverage"] <= 1
     assert payload["trajectory_manifest"]["artifact_hashes"]
+    assert payload["evidence"]["tags"] == ["stress-only", "cached-provider", "redacted-prompt"]
 
 
 def test_cli_submission_registry_and_hash_run(tmp_path: Path):
@@ -63,8 +65,10 @@ def test_cli_submission_registry_and_hash_run(tmp_path: Path):
     )
 
     assert "quickstart_core_synthetic_v0_1" in registry.read_text(encoding="utf-8")
-    assert "reproducibility_hash" in csv_path.read_text(encoding="utf-8")
+    assert "`stress-only`" in registry.read_text(encoding="utf-8")
+    assert "evidence_tags" in csv_path.read_text(encoding="utf-8")
     assert "Community Benchmark Registry" in html_path.read_text(encoding="utf-8")
+    assert "stress-only" in html_path.read_text(encoding="utf-8")
 
 
 def test_hash_run_produces_stable_trajectory_fingerprint():

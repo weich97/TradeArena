@@ -28,3 +28,14 @@ skill claims. Provider-hosted APIs may change routing, wrapper prompts,
 context truncation, rate limits, and model aliases. Cache-first and live-call
 rows must therefore be labeled separately, and they should not be pooled into a
 scientific claim unless the protocol declares how cache provenance is handled.
+
+## Evidence Labels
+
+Generated leaderboard rows carry explicit evidence labels:
+`stress-only`, `cached-provider`, `live-provider`, `deterministic-baseline`,
+`external-submitted`, `quote-calibrated`, `fill-replay-validated`,
+`redacted-prompt`, and `fully-auditable`. These labels are the row-level
+version of the claim boundary: they describe whether a result is a stress
+benchmark, a cached or live provider run, a deterministic anchor, an external
+submission, or a quote/fill-validated execution row. See
+[`docs/evidence_labels.md`](evidence_labels.md).

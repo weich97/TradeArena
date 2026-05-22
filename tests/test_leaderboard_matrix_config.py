@@ -71,6 +71,19 @@ def test_default_model_matrix_includes_execution_shock_scenarios():
     assert latency["latency_steps"] >= 4
 
 
+def test_leaderboard_evidence_labels_bound_claim_scope():
+    model_module = _load_model_matrix_module()
+    real_module = _load_real_matrix_module()
+
+    provider_evidence = model_module.evidence_payload_for_row(provider="poe", execution_mode="realistic-stress")
+    baseline_evidence = real_module.evidence_payload_for_row(provider="baseline", execution_mode="realistic-stress")
+
+    assert provider_evidence["tags"] == ["stress-only", "cached-provider", "redacted-prompt"]
+    assert baseline_evidence["tags"] == ["stress-only", "deterministic-baseline"]
+    assert model_module._format_evidence("stress-only;cached-provider") == "`stress-only`<br>`cached-provider`"
+    assert real_module._format_evidence("stress-only;deterministic-baseline")
+
+
 def test_model_matrix_aggregate_reports_uncertainty_and_baseline_tests():
     module = _load_model_matrix_module()
     rows = [

@@ -31,6 +31,9 @@ The browser-readable version is
 [`docs/results/community_registry.html`](results/community_registry.html).
 Challenge format, leaderboard badges, anonymous rows, and citation guidance are
 defined in [`docs/benchmark_challenges.md`](benchmark_challenges.md).
+Evidence labels such as `stress-only`, `cached-provider`, `redacted-prompt`,
+and `quote-calibrated` are defined in
+[`docs/evidence_labels.md`](evidence_labels.md).
 
 The current registry also includes an LLM model matrix generator: seven models
 plus lower anchors over six synthetic market and execution-stress scenarios.

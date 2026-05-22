@@ -15,40 +15,40 @@ The default protocol evaluates five rolling-window seeds per `(model, scenario)`
 
 ## Cross-Scenario Aggregate
 
-| Rank | Provider | Model | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | boot p vs hold | perm p vs hold | boot p vs random | perm p vs random | Parse |
-| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | baseline | random | 2 | 10 | 0.0017 +- 0.0759 | [-0.0435, 0.0452] | -0.1732 | 0.9922 +- 3.6056 | 0.7638 | 0.3882 | 0.0250 | 0.6459 | 0.9070 | 0.9375 | 1.0000 | 1.0000 | 1.0000 |
-| 2 | baseline | always-hold | 2 | 10 | 0.0000 +- 0.0000 | [0.0000, 0.0000] | 0.0000 | 0.0000 +- 0.0000 | 0.0000 | 0.3417 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.9070 | 0.9375 | 1.0000 |
-| 3 | poe | claude-opus-4.7 | 2 | 10 | -0.0409 +- 0.0653 | [-0.0800, -0.0046] | -0.1963 | -1.6385 +- 3.1774 | 0.7408 | 0.5951 | 0.3722 | 0.6665 | 0.0290 | 0.0938 | 0.1520 | 0.2051 | 0.9917 |
-| 4 | poe | gemini-3.1-pro | 2 | 10 | -0.0486 +- 0.0744 | [-0.0925, -0.0044] | -0.1963 | -1.2959 +- 3.5166 | 0.6978 | 0.5283 | 0.4750 | 0.6235 | 0.0210 | 0.0703 | 0.0740 | 0.1152 | 1.0000 |
-| 5 | deepseek | deepseek-v4-pro | 2 | 10 | -0.0532 +- 0.0550 | [-0.0876, -0.0238] | -0.1963 | -3.7318 +- 3.3536 | 0.7119 | 0.5754 | 0.2944 | 0.6610 | 0.0000 | 0.0039 | 0.0920 | 0.1172 | 1.0000 |
-| 6 | poe | kimi-k2.5 | 2 | 10 | -0.0574 +- 0.0626 | [-0.0937, -0.0211] | -0.2040 | -2.6697 +- 3.8012 | 0.7095 | 0.4830 | 0.4167 | 0.6331 | 0.0010 | 0.0293 | 0.0620 | 0.0801 | 1.0000 |
-| 7 | poe | glm-5 | 2 | 10 | -0.0598 +- 0.0697 | [-0.1000, -0.0189] | -0.1963 | -2.8383 +- 4.0627 | 0.7414 | 0.4610 | 0.3458 | 0.6491 | 0.0030 | 0.0469 | 0.0830 | 0.1113 | 0.9833 |
-| 8 | poe | gpt-5.5 | 2 | 10 | -0.0648 +- 0.0651 | [-0.1014, -0.0254] | -0.1963 | -2.7967 +- 3.6057 | 0.7367 | 0.5315 | 0.3750 | 0.6442 | 0.0000 | 0.0273 | 0.0370 | 0.0645 | 1.0000 |
-| 9 | deepseek | deepseek-v4-flash | 2 | 10 | -0.0709 +- 0.0654 | [-0.1078, -0.0310] | -0.2058 | -3.3458 +- 3.7975 | 0.7573 | 0.4950 | 0.4000 | 0.6587 | 0.0000 | 0.0176 | 0.0190 | 0.0391 | 1.0000 |
+| Rank | Provider | Model | Evidence | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | boot p vs hold | perm p vs hold | boot p vs random | perm p vs random | Parse |
+| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | baseline | random | `stress-only`<br>`deterministic-baseline` | 2 | 10 | 0.0017 +- 0.0759 | [-0.0435, 0.0452] | -0.1732 | 0.9922 +- 3.6056 | 0.7638 | 0.3882 | 0.0250 | 0.6459 | 0.9070 | 0.9375 | 1.0000 | 1.0000 | 1.0000 |
+| 2 | baseline | always-hold | `stress-only`<br>`deterministic-baseline` | 2 | 10 | 0.0000 +- 0.0000 | [0.0000, 0.0000] | 0.0000 | 0.0000 +- 0.0000 | 0.0000 | 0.3417 | 1.0000 | 1.0000 | 1.0000 | 1.0000 | 0.9070 | 0.9375 | 1.0000 |
+| 3 | poe | claude-opus-4.7 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 2 | 10 | -0.0409 +- 0.0653 | [-0.0800, -0.0046] | -0.1963 | -1.6385 +- 3.1774 | 0.7408 | 0.5951 | 0.3722 | 0.6665 | 0.0290 | 0.0938 | 0.1520 | 0.2051 | 0.9917 |
+| 4 | poe | gemini-3.1-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 2 | 10 | -0.0486 +- 0.0744 | [-0.0925, -0.0044] | -0.1963 | -1.2959 +- 3.5166 | 0.6978 | 0.5283 | 0.4750 | 0.6235 | 0.0210 | 0.0703 | 0.0740 | 0.1152 | 1.0000 |
+| 5 | deepseek | deepseek-v4-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 2 | 10 | -0.0532 +- 0.0550 | [-0.0876, -0.0238] | -0.1963 | -3.7318 +- 3.3536 | 0.7119 | 0.5754 | 0.2944 | 0.6610 | 0.0000 | 0.0039 | 0.0920 | 0.1172 | 1.0000 |
+| 6 | poe | kimi-k2.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 2 | 10 | -0.0574 +- 0.0626 | [-0.0937, -0.0211] | -0.2040 | -2.6697 +- 3.8012 | 0.7095 | 0.4830 | 0.4167 | 0.6331 | 0.0010 | 0.0293 | 0.0620 | 0.0801 | 1.0000 |
+| 7 | poe | glm-5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 2 | 10 | -0.0598 +- 0.0697 | [-0.1000, -0.0189] | -0.1963 | -2.8383 +- 4.0627 | 0.7414 | 0.4610 | 0.3458 | 0.6491 | 0.0030 | 0.0469 | 0.0830 | 0.1113 | 0.9833 |
+| 8 | poe | gpt-5.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 2 | 10 | -0.0648 +- 0.0651 | [-0.1014, -0.0254] | -0.1963 | -2.7967 +- 3.6057 | 0.7367 | 0.5315 | 0.3750 | 0.6442 | 0.0000 | 0.0273 | 0.0370 | 0.0645 | 1.0000 |
+| 9 | deepseek | deepseek-v4-flash | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 2 | 10 | -0.0709 +- 0.0654 | [-0.1078, -0.0310] | -0.2058 | -3.3458 +- 3.7975 | 0.7573 | 0.4950 | 0.4000 | 0.6587 | 0.0000 | 0.0176 | 0.0190 | 0.0391 | 1.0000 |
 
 ## Scenario Aggregates
 
-| Scenario | Provider | Model | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Alpha | Risk | Execution | Fill |
-| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Yahoo 2022 rates drawdown | baseline | always-hold | 5 | 0.0000 +- 0.0000 | [0.0000, 0.0000] | 0.0000 | 0.0000 +- 0.0000 | 0.3417 | 1.0000 | 1.0000 | 0.0000 |
-| Yahoo 2022 rates drawdown | baseline | random | 5 | -0.0320 +- 0.0830 | [-0.0956, 0.0319] | -0.1732 | -0.4964 +- 3.5754 | 0.3662 | 0.0389 | 0.6556 | 0.7576 |
-| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-pro | 5 | -0.0613 +- 0.0691 | [-0.1132, -0.0093] | -0.1963 | -1.8098 +- 1.6506 | 0.4112 | 0.4611 | 0.6593 | 0.6959 |
-| Yahoo 2022 rates drawdown | poe | glm-5 | 5 | -0.0709 +- 0.0837 | [-0.1337, -0.0080] | -0.1963 | -1.5151 +- 2.6350 | 0.3061 | 0.3833 | 0.6491 | 0.7214 |
-| Yahoo 2022 rates drawdown | poe | kimi-k2.5 | 5 | -0.0724 +- 0.0665 | [-0.1209, -0.0203] | -0.2040 | -1.9841 +- 2.1168 | 0.3536 | 0.5306 | 0.6290 | 0.6857 |
-| Yahoo 2022 rates drawdown | poe | claude-opus-4.7 | 5 | -0.0806 +- 0.0674 | [-0.1299, -0.0239] | -0.1963 | -2.1710 +- 2.0573 | 0.3752 | 0.4806 | 0.6626 | 0.7452 |
-| Yahoo 2022 rates drawdown | poe | gemini-3.1-pro | 5 | -0.0865 +- 0.0709 | [-0.1346, -0.0239] | -0.1963 | -2.2941 +- 2.2427 | 0.4873 | 0.5556 | 0.6380 | 0.6902 |
-| Yahoo 2022 rates drawdown | poe | gpt-5.5 | 5 | -0.0883 +- 0.0675 | [-0.1337, -0.0284] | -0.1963 | -2.3377 +- 2.1098 | 0.4461 | 0.4889 | 0.6393 | 0.7111 |
-| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-flash | 5 | -0.0929 +- 0.0695 | [-0.1381, -0.0345] | -0.2058 | -2.5092 +- 2.2667 | 0.3775 | 0.5250 | 0.6749 | 0.7543 |
-| Yahoo recent GSPC/BTC/BTC futures | baseline | random | 5 | 0.0355 +- 0.0569 | [-0.0159, 0.0688] | -0.1216 | 2.4808 +- 3.3057 | 0.4103 | 0.0111 | 0.6362 | 0.7701 |
-| Yahoo recent GSPC/BTC/BTC futures | baseline | always-hold | 5 | 0.0000 +- 0.0000 | [0.0000, 0.0000] | 0.0000 | 0.0000 +- 0.0000 | 0.3417 | 1.0000 | 1.0000 | 0.0000 |
-| Yahoo recent GSPC/BTC/BTC futures | poe | claude-opus-4.7 | 5 | -0.0011 +- 0.0332 | [-0.0251, 0.0271] | -0.0583 | -1.1059 +- 4.2160 | 0.8149 | 0.2639 | 0.6705 | 0.7364 |
-| Yahoo recent GSPC/BTC/BTC futures | poe | gemini-3.1-pro | 5 | -0.0107 +- 0.0619 | [-0.0627, 0.0354] | -0.1212 | -0.2977 +- 4.5060 | 0.5692 | 0.3944 | 0.6089 | 0.7053 |
-| Yahoo recent GSPC/BTC/BTC futures | poe | gpt-5.5 | 5 | -0.0414 +- 0.0601 | [-0.0870, 0.0035] | -0.1202 | -3.2557 +- 4.9269 | 0.6170 | 0.2611 | 0.6491 | 0.7623 |
-| Yahoo recent GSPC/BTC/BTC futures | poe | kimi-k2.5 | 5 | -0.0423 +- 0.0617 | [-0.0887, 0.0040] | -0.1202 | -3.3553 +- 5.1822 | 0.6125 | 0.3028 | 0.6372 | 0.7334 |
-| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-pro | 5 | -0.0452 +- 0.0433 | [-0.0838, -0.0161] | -0.1199 | -5.6538 +- 3.6531 | 0.7397 | 0.1278 | 0.6628 | 0.7279 |
-| Yahoo recent GSPC/BTC/BTC futures | poe | glm-5 | 5 | -0.0487 +- 0.0600 | [-0.0950, -0.0040] | -0.1199 | -4.1615 +- 5.0810 | 0.6159 | 0.3083 | 0.6492 | 0.7614 |
-| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-flash | 5 | -0.0489 +- 0.0598 | [-0.0951, -0.0044] | -0.1199 | -4.1825 +- 5.0556 | 0.6125 | 0.2750 | 0.6426 | 0.7603 |
+| Scenario | Provider | Model | Evidence | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Alpha | Risk | Execution | Fill |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Yahoo 2022 rates drawdown | baseline | always-hold | `stress-only`<br>`deterministic-baseline` | 5 | 0.0000 +- 0.0000 | [0.0000, 0.0000] | 0.0000 | 0.0000 +- 0.0000 | 0.3417 | 1.0000 | 1.0000 | 0.0000 |
+| Yahoo 2022 rates drawdown | baseline | random | `stress-only`<br>`deterministic-baseline` | 5 | -0.0320 +- 0.0830 | [-0.0956, 0.0319] | -0.1732 | -0.4964 +- 3.5754 | 0.3662 | 0.0389 | 0.6556 | 0.7576 |
+| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0613 +- 0.0691 | [-0.1132, -0.0093] | -0.1963 | -1.8098 +- 1.6506 | 0.4112 | 0.4611 | 0.6593 | 0.6959 |
+| Yahoo 2022 rates drawdown | poe | glm-5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0709 +- 0.0837 | [-0.1337, -0.0080] | -0.1963 | -1.5151 +- 2.6350 | 0.3061 | 0.3833 | 0.6491 | 0.7214 |
+| Yahoo 2022 rates drawdown | poe | kimi-k2.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0724 +- 0.0665 | [-0.1209, -0.0203] | -0.2040 | -1.9841 +- 2.1168 | 0.3536 | 0.5306 | 0.6290 | 0.6857 |
+| Yahoo 2022 rates drawdown | poe | claude-opus-4.7 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0806 +- 0.0674 | [-0.1299, -0.0239] | -0.1963 | -2.1710 +- 2.0573 | 0.3752 | 0.4806 | 0.6626 | 0.7452 |
+| Yahoo 2022 rates drawdown | poe | gemini-3.1-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0865 +- 0.0709 | [-0.1346, -0.0239] | -0.1963 | -2.2941 +- 2.2427 | 0.4873 | 0.5556 | 0.6380 | 0.6902 |
+| Yahoo 2022 rates drawdown | poe | gpt-5.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0883 +- 0.0675 | [-0.1337, -0.0284] | -0.1963 | -2.3377 +- 2.1098 | 0.4461 | 0.4889 | 0.6393 | 0.7111 |
+| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-flash | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0929 +- 0.0695 | [-0.1381, -0.0345] | -0.2058 | -2.5092 +- 2.2667 | 0.3775 | 0.5250 | 0.6749 | 0.7543 |
+| Yahoo recent GSPC/BTC/BTC futures | baseline | random | `stress-only`<br>`deterministic-baseline` | 5 | 0.0355 +- 0.0569 | [-0.0159, 0.0688] | -0.1216 | 2.4808 +- 3.3057 | 0.4103 | 0.0111 | 0.6362 | 0.7701 |
+| Yahoo recent GSPC/BTC/BTC futures | baseline | always-hold | `stress-only`<br>`deterministic-baseline` | 5 | 0.0000 +- 0.0000 | [0.0000, 0.0000] | 0.0000 | 0.0000 +- 0.0000 | 0.3417 | 1.0000 | 1.0000 | 0.0000 |
+| Yahoo recent GSPC/BTC/BTC futures | poe | claude-opus-4.7 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0011 +- 0.0332 | [-0.0251, 0.0271] | -0.0583 | -1.1059 +- 4.2160 | 0.8149 | 0.2639 | 0.6705 | 0.7364 |
+| Yahoo recent GSPC/BTC/BTC futures | poe | gemini-3.1-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0107 +- 0.0619 | [-0.0627, 0.0354] | -0.1212 | -0.2977 +- 4.5060 | 0.5692 | 0.3944 | 0.6089 | 0.7053 |
+| Yahoo recent GSPC/BTC/BTC futures | poe | gpt-5.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0414 +- 0.0601 | [-0.0870, 0.0035] | -0.1202 | -3.2557 +- 4.9269 | 0.6170 | 0.2611 | 0.6491 | 0.7623 |
+| Yahoo recent GSPC/BTC/BTC futures | poe | kimi-k2.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0423 +- 0.0617 | [-0.0887, 0.0040] | -0.1202 | -3.3553 +- 5.1822 | 0.6125 | 0.3028 | 0.6372 | 0.7334 |
+| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0452 +- 0.0433 | [-0.0838, -0.0161] | -0.1199 | -5.6538 +- 3.6531 | 0.7397 | 0.1278 | 0.6628 | 0.7279 |
+| Yahoo recent GSPC/BTC/BTC futures | poe | glm-5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0487 +- 0.0600 | [-0.0950, -0.0040] | -0.1199 | -4.1615 +- 5.0810 | 0.6159 | 0.3083 | 0.6492 | 0.7614 |
+| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-flash | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | -0.0489 +- 0.0598 | [-0.0951, -0.0044] | -0.1199 | -4.1825 +- 5.0556 | 0.6125 | 0.2750 | 0.6426 | 0.7603 |
 
 ## Paired Bootstrap Tests
 
@@ -79,26 +79,26 @@ Positive deltas mean the model beat the named anchor on matched `(scenario, seed
 
 Each real-market seed maps to a rolling window offset. Provider-backed rows keep raw text in ignored caches and publish redacted manifests with provider/model labels, masked timestamps, and data hashes; this reduces cache-bias ambiguity and makes provider drift auditable without exposing prompts.
 
-| Scenario | Provider | Model | Runs | Seeds | Window offsets | Period | Return mean +- std | 95% CI | Provider policy | Cache policy |
-| --- | --- | --- | ---: | ---: | --- | --- | ---: | ---: | --- | --- |
-| Yahoo 2022 rates drawdown | baseline | always-hold | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | 0.0000 +- 0.0000 | [0.0000, 0.0000] | deterministic_baseline | deterministic_no_provider_cache |
-| Yahoo 2022 rates drawdown | baseline | random | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0320 +- 0.0830 | [-0.0956, 0.0319] | deterministic_baseline | deterministic_no_provider_cache |
-| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-flash | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0929 +- 0.0695 | [-0.1381, -0.0345] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-pro | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0613 +- 0.0691 | [-0.1132, -0.0093] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo 2022 rates drawdown | poe | claude-opus-4.7 | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0806 +- 0.0674 | [-0.1299, -0.0239] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo 2022 rates drawdown | poe | gemini-3.1-pro | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0865 +- 0.0709 | [-0.1346, -0.0239] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo 2022 rates drawdown | poe | glm-5 | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0709 +- 0.0837 | [-0.1337, -0.0080] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo 2022 rates drawdown | poe | gpt-5.5 | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0883 +- 0.0675 | [-0.1337, -0.0284] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo 2022 rates drawdown | poe | kimi-k2.5 | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0724 +- 0.0665 | [-0.1209, -0.0203] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo recent GSPC/BTC/BTC futures | baseline | always-hold | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | 0.0000 +- 0.0000 | [0.0000, 0.0000] | deterministic_baseline | deterministic_no_provider_cache |
-| Yahoo recent GSPC/BTC/BTC futures | baseline | random | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | 0.0355 +- 0.0569 | [-0.0159, 0.0688] | deterministic_baseline | deterministic_no_provider_cache |
-| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-flash | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0489 +- 0.0598 | [-0.0951, -0.0044] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-pro | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0452 +- 0.0433 | [-0.0838, -0.0161] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo recent GSPC/BTC/BTC futures | poe | claude-opus-4.7 | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0011 +- 0.0332 | [-0.0251, 0.0271] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo recent GSPC/BTC/BTC futures | poe | gemini-3.1-pro | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0107 +- 0.0619 | [-0.0627, 0.0354] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo recent GSPC/BTC/BTC futures | poe | glm-5 | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0487 +- 0.0600 | [-0.0950, -0.0040] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo recent GSPC/BTC/BTC futures | poe | gpt-5.5 | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0414 +- 0.0601 | [-0.0870, 0.0035] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
-| Yahoo recent GSPC/BTC/BTC futures | poe | kimi-k2.5 | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0423 +- 0.0617 | [-0.0887, 0.0040] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Scenario | Provider | Model | Evidence | Runs | Seeds | Window offsets | Period | Return mean +- std | 95% CI | Provider policy | Cache policy |
+| --- | --- | --- | --- | ---: | ---: | --- | --- | ---: | ---: | --- | --- |
+| Yahoo 2022 rates drawdown | baseline | always-hold | `stress-only`<br>`deterministic-baseline` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | 0.0000 +- 0.0000 | [0.0000, 0.0000] | deterministic_baseline | deterministic_no_provider_cache |
+| Yahoo 2022 rates drawdown | baseline | random | `stress-only`<br>`deterministic-baseline` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0320 +- 0.0830 | [-0.0956, 0.0319] | deterministic_baseline | deterministic_no_provider_cache |
+| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-flash | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0929 +- 0.0695 | [-0.1381, -0.0345] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo 2022 rates drawdown | deepseek | deepseek-v4-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0613 +- 0.0691 | [-0.1132, -0.0093] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo 2022 rates drawdown | poe | claude-opus-4.7 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0806 +- 0.0674 | [-0.1299, -0.0239] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo 2022 rates drawdown | poe | gemini-3.1-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0865 +- 0.0709 | [-0.1346, -0.0239] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo 2022 rates drawdown | poe | glm-5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0709 +- 0.0837 | [-0.1337, -0.0080] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo 2022 rates drawdown | poe | gpt-5.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0883 +- 0.0675 | [-0.1337, -0.0284] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo 2022 rates drawdown | poe | kimi-k2.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2022-01-01 to 2022-12-31 (weekly, max 12) | -0.0724 +- 0.0665 | [-0.1209, -0.0203] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo recent GSPC/BTC/BTC futures | baseline | always-hold | `stress-only`<br>`deterministic-baseline` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | 0.0000 +- 0.0000 | [0.0000, 0.0000] | deterministic_baseline | deterministic_no_provider_cache |
+| Yahoo recent GSPC/BTC/BTC futures | baseline | random | `stress-only`<br>`deterministic-baseline` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | 0.0355 +- 0.0569 | [-0.0159, 0.0688] | deterministic_baseline | deterministic_no_provider_cache |
+| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-flash | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0489 +- 0.0598 | [-0.0951, -0.0044] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo recent GSPC/BTC/BTC futures | deepseek | deepseek-v4-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0452 +- 0.0433 | [-0.0838, -0.0161] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo recent GSPC/BTC/BTC futures | poe | claude-opus-4.7 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0011 +- 0.0332 | [-0.0251, 0.0271] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo recent GSPC/BTC/BTC futures | poe | gemini-3.1-pro | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0107 +- 0.0619 | [-0.0627, 0.0354] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo recent GSPC/BTC/BTC futures | poe | glm-5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0487 +- 0.0600 | [-0.0950, -0.0040] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo recent GSPC/BTC/BTC futures | poe | gpt-5.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0414 +- 0.0601 | [-0.0870, 0.0035] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
+| Yahoo recent GSPC/BTC/BTC futures | poe | kimi-k2.5 | `stress-only`<br>`cached-provider`<br>`redacted-prompt` | 5 | 5 | 0,1,2,3,4 | 2025-05-01 to 2026-05-14 (weekly, max 12) | -0.0423 +- 0.0617 | [-0.0887, 0.0040] | provider_api_or_frozen_cache | live_or_cache_backed_raw_cache_ignored |
 
 ## Raw Seed Rows
 

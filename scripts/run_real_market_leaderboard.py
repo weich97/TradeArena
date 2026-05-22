@@ -14,6 +14,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file, sha256_text  # noqa: E402
+from tradearena.evaluation.evidence import evidence_payload_for_row, format_evidence_tags  # noqa: E402
 from tradearena.evaluation.statistics import paired_bootstrap_difference, sample_std, summarize_metric  # noqa: E402
 from tradearena.factory import build_default_system  # noqa: E402
 
@@ -81,6 +82,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", default="docs/results/real_market_matrix")
     parser.add_argument("--submission-dir", default="examples/benchmark_submissions/real_market_matrix")
     parser.add_argument("--cache-dir", default="outputs/llm_cache/real_market_matrix")
+    parser.add_argument(
+        "--provider-mode",
+        default="cached",
+        choices=["cached", "live"],
+        help="Evidence label for provider-backed rows; defaults to cached because public rows are redacted manifests.",
+    )
     parser.add_argument("--update-registry", action="store_true")
     args = parser.parse_args(argv)
 
@@ -120,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
                         output_dir=output_dir,
                         submission_dir=submission_dir,
                         cache_dir=cache_dir,
+                        provider_mode=args.provider_mode,
                     )
                     rows.append(row)
                     print(
@@ -204,6 +212,7 @@ def _run_one(
     output_dir: Path,
     submission_dir: Path,
     cache_dir: Path,
+    provider_mode: str,
 ) -> dict[str, Any]:
     model_slug = _slug(f"{provider}-{model}")
     scenario_key = str(scenario["key"])
@@ -234,6 +243,14 @@ def _run_one(
     ).run()
 
     parse_coverage = 1.0 if provider == "baseline" else _parse_coverage(trajectory.to_dict(), symbols)
+    evidence = evidence_payload_for_row(
+        provider=provider,
+        execution_mode="realistic-stress",
+        provider_mode=provider_mode,
+        raw_provider_text_removed=True,
+        trajectory_format="redacted_manifest",
+    )
+    evidence_tags = format_evidence_tags(evidence["tags"])
     metrics_payload = {
         "total_return": float(metrics.get("total_return", 0.0)),
         "max_drawdown": float(metrics.get("max_drawdown", 0.0)),
@@ -261,6 +278,7 @@ def _run_one(
         "walk_forward_unit": "rolling_window_offset",
         "parse_coverage": parse_coverage,
         "metrics": metrics_payload,
+        "evidence": evidence,
         "evaluation_protocol": {
             "repeat_unit": "seed_mapped_to_window_offset",
             "cache_policy": _cache_policy(provider),
@@ -331,6 +349,7 @@ def _run_one(
                 },
             },
             "metrics": metrics_payload,
+            "evidence": evidence,
             "trajectory_manifest": {
                 "format": "redacted_manifest",
                 "path_or_uri": _rel(summary_path),
@@ -372,6 +391,8 @@ def _run_one(
         "timestamp_policy": "relative_masked",
         "data_hash": data_hash,
         "parse_coverage": parse_coverage,
+        "evidence_tags": evidence_tags,
+        "claim_scope": evidence["claim_scope"],
         **metrics_payload,
         "reproducibility_hash": submission["reproducibility_hash"],
         "submission": _rel(submission_path),
@@ -490,6 +511,8 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "avg_alpha_quality": _avg(row["alpha_quality_score"] for row in model_rows),
                 "avg_risk_discipline": _avg(row["risk_discipline_score"] for row in model_rows),
                 "avg_execution_robustness": _avg(row["execution_robustness_score"] for row in model_rows),
+                "evidence_tags": _collapse_values(row.get("evidence_tags", "") for row in model_rows),
+                "claim_scope": _collapse_values(row.get("claim_scope", "") for row in model_rows),
                 "delta_return_vs_hold": hold_test["mean_delta"],
                 "delta_return_vs_hold_ci_low": hold_test["delta_ci_low"],
                 "delta_return_vs_hold_ci_high": hold_test["delta_ci_high"],
@@ -539,6 +562,8 @@ def _scenario_aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]
                 "avg_alpha_quality": _avg(row["alpha_quality_score"] for row in model_rows),
                 "avg_risk_discipline": _avg(row["risk_discipline_score"] for row in model_rows),
                 "avg_execution_robustness": _avg(row["execution_robustness_score"] for row in model_rows),
+                "evidence_tags": _collapse_values(row.get("evidence_tags", "") for row in model_rows),
+                "claim_scope": _collapse_values(row.get("claim_scope", "") for row in model_rows),
             }
         )
     return sorted(output, key=lambda row: (str(row["scenario_key"]), -float(row["avg_return"])))
@@ -572,6 +597,8 @@ def _walk_forward_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "return_std": return_stats["return_std"],
                 "return_ci_low": return_stats["return_ci_low"],
                 "return_ci_high": return_stats["return_ci_high"],
+                "evidence_tags": _collapse_values(row.get("evidence_tags", "") for row in model_rows),
+                "claim_scope": _collapse_values(row.get("claim_scope", "") for row in model_rows),
                 "provider_call_policy": _collapse_values(
                     row.get("provider_call_policy", _provider_call_policy(provider)) for row in model_rows
                 ),
@@ -646,6 +673,8 @@ def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "timestamp_policy",
         "data_hash",
         "parse_coverage",
+        "evidence_tags",
+        "claim_scope",
         "total_return",
         "max_drawdown",
         "sharpe",
@@ -687,6 +716,8 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "avg_alpha_quality",
         "avg_risk_discipline",
         "avg_execution_robustness",
+        "evidence_tags",
+        "claim_scope",
         "delta_return_vs_hold",
         "delta_return_vs_hold_ci_low",
         "delta_return_vs_hold_ci_high",
@@ -724,6 +755,8 @@ def _write_scenario_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> N
         "avg_alpha_quality",
         "avg_risk_discipline",
         "avg_execution_robustness",
+        "evidence_tags",
+        "claim_scope",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -768,6 +801,8 @@ def _write_walk_forward_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "return_std",
         "return_ci_low",
         "return_ci_high",
+        "evidence_tags",
+        "claim_scope",
         "provider_call_policy",
         "cache_policy",
         "timestamp_policy",
@@ -802,8 +837,8 @@ def _write_matrix_markdown(
         "",
         "## Cross-Scenario Aggregate",
         "",
-        "| Rank | Provider | Model | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | boot p vs hold | perm p vs hold | boot p vs random | perm p vs random | Parse |",
-        "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Rank | Provider | Model | Evidence | Scenarios | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Avg fill | Alpha | Risk | Execution | boot p vs hold | perm p vs hold | boot p vs random | perm p vs random | Parse |",
+        "| ---: | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for rank, row in enumerate(aggregate_rows, start=1):
         lines.append(
@@ -813,6 +848,7 @@ def _write_matrix_markdown(
                     str(rank),
                     str(row["provider"]),
                     str(row["model"]),
+                    _format_evidence(row.get("evidence_tags", "")),
                     str(row["scenario_count"]),
                     str(row["run_count"]),
                     _fmt_pm(row["avg_return"], row["std_return"]),
@@ -837,8 +873,8 @@ def _write_matrix_markdown(
             "",
             "## Scenario Aggregates",
             "",
-            "| Scenario | Provider | Model | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Alpha | Risk | Execution | Fill |",
-            "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+            "| Scenario | Provider | Model | Evidence | Runs | Return mean +- std | 95% CI | Worst DD | Sharpe mean +- std | Alpha | Risk | Execution | Fill |",
+            "| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
         ]
     )
     for row in scenario_rows:
@@ -849,6 +885,7 @@ def _write_matrix_markdown(
                     str(row["scenario_label"]),
                     str(row["provider"]),
                     str(row["model"]),
+                    _format_evidence(row.get("evidence_tags", "")),
                     str(row["run_count"]),
                     _fmt_pm(row["avg_return"], row["std_return"]),
                     _fmt_ci(row["return_ci_low"], row["return_ci_high"]),
@@ -899,8 +936,8 @@ def _write_matrix_markdown(
                 "",
                 "Each real-market seed maps to a rolling window offset. Provider-backed rows keep raw text in ignored caches and publish redacted manifests with provider/model labels, masked timestamps, and data hashes; this reduces cache-bias ambiguity and makes provider drift auditable without exposing prompts.",
                 "",
-                "| Scenario | Provider | Model | Runs | Seeds | Window offsets | Period | Return mean +- std | 95% CI | Provider policy | Cache policy |",
-                "| --- | --- | --- | ---: | ---: | --- | --- | ---: | ---: | --- | --- |",
+                "| Scenario | Provider | Model | Evidence | Runs | Seeds | Window offsets | Period | Return mean +- std | 95% CI | Provider policy | Cache policy |",
+                "| --- | --- | --- | --- | ---: | ---: | --- | --- | ---: | ---: | --- | --- |",
             ]
         )
         for row in walk_forward_rows:
@@ -911,6 +948,7 @@ def _write_matrix_markdown(
                         str(row["scenario_label"]),
                         str(row["provider"]),
                         str(row["model"]),
+                        _format_evidence(row.get("evidence_tags", "")),
                         str(row["run_count"]),
                         str(row["seed_count"]),
                         str(row["window_offsets"]),
@@ -1041,6 +1079,11 @@ def _fmt_ci(low: Any, high: Any) -> str:
     if low is None or high is None:
         return ""
     return f"[{_fmt(low)}, {_fmt(high)}]"
+
+
+def _format_evidence(value: Any) -> str:
+    tags = [tag for tag in str(value or "").split(";") if tag]
+    return "<br>".join(f"`{tag}`" for tag in tags)
 
 
 def _avg(values: Any) -> float:

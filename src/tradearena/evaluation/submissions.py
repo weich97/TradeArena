@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from tradearena.core.reproducibility import compute_reproducibility_hash
+from tradearena.evaluation.evidence import format_evidence_tags, validate_evidence_tags
 
 
 REQUIRED_TOP_LEVEL = (
@@ -114,6 +115,19 @@ def validate_submission(payload: dict[str, Any], *, verify_hash: bool = True) ->
         if observed != expected:
             errors.append(f"reproducibility_hash mismatch: expected {expected}, observed {observed}")
 
+    evidence = payload.get("evidence")
+    if evidence is not None:
+        if not isinstance(evidence, dict):
+            errors.append("evidence must be an object when provided")
+        else:
+            tags = evidence.get("tags")
+            if not isinstance(tags, list) or not tags:
+                errors.append("evidence.tags must be a non-empty list when evidence is provided")
+            else:
+                errors.extend(validate_evidence_tags(tags))
+            if not isinstance(evidence.get("claim_scope"), str) or not evidence.get("claim_scope"):
+                errors.append("evidence.claim_scope must be a non-empty string when evidence is provided")
+
     return errors
 
 
@@ -139,6 +153,10 @@ def build_registry_rows(input_dir: str | Path) -> tuple[list[dict[str, Any]], li
             errors.extend(f"{path}: {error}" for error in payload_errors)
             continue
         seen_hashes[payload["reproducibility_hash"]] += 1
+        evidence = payload.get("evidence", {})
+        evidence_tags = evidence.get("tags", []) if isinstance(evidence, dict) else []
+        evidence_tag_text = format_evidence_tags(evidence_tags)
+        claim_scope = str(evidence.get("claim_scope", "")) if isinstance(evidence, dict) else ""
         rows.append(
             {
                 "entry_id": f"ta-{payload['reproducibility_hash'].split(':')[-1][:12]}",
@@ -162,6 +180,8 @@ def build_registry_rows(input_dir: str | Path) -> tuple[list[dict[str, Any]], li
                 "reproducibility_hash": payload["reproducibility_hash"],
                 "reproducibility_status": "Reproducible",
                 "redaction_status": "Redacted",
+                "evidence_tags": evidence_tag_text,
+                "claim_scope": claim_scope,
                 "source_file": path.as_posix(),
             }
         )
@@ -181,8 +201,8 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
         "It is designed to compare audit-ready runs without exposing raw provider",
         "prompts, responses, private portfolios, or credentials.",
         "",
-        "| Entry | Scenario | Agent | Prompt | Feedback | Parse | Data | Return | Max DD | Fill | Rejected | Risk edits | Audit | Badges | Hash |",
-        "| --- | --- | --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
+        "| Entry | Scenario | Agent | Prompt | Feedback | Evidence | Parse | Data | Return | Max DD | Fill | Rejected | Risk edits | Audit | Badges | Hash |",
+        "| --- | --- | --- | --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     for row in rows:
         agent = f"{row['provider']} / {row['model_family']}"
@@ -197,6 +217,7 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
                     agent,
                     str(row["prompt_mode"]),
                     str(row["risk_feedback_mode"]),
+                    _format_evidence_cell(row["evidence_tags"]),
                     parse_coverage,
                     data,
                     _fmt_float(row["total_return"]),
@@ -212,7 +233,7 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
             + " |"
         )
     if not rows:
-        lines.append("| _No accepted submissions yet._ |  |  |  |  |  |  |  |  |  |  |  |  |  |  |")
+        lines.append("| _No accepted submissions yet._ |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |")
     lines.extend(
         [
             "",
@@ -234,7 +255,7 @@ def write_registry_html(rows: list[dict[str, Any]], output_path: str | Path) -> 
     provider_options = "\n".join(f'<option value="{_h(provider)}">{_h(provider)}</option>' for provider in providers)
     table_rows = "\n".join(_registry_html_row(row) for row in rows)
     if not table_rows:
-        table_rows = '<tr><td colspan="15">No accepted submissions yet.</td></tr>'
+        table_rows = '<tr><td colspan="16">No accepted submissions yet.</td></tr>'
     html_text = """<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
@@ -276,7 +297,7 @@ summary { color: #1d4ed8; cursor: pointer; }
       <thead>
         <tr>
           <th data-sort="text">Entry</th><th data-sort="text">Scenario</th><th data-sort="text">Agent</th>
-          <th data-sort="text">Prompt</th><th data-sort="text">Feedback</th><th data-sort="num">Parse</th>
+          <th data-sort="text">Prompt</th><th data-sort="text">Feedback</th><th data-sort="text">Evidence</th><th data-sort="num">Parse</th>
           <th data-sort="text">Data</th><th data-sort="num">Return</th><th data-sort="num">Max DD</th>
           <th data-sort="num">Fill</th><th data-sort="num">Rejected</th><th data-sort="num">Risk edits</th>
           <th data-sort="num">Audit</th><th data-sort="text">Badges</th><th data-sort="text">Details</th>
@@ -344,6 +365,8 @@ def _registry_html_row(row: dict[str, Any]) -> str:
             "model_family",
             "prompt_mode",
             "risk_feedback_mode",
+            "evidence_tags",
+            "claim_scope",
             "data_source",
             "frequency",
             "reproducibility_hash",
@@ -353,10 +376,12 @@ def _registry_html_row(row: dict[str, Any]) -> str:
         f'<span class="badge">{_h(row["reproducibility_status"])}</span>'
         f'<span class="badge redacted">{_h(row["redaction_status"])}</span>'
     )
+    evidence = _evidence_badges(row.get("evidence_tags", ""))
     details = (
         "<details>"
         "<summary>Open</summary>"
         f"<div>Model redacted: {_h(row['model_redacted'])}</div>"
+        f"<div>Claim scope: {_h(row.get('claim_scope', ''))}</div>"
         f"<div>Source: <code>{_h(row['source_file'])}</code></div>"
         f"<div>Hash: <code>{_h(hash_text)}</code></div>"
         "</details>"
@@ -368,6 +393,7 @@ def _registry_html_row(row: dict[str, Any]) -> str:
         f'<td>{_h(row["provider"])} / {_h(row["model_family"])}</td>'
         f'<td>{_h(row["prompt_mode"])}</td>'
         f'<td>{_h(row["risk_feedback_mode"])}</td>'
+        f"<td>{evidence}</td>"
         f'<td data-value="{_h(parse)}">{_h(parse)}</td>'
         f'<td>{_h(data)}</td>'
         f'<td data-value="{float(row["total_return"]):.6f}">{float(row["total_return"]):.4f}</td>'
@@ -406,6 +432,20 @@ def _is_number(value: Any) -> bool:
 
 def _fmt_float(value: Any) -> str:
     return f"{float(value):.4f}"
+
+
+def _format_evidence_cell(value: Any) -> str:
+    tags = str(value or "")
+    if not tags:
+        return ""
+    return "<br>".join(f"`{tag}`" for tag in tags.split(";") if tag)
+
+
+def _evidence_badges(value: Any) -> str:
+    tags = [tag for tag in str(value or "").split(";") if tag]
+    if not tags:
+        return ""
+    return "".join(f'<span class="badge redacted">{_h(tag)}</span>' for tag in tags)
 
 
 def _h(value: Any) -> str:
