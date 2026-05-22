@@ -23,6 +23,26 @@ from tradearena.factory import build_default_system  # noqa: E402
 
 
 CLASSICAL_BASELINES: dict[str, dict[str, str]] = {
+    "always_hold": {
+        "label": "Always hold",
+        "strategy": "always-hold",
+        "family": "lower_anchor",
+    },
+    "random": {
+        "label": "Random",
+        "strategy": "random",
+        "family": "lower_anchor",
+    },
+    "buy_and_hold": {
+        "label": "Buy and hold",
+        "strategy": "buy-and-hold",
+        "family": "passive",
+    },
+    "equal_weight": {
+        "label": "Equal weight",
+        "strategy": "equal-weight",
+        "family": "passive_rebalance",
+    },
     "naive_momentum": {
         "label": "Naive momentum",
         "strategy": "naive-momentum",
@@ -42,6 +62,11 @@ CLASSICAL_BASELINES: dict[str, dict[str, str]] = {
         "label": "Minimum variance",
         "strategy": "min-var",
         "family": "covariance_weighted",
+    },
+    "markowitz_mvo": {
+        "label": "Markowitz MVO",
+        "strategy": "markowitz-mvo",
+        "family": "mean_variance_weighted",
     },
 }
 QUALITY_FIELDS = (
@@ -344,6 +369,8 @@ def _write_markdown(
         "- Mean reversion: long recent underperformers.",
         "- Risk parity: rolling inverse-volatility allocation.",
         "- Minimum variance: rolling covariance-driven minimum-variance allocation.",
+        "- Markowitz MVO: rolling expected-return and covariance allocation.",
+        "- Passive anchors: buy-and-hold, equal-weight rebalance, random, and always-hold.",
         "",
         "## Does The Best LLM Outperform The Best Classical Baseline?",
         "",

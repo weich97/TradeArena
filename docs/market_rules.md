@@ -14,6 +14,45 @@ see which assumptions are active.
 | Crypto | 24/7 sessions, venue fee tiers, funding or borrow costs, spread shocks | liquidity and fees can change faster than daily bars show |
 | Futures | contract rolls, expiry, margin, tick size, session breaks | continuous prices can hide roll and margin risk |
 
+TradeArena now exposes these as testable rule-package helpers in
+[`src/tradearena/tools/market_rules.py`](../src/tradearena/tools/market_rules.py).
+They are intentionally separate from the default simulator so a benchmark row
+can state exactly which venue rule layer was active.
+
+| Helper | Encoded checks |
+| --- | --- |
+| `ashare_rule_package()` | T+1 sellability, 100-share board lots, limit-up buy block, limit-down sell block |
+| `hong_kong_rule_package()` | board-lot rounding and stamp-duty cost estimate |
+| `crypto_rule_package()` | fee tier, funding cost, and participation-limited liquidity |
+| `futures_rule_package()` | initial margin requirement and roll-window flag |
+| `liquidity_halt_rule_package()` | participation clipping and Almgren-Chriss-style temporary impact estimate |
+
+Minimal usage:
+
+```python
+from tradearena.core.domain import Side
+from tradearena.tools import MarketRuleState, ashare_rule_package, review_market_rule_order
+
+decision = review_market_rule_order(
+    symbol="600519.SS",
+    side=Side.SELL,
+    quantity=200,
+    state=MarketRuleState(
+        price=100.0,
+        previous_close=99.0,
+        settled_position=100,
+        same_day_buy_quantity=100,
+    ),
+    package=ashare_rule_package(),
+)
+assert decision.blocked
+```
+
+The output is a `MarketRuleDecision` with `status`, `reasons`, approved
+quantity, fee/funding estimates, margin requirement, and market-impact
+estimate. This makes market infeasibility auditable instead of hiding it inside
+portfolio PnL.
+
 ## Risk Preset Ideas
 
 | Preset | Checks |

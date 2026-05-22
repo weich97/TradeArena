@@ -148,13 +148,21 @@ def test_classical_matrix_includes_non_llm_strong_baselines():
     module = _load_classical_matrix_module()
 
     assert set(module.CLASSICAL_BASELINES) == {
+        "always_hold",
+        "random",
+        "buy_and_hold",
+        "equal_weight",
         "naive_momentum",
         "mean_reversion",
         "risk_parity",
         "min_var",
+        "markowitz_mvo",
     }
+    assert module.CLASSICAL_BASELINES["buy_and_hold"]["strategy"] == "buy-and-hold"
+    assert module.CLASSICAL_BASELINES["equal_weight"]["strategy"] == "equal-weight"
     assert module.CLASSICAL_BASELINES["risk_parity"]["strategy"] == "risk-parity"
     assert module.CLASSICAL_BASELINES["min_var"]["strategy"] == "min-var"
+    assert module.CLASSICAL_BASELINES["markowitz_mvo"]["strategy"] == "markowitz-mvo"
 
 
 def test_quality_decomposition_uses_three_benchmark_axes():

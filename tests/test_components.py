@@ -1,6 +1,13 @@
 from datetime import datetime, timezone
 
-from tradearena.agents import AlwaysHoldStrategy, MaxPositionRiskManager, MemoryAwareSignalWeightedStrategy, RandomAllocationStrategy
+from tradearena.agents import (
+    AlwaysHoldStrategy,
+    EqualWeightStrategy,
+    MarkowitzMVOStrategy,
+    MaxPositionRiskManager,
+    MemoryAwareSignalWeightedStrategy,
+    RandomAllocationStrategy,
+)
 from tradearena.core.domain import Decision, Fill, MarketSnapshot, Order, PortfolioState, Side, Signal
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.data import SyntheticMarketDataProvider
@@ -10,10 +17,16 @@ from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_e
 from tradearena.tools import (
     CalibratedOrderSimulator,
     FillReplayOrderSimulator,
+    MarketRuleState,
     QuoteReplayOrderSimulator,
     RealisticOrderSimulator,
     RiskCalculator,
     SimpleOrderSimulator,
+    ashare_rule_package,
+    crypto_rule_package,
+    futures_rule_package,
+    liquidity_halt_rule_package,
+    review_market_rule_order,
 )
 
 
@@ -157,6 +170,67 @@ def test_lower_anchor_strategies_are_deterministic_and_distinct():
     assert all(decision.target_weight == 0.0 for decision in hold_decisions)
     assert [decision.target_weight for decision in first_random] == [decision.target_weight for decision in second_random]
     assert any(decision.target_weight > 0.0 for decision in first_random)
+
+
+def test_equal_weight_and_markowitz_mvo_baselines_run():
+    snapshots = SyntheticMarketDataProvider(symbols=("SYN", "ALT", "DEF"), periods=5, seed=8).stream()
+    portfolio = PortfolioState(cash=100_000.0)
+
+    equal_weight = EqualWeightStrategy(max_long_weight=0.40).decide(snapshots[0], [], portfolio, memory=None)
+    assert [decision.target_weight for decision in equal_weight] == [1 / 3, 1 / 3, 1 / 3]
+
+    mvo = MarkowitzMVOStrategy(lookback=3, max_long_weight=0.40)
+    decisions = []
+    for snapshot in snapshots:
+        decisions = mvo.decide(snapshot, [], portfolio, memory=None)
+    assert decisions
+    assert all(0.0 <= decision.target_weight <= 0.40 for decision in decisions)
+    assert any(decision.metadata["strategy"] == "markowitz-mvo-strategy" for decision in decisions)
+
+
+def test_market_rule_packages_encode_venue_constraints():
+    ashare_block = review_market_rule_order(
+        symbol="600519.SS",
+        side=Side.SELL,
+        quantity=200,
+        state=MarketRuleState(price=100.0, previous_close=99.0, settled_position=100, same_day_buy_quantity=100),
+        package=ashare_rule_package(),
+    )
+    assert ashare_block.blocked
+    assert "t_plus_one_sellable_clip" in ashare_block.reasons
+
+    crypto = review_market_rule_order(
+        symbol="BTC-USD",
+        side=Side.BUY,
+        quantity=3.0,
+        state=MarketRuleState(price=100_000.0, volume=20.0),
+        package=crypto_rule_package(fee_bps=10.0, funding_bps=2.0),
+    )
+    assert crypto.clipped
+    assert crypto.approved_quantity == 2.0
+    assert crypto.estimated_fee == 200.0
+    assert crypto.estimated_funding == 40.0
+
+    futures = review_market_rule_order(
+        symbol="ESM26",
+        side=Side.BUY,
+        quantity=1.0,
+        state=MarketRuleState(price=6000.0, available_cash=1000.0),
+        package=futures_rule_package(initial_margin_rate=0.10, contract_multiplier=50.0),
+    )
+    assert futures.blocked
+    assert "futures_margin_shortfall" in futures.reasons
+
+    shock = review_market_rule_order(
+        symbol="SYN",
+        side=Side.BUY,
+        quantity=1000.0,
+        state=MarketRuleState(price=50.0, volume=10_000.0),
+        package=liquidity_halt_rule_package(participation_rate=0.02, eta=0.25),
+    )
+    assert shock.clipped
+    assert shock.approved_quantity == 200.0
+    assert shock.estimated_market_impact > 0.0
 
 
 def test_realistic_simulator_records_partial_fill_and_latency():

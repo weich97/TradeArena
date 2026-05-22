@@ -18,6 +18,7 @@ history. The script runs:
 - `examples/audit_trajectory_walkthrough.py`
 - `scripts/render_audit_report.py`
 - `scripts/render_agent_autopsy_dashboard.py`
+- `scripts/run_failure_autopsy.py`
 - `tradearena validate-submission examples/benchmark_submissions/example_redacted_submission.json`
 - `scripts/check_release_readiness.py`
 

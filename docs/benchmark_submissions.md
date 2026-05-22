@@ -33,8 +33,8 @@ Challenge format, leaderboard badges, anonymous rows, and citation guidance are
 defined in [`docs/benchmark_challenges.md`](benchmark_challenges.md).
 
 The current registry also includes an LLM model matrix generator: seven models
-plus `random` and `always-hold` anchors over six synthetic market and
-execution-stress scenarios. The three execution shock rows are
+plus lower anchors over six synthetic market and execution-stress scenarios.
+The three execution shock rows are
 `liquidity_collapse`, `spread_explosion`, and `latency_spike`; they are
 intended to expose overconfident target weights through partial fills, crossing
 costs, pending orders, and rejections. The default protocol runs five seeds per
@@ -72,10 +72,11 @@ The real-market summary is tracked at
 Real-market rows live under
 [`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/).
 
-The same scenarios also have deterministic non-LLM baselines: naive momentum,
-mean reversion, risk parity, and minimum variance. These rows make the model
-matrix falsifiable against standard portfolio construction rules instead of
-only comparing LLMs with other LLMs:
+The same scenarios also have deterministic non-LLM baselines: buy-and-hold,
+equal weight, naive momentum, mean reversion, risk parity, minimum variance,
+Markowitz/MVO, random, and always-hold. These rows are a main benchmark
+surface. They make the model matrix falsifiable against standard portfolio
+construction rules instead of only comparing LLMs with other LLMs:
 
 ```bash
 python scripts/run_classical_baseline_matrix.py

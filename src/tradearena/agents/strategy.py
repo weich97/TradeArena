@@ -79,6 +79,40 @@ class BuyAndHoldStrategy:
 
 
 @dataclass
+class EqualWeightStrategy:
+    """Equal-weight rebalancing baseline.
+
+    This is intentionally distinct from `BuyAndHoldStrategy`: it represents a
+    simple periodic rebalance policy and is useful as a classical anchor when
+    LLM rows are evaluated on target-weight quality.
+    """
+
+    target_gross: float = 1.0
+    max_long_weight: float = 0.35
+    name: str = "equal-weight-strategy"
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        symbols = sorted(snapshot.bars)
+        if not symbols:
+            return []
+        target = min(self.max_long_weight, self.target_gross / len(symbols))
+        return [
+            _target_weight_decision(
+                symbol=symbol,
+                target=target,
+                confidence=1.0,
+                rationale="equal-weight periodic rebalance baseline",
+                metadata={
+                    "strategy": self.name,
+                    "target_gross": self.target_gross,
+                    "max_long_weight": self.max_long_weight,
+                },
+            )
+            for symbol in symbols
+        ]
+
+
+@dataclass
 class AlwaysHoldStrategy:
     name: str = "always-hold"
 
@@ -378,6 +412,79 @@ class MeanVarianceStrategy:
                 factor = augmented[row][col]
                 augmented[row] = [value - factor * pivot_value for value, pivot_value in zip(augmented[row], augmented[col])]
         return [augmented[row][-1] for row in range(n)]
+
+
+@dataclass
+class MarkowitzMVOStrategy(MeanVarianceStrategy):
+    """Rolling long-only Markowitz mean-variance optimization baseline."""
+
+    risk_aversion: float = 10.0
+    min_expected_return: float = 0.0
+    name: str = "markowitz-mvo-strategy"
+
+    def _weights(self, symbols: list[str]) -> dict[str, float]:
+        if not symbols:
+            return {}
+        usable = [symbol for symbol in symbols if len(self._history.get(symbol, ())) >= min(self.lookback + 1, 3)]
+        if len(usable) < 2:
+            return self._equal_weight(symbols)
+
+        returns_by_symbol: dict[str, list[float]] = {}
+        min_len = self.lookback
+        for symbol in usable:
+            prices = list(self._history[symbol])
+            returns = [(curr / prev) - 1.0 for prev, curr in zip(prices, prices[1:]) if prev > 0]
+            if returns:
+                returns_by_symbol[symbol] = returns[-self.lookback :]
+                min_len = min(min_len, len(returns_by_symbol[symbol]))
+        if len(returns_by_symbol) < 2 or min_len < 2:
+            return self._equal_weight(symbols)
+
+        ordered = sorted(returns_by_symbol)
+        matrix = [returns_by_symbol[symbol][-min_len:] for symbol in ordered]
+        expected = [sum(values) / len(values) for values in matrix]
+        signal = [max(self.min_expected_return, value) for value in expected]
+        if sum(signal) <= 1e-12:
+            return self._equal_weight(symbols)
+
+        covariance = self._covariance(matrix)
+        risk_scale = max(1e-9, float(self.risk_aversion))
+        for idx in range(len(covariance)):
+            covariance[idx][idx] = covariance[idx][idx] * risk_scale + self.ridge
+            for col in range(len(covariance)):
+                if col != idx:
+                    covariance[idx][col] *= risk_scale
+
+        solution = self._solve(covariance, signal)
+        scores = {symbol: max(0.0, value) if isfinite(value) else 0.0 for symbol, value in zip(ordered, solution)}
+        if sum(scores.values()) <= 1e-12:
+            return self._equal_weight(symbols)
+        weights = _normalize_capped(scores, self.max_long_weight)
+        return {symbol: weights.get(symbol, 0.0) for symbol in symbols}
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        decisions = super().decide(snapshot, signals, portfolio, memory)
+        adjusted = []
+        for decision in decisions:
+            metadata = dict(decision.metadata)
+            metadata.update(
+                {
+                    "strategy": self.name,
+                    "risk_aversion": self.risk_aversion,
+                    "min_expected_return": self.min_expected_return,
+                }
+            )
+            adjusted.append(
+                Decision(
+                    symbol=decision.symbol,
+                    side=decision.side,
+                    target_weight=decision.target_weight,
+                    confidence=decision.confidence,
+                    rationale="rolling Markowitz mean-variance allocation using realized returns and covariance",
+                    metadata=metadata,
+                )
+            )
+        return adjusted
 
 
 @dataclass

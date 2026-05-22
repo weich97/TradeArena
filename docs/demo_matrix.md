@@ -33,9 +33,9 @@ without reading the full source tree.
 - Artifacts:
   - `docs/results/classical_baselines/classical_baselines.md`
   - `docs/results/classical_baselines/classical_vs_llm_comparison.csv`
-- Shows: naive momentum, mean reversion, risk parity, and minimum-variance
-  baselines on the same synthetic and Yahoo Finance scenarios as the model
-  leaderboard.
+- Shows: buy-and-hold, equal weight, naive momentum, mean reversion, risk
+  parity, minimum variance, Markowitz/MVO, random, and always-hold on the same
+  synthetic and Yahoo Finance scenarios as the model leaderboard.
 
 ### Decision/Execution Quality Radar
 
@@ -62,9 +62,11 @@ without reading the full source tree.
 - Run:
   - `python examples/audit_trajectory_walkthrough.py`
   - `python scripts/render_agent_autopsy_dashboard.py`
+  - `python scripts/run_failure_autopsy.py`
 - Artifact: `outputs/examples/agent_autopsy_dashboard.html`
-- Shows: intent versus executed weights, slippage attribution, and a risk
-  intervention timeline from the same replayable trajectory.
+- Shows: intent versus executed weights, slippage attribution, a risk
+  intervention timeline, and fixed failure-mode counts from the same replayable
+  trajectory.
 
 ### Replay Mode
 

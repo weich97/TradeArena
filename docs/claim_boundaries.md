@@ -1,0 +1,30 @@
+# Claim Boundaries
+
+TradeArena separates three kinds of claims. Mixing them makes benchmark rows
+look stronger than the evidence supports.
+
+| Claim class | Supported statement | Required evidence | Not enough evidence |
+| --- | --- | --- | --- |
+| Engineering claim | The framework records replayable market observations, decisions, risk reports, fills, memory, metrics, and hashes. | A trajectory JSON, manifest, schema validation, and reproduction command. | A return table without the trajectory and hash. |
+| Benchmark claim | Risk gates and paper-execution frictions change measured agent outcomes under a frozen protocol. | Shared scenarios, seeds or rolling windows, fixed baselines, costs, risk settings, and confidence intervals. | One run, one provider response, or an unversioned prompt. |
+| Scientific claim | A model or agent class is more reliable for financial decision making. | Repeated runs, stable provider/version records, redaction policy, non-LLM baselines, p-values or CIs, failure-mode autopsy, and independent replication. | Cache-first/live-call mixtures, provider-drifted rows, or redacted prompts alone. |
+
+## Reporting Rule
+
+For public results, every table should say which claim class it supports.
+
+- Engineering rows can say that an artifact is replayable or auditable.
+- Benchmark rows can say that the protocol exposes risk, execution, or
+  calibration differences.
+- Scientific rows should be rare and conservative. A model should first beat
+  fixed non-LLM baselines such as buy-and-hold, equal weight, momentum, mean
+  reversion, risk parity, minimum variance, Markowitz/MVO, random, and
+  always-hold under the same market and execution assumptions.
+
+## Redaction And Provider Drift
+
+Redacted benchmark rows are useful for participation, but they weaken model
+skill claims. Provider-hosted APIs may change routing, wrapper prompts,
+context truncation, rate limits, and model aliases. Cache-first and live-call
+rows must therefore be labeled separately, and they should not be pooled into a
+scientific claim unless the protocol declares how cache provenance is handled.

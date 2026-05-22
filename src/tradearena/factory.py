@@ -5,7 +5,9 @@ from tradearena.agents import (
     BuyAndHoldStrategy,
     DeepSeekLLMAnalyst,
     DeterministicRLAllocationStrategy,
+    EqualWeightStrategy,
     MacroNewsAnalyst,
+    MarkowitzMVOStrategy,
     MaxPositionRiskManager,
     MeanVarianceStrategy,
     MeanReversionStrategy,
@@ -58,12 +60,14 @@ def default_registry() -> PluginRegistry:
     registry.register("strategy", "signal-weighted", SignalWeightedStrategy)
     registry.register("strategy", "memory-aware", MemoryAwareSignalWeightedStrategy)
     registry.register("strategy", "buy-and-hold", BuyAndHoldStrategy)
+    registry.register("strategy", "equal-weight", EqualWeightStrategy)
     registry.register("strategy", "always-hold", AlwaysHoldStrategy)
     registry.register("strategy", "random-allocation", RandomAllocationStrategy)
     registry.register("strategy", "naive-momentum", NaiveMomentumStrategy)
     registry.register("strategy", "mean-reversion", MeanReversionStrategy)
     registry.register("strategy", "risk-parity", RiskParityStrategy)
     registry.register("strategy", "mean-variance", MeanVarianceStrategy)
+    registry.register("strategy", "markowitz-mvo", MarkowitzMVOStrategy)
     registry.register("strategy", "mock-rl-policy", DeterministicRLAllocationStrategy)
     registry.register("risk", "max-position", MaxPositionRiskManager)
     registry.register("risk", "none", NoRiskManager)
@@ -136,6 +140,8 @@ def build_default_system(
 ) -> TradeArena:
     if strategy_name == "buy-and-hold":
         strategy = BuyAndHoldStrategy()
+    elif strategy_name in {"equal-weight", "equal-weight-rebalance", "equal_weight"}:
+        strategy = EqualWeightStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"always-hold", "hold", "cash"}:
         strategy = AlwaysHoldStrategy()
     elif strategy_name in {"random-allocation", "random", "noise"}:
@@ -146,8 +152,10 @@ def build_default_system(
         strategy = MeanReversionStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"risk-parity", "inverse-volatility"}:
         strategy = RiskParityStrategy(max_long_weight=max_position_weight)
-    elif strategy_name in {"mean-variance", "markowitz", "mvo", "min-var", "minimum-variance"}:
+    elif strategy_name in {"mean-variance", "min-var", "minimum-variance"}:
         strategy = MeanVarianceStrategy(max_long_weight=max_position_weight)
+    elif strategy_name in {"markowitz-mvo", "markowitz", "mvo", "mean-variance-optimization"}:
+        strategy = MarkowitzMVOStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"mock-rl-policy", "rl-policy", "deep-rl"}:
         strategy = DeterministicRLAllocationStrategy(max_long_weight=max_position_weight)
     elif strategy_name == "memory-aware":

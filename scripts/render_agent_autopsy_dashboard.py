@@ -7,6 +7,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
+from tradearena.evaluation.autopsy import autopsy_trajectory
+
 
 DEFAULT_INPUT = "outputs/examples/audit_walkthrough_trajectory.json"
 DEFAULT_OUTPUT = "outputs/examples/agent_autopsy_dashboard.html"
@@ -37,6 +39,7 @@ def _render(data: dict[str, Any], rows: list[dict[str, Any]], trajectory_path: P
     summary = _summary(rows)
     symbols = _symbols(data)
     slippage = _slippage_by_symbol(data)
+    failure_autopsy = autopsy_trajectory(data)
     top_gap_rows = _top_gap_rows(rows)
     intervention_rows = [row for row in rows if row["risk_edits"] or row["pending_orders"] or row["rejected_orders"]]
 
@@ -177,6 +180,12 @@ def _render(data: dict[str, Any], rows: list[dict[str, Any]], trajectory_path: P
         <h2>Intervention Events</h2>
         {_intervention_table(intervention_rows)}
       </div>
+    </section>
+
+    <section class="panel">
+      <h2>Failure-Mode Autopsy</h2>
+      {_failure_autopsy_table(failure_autopsy)}
+      <p class="muted">The taxonomy is diagnostic, not a claim that one model is categorically better. It separates failure mechanisms such as pre-risk leverage, low-confidence bets, and insensitivity to liquidity or slippage.</p>
     </section>
   </main>
 </body>
@@ -467,6 +476,20 @@ def _intervention_table(rows: list[dict[str, Any]]) -> str:
         + "".join(body)
         + "</tbody></table>"
     )
+
+
+def _failure_autopsy_table(autopsy: dict[str, Any]) -> str:
+    rows = [
+        (mode, count)
+        for mode, count in autopsy.get("failure_mode_counts", {}).items()
+        if int(count) > 0
+    ]
+    if not rows:
+        return '<div class="empty">No failure-mode markers were detected by the current taxonomy.</div>'
+    body = []
+    for mode, count in sorted(rows, key=lambda item: (-int(item[1]), item[0])):
+        body.append(f"<tr><td><code>{_e(mode)}</code></td><td>{int(count)}</td></tr>")
+    return "<table><thead><tr><th>Failure mode</th><th>Steps flagged</th></tr></thead><tbody>" + "".join(body) + "</tbody></table>"
 
 
 def _metric(label: str, value: Any) -> str:

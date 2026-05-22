@@ -3,6 +3,11 @@
   "spec_id": "tradearena-v0.2",
   "status": "frozen",
   "claim_boundary": "agent reliability, risk-aware decision quality, and intent-to-execution auditability; not live profitability or broker-grade transaction-cost prediction",
+  "claim_classes": {
+    "engineering": "the framework records replayable trajectories, risk reports, execution reports, manifests, and hashes",
+    "benchmark": "under a frozen protocol, risk gates and paper-execution friction can change measured agent outcomes",
+    "scientific": "model-specific trading-skill claims require provider-stable live calls, non-redacted or auditable prompts, repeated seeds or rolling windows, and wins over fixed non-LLM baselines"
+  },
   "data_windows": {
     "synthetic": {
       "scenarios": [
@@ -53,7 +58,15 @@
     "drawdown_lookback": 5,
     "drawdown_de_risk_weight": 0.0,
     "shorting": "disallowed in v0.2 public leaderboard",
-    "leverage": "disallowed above max_gross_exposure"
+    "leverage": "disallowed above max_gross_exposure",
+    "rule_packages": [
+      "us_equity_regular_hours",
+      "ashare_t_plus_one_price_limit_board_lot",
+      "hong_kong_board_lot_stamp_duty",
+      "crypto_fee_tier_funding",
+      "futures_margin_roll",
+      "suspension_circuit_liquidity_halt"
+    ]
   },
   "execution": {
     "default_mode": "realistic-stress",
@@ -85,10 +98,13 @@
   "baselines": [
     "always-hold",
     "random",
+    "buy_and_hold",
+    "equal_weight",
     "naive_momentum",
     "mean_reversion",
     "risk_parity",
-    "min_var"
+    "min_var",
+    "markowitz_mvo"
   ],
   "metrics": {
     "primary": [
@@ -129,7 +145,17 @@
     "parse_failure": "count parse_coverage below 1.0 and use the documented parser fallback; do not silently drop the row",
     "risk_block": "count as a valid decision with zero approved target for the blocked order",
     "execution_rejection": "count as a valid attempted order, increment rejected_order_count, and keep the portfolio state unchanged for the rejected quantity",
-    "missing_data": "row is invalid unless the scenario declares a data-gap rule before evaluation"
+    "missing_data": "row is invalid unless the scenario declares a data-gap rule before evaluation",
+    "autopsy_taxonomy": [
+      "overtrading",
+      "pre_risk_leverage",
+      "low_confidence_bet",
+      "slippage_insensitive",
+      "liquidity_insensitive",
+      "memory_pollution",
+      "rationale_decision_mismatch",
+      "position_limit_noncompliance"
+    ]
   },
   "required_artifacts": [
     "raw seed CSV",

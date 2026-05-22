@@ -22,6 +22,29 @@ intent-to-execution auditability. It does not claim live profitability or
 broker-grade transaction-cost prediction unless a row attaches quote/fill
 calibration provenance.
 
+## Claim Classes
+
+The spec records three claim classes:
+
+- engineering claims: replayable trajectories, manifests, hashes, and schemas;
+- benchmark claims: risk gates and paper-execution friction change outcomes
+  under shared assumptions;
+- scientific claims: model-specific reliability statements, which require
+  stable provider provenance, repeated seeds or rolling windows, wins over
+  non-LLM baselines, and failure-mode autopsy.
+
+The fixed non-LLM baseline set is: `always-hold`, `random`, `buy_and_hold`,
+`equal_weight`, `naive_momentum`, `mean_reversion`, `risk_parity`, `min_var`,
+and `markowitz_mvo`.
+
+## Market Rule Packages
+
+The protocol prefers deeper market rules over a wider list of unsupported asset
+classes. Rule packages include A-share T+1 and price limits, Hong Kong board
+lots and stamp duty, crypto fee tiers and funding, futures margin and roll
+windows, and suspension/circuit/liquidity halt stress. See
+[`docs/market_rules.md`](market_rules.md).
+
 ## Validation
 
 Run:
@@ -45,6 +68,9 @@ Failures are part of the benchmark:
 - execution rejections count as attempted orders;
 - missing data invalidates a row unless the scenario declares a data-gap rule
   before evaluation.
+- failure autopsy classifies overtrading, pre-risk leverage, low-confidence
+  bets, slippage or liquidity insensitivity, memory pollution,
+  rationale/decision mismatch, and position-limit noncompliance.
 
 This makes bad rows visible instead of letting leaderboard scripts quietly
 select only successful runs.

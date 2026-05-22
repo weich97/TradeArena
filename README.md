@@ -38,6 +38,7 @@
   <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
   <a href="docs/evaluation_rigor.md">Rigor</a> |
+  <a href="docs/claim_boundaries.md">Claims</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
@@ -111,6 +112,21 @@ multi-agent finance systems, and broader autonomous-agent evaluation. The
 included tasks are paper-only and research-oriented; they are not live trading
 recommendations.
 
+## Claim Boundary
+
+The repo distinguishes three claims:
+
+| Claim class | What the project can say | Evidence required |
+| --- | --- | --- |
+| Engineering | TradeArena records replayable trajectories, risk reports, fills, manifests, and hashes. | Runnable artifact, schema validation, and reproduction command. |
+| Benchmark | Risk gates and paper-execution frictions change measured outcomes under a frozen protocol. | Shared scenarios, seeds or rolling windows, fixed baselines, confidence intervals, and execution assumptions. |
+| Scientific | A model or agent class is more reliable for financial decisions. | Stable provider/version records, repeated runs, non-LLM baseline wins, failure autopsy, and independent replication. |
+
+Model rows that mix redaction, provider drift, cache-first behavior, and live
+calls should be read as benchmark evidence, not as broad claims that one model
+is generally better at trading. See
+[`docs/claim_boundaries.md`](docs/claim_boundaries.md).
+
 ## Why TradeArena?
 
 TradeArena is not a replacement for mature backtesting engines. It is a small
@@ -151,9 +167,10 @@ a decayed memory overlay when recent memory contains drawdowns, rejected orders,
 or risk violations. It records the configured `memory_decay_rate`, a weighted
 `memory_pollution_ratio` for noisy or invalid memory events, and
 `memory_driven_leverage_amplification`, the per-decision ratio between
-memory-adjusted and base target exposure. Classical baselines are also available, including equal
-buy-and-hold and a rolling minimum-variance strategy that estimates realized
-covariance from the current trajectory only.
+memory-adjusted and base target exposure. Classical baselines are first-class
+comparison rows: buy-and-hold, equal weight, naive momentum, mean reversion,
+risk parity, minimum variance, Markowitz/MVO, random, and always-hold. LLM rows
+should beat these anchors before any model-skill claim is made.
 
 Execution is split into two stages. First,
 [`TargetWeightExecutionAgent`](src/tradearena/agents/execution.py) translates
@@ -435,16 +452,22 @@ The v0.1 benchmark card makes one limited claim:
 
 The public leaderboard includes two model-comparison generators:
 
-- a synthetic matrix: seven LLMs plus `random` and `always-hold` anchors across
-  calm-trend, high-volatility, jump/tail, liquidity-collapse,
-  spread-explosion, and latency-spike scenarios;
+- a classical baseline matrix: buy-and-hold, equal weight, naive momentum,
+  mean reversion, risk parity, minimum variance, Markowitz/MVO, random, and
+  always-hold across the same synthetic and real-market scenarios;
+- a synthetic matrix: seven LLMs plus lower anchors across calm-trend,
+  high-volatility, jump/tail, liquidity-collapse, spread-explosion, and
+  latency-spike scenarios;
 - a real-market matrix: the same model set across Yahoo Finance `^GSPC`,
   `BTC-USD`, and CME Bitcoin futures (`BTC=F`) rolling windows.
 
 Models include Poe-hosted `gpt-5.5`, `gemini-3.1-pro`, `kimi-k2.5`, `glm-5`,
 `claude-opus-4.7`, plus direct `deepseek-v4-flash` and `deepseek-v4-pro`.
 The rows are redacted benchmark manifests; raw provider prompts and responses
-remain in ignored local caches.
+remain in ignored local caches. These rows are suitable for reliability and
+audit benchmarking; they should not be described as model-level trading-skill
+claims unless the model also beats the fixed non-LLM baselines under the frozen
+protocol.
 
 The leaderboard scripts now default to five seeds per `(model, scenario)` and
 write raw seed rows plus aggregate tables with mean, sample standard deviation,
@@ -491,10 +514,11 @@ python scripts/run_classical_baseline_matrix.py
 python scripts/build_quality_decomposition.py
 ```
 
-The classical baseline matrix runs naive momentum, mean reversion, risk parity,
-and minimum-variance allocation on the same synthetic and Yahoo Finance
-leaderboard scenarios. It is included so comparisons answer whether an LLM
-policy beats strong non-LLM baselines, not only other LLMs.
+The classical baseline matrix runs passive, random, trend-following,
+contrarian, volatility-weighted, minimum-variance, and Markowitz/MVO policies on
+the same synthetic and Yahoo Finance leaderboard scenarios. It is a main
+benchmark surface, not an appendix, because LLM rows must be compared against
+classical strategies before any scientific model claim is credible.
 The quality decomposition separates pre-risk alpha quality, risk discipline,
 and execution robustness in a three-axis radar chart.
 

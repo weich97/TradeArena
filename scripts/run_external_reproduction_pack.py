@@ -30,6 +30,11 @@ COMMANDS = [
         "description": "Render the Agent Autopsy Dashboard.",
     },
     {
+        "id": "failure_autopsy",
+        "argv": [sys.executable, "scripts/run_failure_autopsy.py"],
+        "description": "Classify trajectory failure modes.",
+    },
+    {
         "id": "validate_submission",
         "argv": [
             sys.executable,
@@ -51,6 +56,8 @@ ARTIFACTS = [
     "outputs/examples/audit_walkthrough_trajectory.json",
     "outputs/examples/audit_report.html",
     "outputs/examples/agent_autopsy_dashboard.html",
+    "outputs/examples/failure_autopsy.json",
+    "outputs/examples/failure_autopsy.md",
     "examples/benchmark_submissions/example_redacted_submission.json",
 ]
 

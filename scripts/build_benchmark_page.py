@@ -250,7 +250,7 @@ def _markdown(
             _wrap(
                 "The synthetic and real-market matrices include deterministic "
                 "non-LLM baselines so the benchmark can ask whether an LLM "
-                "policy beats classical strategies, not only other LLMs."
+                "policy beats fixed non-LLM strategies, not only other LLMs."
             ),
             "",
             _md_table(
@@ -509,7 +509,7 @@ def _html(
     if classical_comparison_rows:
         classical = _section(
             "Non-LLM Classical Baseline Check",
-            "Deterministic baselines answer whether LLM policies outperform classical strategies, not only other LLMs.",
+            "Deterministic baselines answer whether LLM policies outperform fixed non-LLM strategies, not only other LLMs.",
             _html_table(
                 ["Universe", "Scenario", "Best classical", "Classical return", "Best LLM", "LLM return", "Return gap", "LLM wins?"],
                 [
@@ -531,7 +531,7 @@ def _html(
     if classical_aggregate_rows:
         classical_aggregate = _section(
             "Classical Baseline Aggregate",
-            "Naive momentum, mean reversion, risk parity, and minimum variance across the benchmark scenarios.",
+            "Buy-and-hold, equal weight, random, always-hold, momentum, mean reversion, risk parity, minimum variance, and Markowitz/MVO across the benchmark scenarios.",
             _html_table(
                 ["Universe", "Baseline", "Scenarios", "Avg return", "Worst DD", "Avg Sharpe", "Avg fill", "Rejected", "Risk edits"],
                 [
