@@ -15,6 +15,25 @@ fit in one focused PR with one validation command.
 | `execution` | Affects order simulation, fills, fees, latency, or liquidity |
 | `docs` | Documentation-only or documentation-first work |
 
+## External Evidence Tasks
+
+These five tasks are the preferred first contributions because they strengthen
+the benchmark evidence chain: a non-maintainer can run it, question it, or
+submit a comparable result. Each task should take about 1-3 hours and can be
+filed through the external validation issue template or a small pull request.
+
+| Task | Time | Commands | Evidence to attach | Suggested labels |
+| --- | ---: | --- | --- | --- |
+| [Run v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | 1 hour | `python scripts/run_external_reproduction_pack.py` | `outputs/reproduction/v0_2/manifest.json`, Python version, shell log, deviations | `validation`, `reproducibility`, `good first issue` |
+| [Run v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | 1 hour | `python scripts/run_external_reproduction_pack.py` | same manifest plus distro, Python, and install notes | `validation`, `reproducibility`, `good first issue` |
+| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | `python scripts/run_classical_baseline_matrix.py`; `tradearena validate-submission <row.json>` | one schema-valid deterministic manifest, rebuilt registry diff, and reproducibility hash | `benchmark`, `good first issue` |
+| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | 2-3 hours | `python scripts/calibrate_quote_fill_model.py` or the Binance sample command in `docs/execution_model.md` | calibration JSON/Markdown with source, venue, date range, sample size, replay error, and residuals | `execution`, `validation`, `help wanted` |
+| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | `python scripts/check_release_readiness.py`; inspect `docs/claim_boundaries.md` | one issue or PR that maps a README/result claim to engineering, benchmark, or scientific evidence | `docs`, `discussion`, `validation` |
+
+Acceptance is deliberately narrow: one environment report, one row, one
+calibration report, or one claim critique. This keeps external validation
+reviewable without asking newcomers to understand the whole codebase.
+
 ## Good First Issues
 
 | Task | Suggested labels | Expected validation |

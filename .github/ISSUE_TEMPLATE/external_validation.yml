@@ -8,6 +8,11 @@ body:
     attributes:
       label: Validation type
       options:
+        - v0.2 reproduction pack on macOS
+        - v0.2 reproduction pack on Ubuntu
+        - Deterministic baseline row
+        - Quote/fill calibration mini-report
+        - Benchmark claim-boundary review
         - Deterministic smoke-test reproduction
         - Redacted LLM benchmark row
         - Historical-market replay

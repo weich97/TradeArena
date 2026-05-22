@@ -49,6 +49,23 @@ Report:
 - whether all checks passed;
 - output paths and any deviations.
 
+## Five Starter Validation Tasks
+
+These are the preferred first external reports because each one is small,
+reviewable, and directly improves the benchmark evidence chain.
+
+| Task | Target time | Submit |
+| --- | ---: | --- |
+| [Run v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | 1 hour | manifest, shell log, Python version, deviations |
+| [Run v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | 1 hour | manifest, distro/Python/install notes, deviations |
+| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | schema-valid manifest, registry diff, reproducibility hash |
+| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | 2-3 hours | calibration JSON/Markdown, data source, venue, sample size, replay error |
+| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | issue or PR mapping one claim to engineering, benchmark, or scientific evidence |
+
+Do not summarize these as "community interest." They count only when the
+commands, artifacts, and deviations are public enough for another reader to
+audit.
+
 ## LLM Validation
 
 For a live or cache-backed LLM row, submit a redacted benchmark manifest rather

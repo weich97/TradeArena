@@ -365,19 +365,22 @@ Finance, or broker APIs unless you run the opt-in commands below.
 
 ## Contributor Entry Points
 
-Small, reviewable contributions are the intended path for outside users:
+The most useful early contributions are not broad feature requests. They are
+small external evidence tasks that show a non-maintainer can run, question, or
+submit benchmark evidence:
 
-- Start with the task list in
-  [`docs/community_tasks.md`](docs/community_tasks.md).
-- Create a plugin with
-  `tradearena new-plugin --type risk --name max-drawdown-guard`.
-- Follow the plugin contracts in
-  [`docs/plugin_development.md`](docs/plugin_development.md).
-- Submit redacted benchmark rows through
-  [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md).
-- Use the challenge format in
-  [`docs/benchmark_challenges.md`](docs/benchmark_challenges.md) for
-  reproducible comparisons.
+| Task | Time | Evidence to submit |
+| --- | ---: | --- |
+| [Run the v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | 1 hour | `outputs/reproduction/v0_2/manifest.json`, Python version, command log, deviations |
+| [Run the v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | 1 hour | same manifest plus OS/package-manager notes |
+| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | one schema-valid manifest and rebuilt registry output |
+| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | 2-3 hours | calibration JSON/Markdown with source, venue, date range, and replay error |
+| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | one issue or PR mapping a README/result claim to engineering, benchmark, or scientific evidence |
+
+The concrete commands, acceptance criteria, and issue labels are in
+[`docs/community_tasks.md`](docs/community_tasks.md). For plugin work, use
+`tradearena new-plugin --type risk --name max-drawdown-guard` and follow
+[`docs/plugin_development.md`](docs/plugin_development.md).
 
 ## LLM Run Paths
 

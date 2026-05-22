@@ -23,12 +23,19 @@ not evidence of external adoption.
 
 ## Good First Participation Paths
 
-- Reproduce `tradearena --benchmark tradearena-core` and file an external
-  validation issue.
-- Submit one redacted benchmark manifest for a model or deterministic baseline.
-- Add a small execution stress preset with a CSV/JSON/SVG artifact.
-- Improve a documentation page by mapping one claim to one runnable command.
-- Add a data sidecar example with a clear license and no private fields.
+Start with one of these 1-3 hour tasks:
+
+| Task | What it proves |
+| --- | --- |
+| [Run the v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | A fresh non-maintainer environment can generate the same artifact manifest |
+| [Run the v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | The no-key path is not maintainer-machine specific |
+| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | The registry can accept comparable non-LLM evidence |
+| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | Execution claims can be checked against quote/fill data rather than stress assumptions alone |
+| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | Public wording stays tied to engineering, benchmark, or scientific evidence |
+
+The task checklist and commands live in
+[`docs/community_tasks.md`](community_tasks.md). Use the external validation
+issue template for reports and small PRs for manifests or documentation fixes.
 
 ## Review Standards
 
