@@ -112,7 +112,7 @@ Useful files:
 
 - `outputs/examples/audit_report.html`
 - `outputs/examples/agent_autopsy_dashboard.html`
-- `outputs/examples/benchmark-v0.1.html`
+- `outputs/examples/benchmark-v0.2.html`
 - `outputs/examples/showcase.html`
 - `outputs/examples/execution_realism_sweep.svg`
 - `outputs/examples/portfolio_markowitz.svg`

@@ -37,7 +37,7 @@
   <a href="https://pypi.org/project/tradearena-benchmark/">PyPI</a> |
   <a href="https://weich97.github.io/TradeArena/">Project site</a> |
   <a href="https://weich97.github.io/TradeArena/agent_autopsy_dashboard.html">Agent Autopsy</a> |
-  <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark card</a> |
+  <a href="https://weich97.github.io/TradeArena/benchmark-v0.2.html">Benchmark card</a> |
   <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
   <a href="docs/evaluation_rigor.md">Rigor</a> |
@@ -468,7 +468,7 @@ tradearena --benchmark tradearena-core
 
 ## Benchmark Result
 
-The v0.1 benchmark card makes one limited claim:
+The v0.2 benchmark card makes one limited claim:
 
 > Autonomous financial-agent results can change materially once risk gates and
 > paper-execution costs are included.
@@ -507,7 +507,7 @@ walk-forward provenance table so cache-backed runs and provider drift remain
 auditable. Full live refreshes can be provider-costly; use a smaller `--models`,
 `--scenarios`, or `--seeds` slice for smoke tests.
 
-The frozen comparison contract for the next benchmark card is
+The frozen comparison contract for this benchmark card is
 [`benchmarks/v0.2/spec.json`](benchmarks/v0.2/spec.json), with a human-readable
 summary in [`docs/benchmark_v0_2_spec.md`](docs/benchmark_v0_2_spec.md). Validate
 and hash it with:
@@ -519,11 +519,11 @@ python scripts/validate_benchmark_spec.py benchmarks/v0.2/spec.json
 Open:
 
 - Static page:
-  [`weich97.github.io/TradeArena/benchmark-v0.1.html`](https://weich97.github.io/TradeArena/benchmark-v0.1.html)
+  [`weich97.github.io/TradeArena/benchmark-v0.2.html`](https://weich97.github.io/TradeArena/benchmark-v0.2.html)
 - Leaderboard:
   [`weich97.github.io/TradeArena/community_registry.html`](https://weich97.github.io/TradeArena/community_registry.html)
 - Markdown artifact:
-  [`docs/results/benchmark_v0_1.md`](docs/results/benchmark_v0_1.md)
+  [`docs/results/benchmark_v0_2.md`](docs/results/benchmark_v0_2.md)
 - Model matrix:
   [`docs/results/model_matrix/leaderboard_model_matrix.md`](docs/results/model_matrix/leaderboard_model_matrix.md)
 - Real-market matrix:
@@ -650,6 +650,8 @@ Useful entry points:
 - Technical white paper: [`docs/technical_report.md`](docs/technical_report.md)
 - Benchmark maturity:
   [`docs/benchmark_maturity.md`](docs/benchmark_maturity.md)
+- v0.2 credibility audit:
+  [`docs/v0_2_credibility_audit.md`](docs/v0_2_credibility_audit.md)
 - Academic report plan:
   [`docs/academic_report_plan.md`](docs/academic_report_plan.md)
 - External validation:

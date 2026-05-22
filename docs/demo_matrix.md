@@ -18,12 +18,12 @@ without reading the full source tree.
 - Artifact: `outputs/examples/showcase.html`
 - Shows: a public-facing demo surface with links to every generated artifact.
 
-### Benchmark v0.1 Card
+### Benchmark v0.2 Card
 
 - Run: `python scripts/build_benchmark_page.py`
 - Artifacts:
-  - `outputs/examples/benchmark-v0.1.html`
-  - `docs/results/benchmark_v0_1.md`
+  - `outputs/examples/benchmark-v0.2.html`
+  - `docs/results/benchmark_v0_2.md`
 - Shows: crisis scenes, intraday portfolio probes, execution-aware baselines,
   and representation robustness as a compact result page.
 

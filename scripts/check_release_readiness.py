@@ -14,6 +14,7 @@ REQUIRED_FILES = [
     "docs/advanced_integrations_security.md",
     "docs/technical_report.md",
     "docs/benchmark_maturity.md",
+    "docs/v0_2_credibility_audit.md",
     "docs/academic_report_plan.md",
     "docs/external_validation.md",
     "docs/claim_boundaries.md",
@@ -34,7 +35,7 @@ REQUIRED_FILES = [
     "docs/launch/release_notes_v0.2.0.md",
     "docs/launch/release_artifacts_v0.2.0.md",
     "docs/launch/release_artifacts_v0.2.0.json",
-    "docs/results/benchmark_v0_1.md",
+    "docs/results/benchmark_v0_2.md",
     "docs/results/llm_live_baseline.md",
     "docs/results/llm_live_baseline.json",
     "docs/results/execution_quote_fill_calibration_sample.md",
@@ -130,7 +131,7 @@ def main() -> int:
         for match in _git_ls_files(pattern):
             failures.append(f"forbidden tracked artifact: {match}")
 
-    public_text_files = [ROOT / "README.md", ROOT / "docs/results/benchmark_v0_1.md"]
+    public_text_files = [ROOT / "README.md", ROOT / "docs/results/benchmark_v0_2.md"]
     for path in public_text_files:
         if path.exists():
             text = path.read_text(encoding="utf-8", errors="ignore").lower()

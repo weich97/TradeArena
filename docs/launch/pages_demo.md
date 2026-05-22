@@ -23,7 +23,7 @@ Useful entry points:
 
 - `index.html`: landing page
 - `showcase.html`: demo portal
-- `benchmark-v0.1.html`: compact benchmark result page
+- `benchmark-v0.2.html`: compact benchmark result page
 - `audit_report.html`: replayable audit report
 - `agent_autopsy_dashboard.html`: intent/execution autopsy dashboard
 - `crisis_snapshot_gallery.html`: diagnostic visual gallery

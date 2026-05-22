@@ -37,7 +37,7 @@ jobs:
           Entry points:
             index.html
             showcase.html
-            benchmark-v0.1.html
+            benchmark-v0.2.html
             audit_report.html
             crisis_snapshot_gallery.html
             retail_planning_report.html

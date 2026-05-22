@@ -21,9 +21,9 @@ SECTIONS = [
         "python scripts/run_launch_demo.py",
     ),
     (
-        "Benchmark v0.1 snapshot",
+        "Benchmark v0.2 card",
         "A compact result page for agent reliability, execution-aware baselines, intraday portfolio probes, and representation robustness.",
-        "benchmark-v0.1.html",
+        "benchmark-v0.2.html",
         "python scripts/build_benchmark_page.py",
     ),
     (
@@ -136,7 +136,7 @@ def main() -> int:
         _run([sys.executable, "scripts/run_launch_demo.py", "--skip-paper-figures"], "Launch demo portal")
         _preserve_launch_portal()
         _run([sys.executable, "scripts/build_quality_decomposition.py"], "Decision/execution quality radar")
-        _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.1 result page")
+        _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.2 result page")
         _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
         _run([sys.executable, "scripts/run_paper_design_demos.py"], "Experiment-design demo suite")
         _run([sys.executable, "examples/visual_tour_demo.py"], "Animated visual tour")
@@ -151,7 +151,7 @@ def main() -> int:
         _preserve_launch_portal()
         _maybe_render_agent_autopsy()
         _run([sys.executable, "scripts/build_quality_decomposition.py"], "Decision/execution quality radar")
-        _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.1 result page")
+        _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.2 result page")
         _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
 
     _copy_pages_assets()
@@ -308,7 +308,7 @@ h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.06; letter-spacing: 0; }
       <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TradeArena also includes opt-in live or cache-backed LLM analyst runs through the same reliability lifecycle: observation -> signal -> intended allocation -> risk gate -> order -> fill/rejection -> portfolio state -> diagnostic report.</p>
       <div class="cta">
         <a href="showcase.html">Open showcase</a>
-        <a href="benchmark-v0.1.html">Benchmark v0.1</a>
+        <a href="benchmark-v0.2.html">Benchmark v0.2</a>
         <a href="demo_video.html">Watch demo</a>
         <a href="https://github.com/weich97/TradeArena">GitHub</a>
       </div>
@@ -336,7 +336,7 @@ python scripts/run_showcase.py
     </div>
   </section>
   <section class="grid">
-    <a class="card" href="benchmark-v0.1.html"><strong>Benchmark result page</strong><span>Agent reliability, intraday portfolio probes, and representation robustness in one compact snapshot.</span></a>
+    <a class="card" href="benchmark-v0.2.html"><strong>Benchmark result page</strong><span>Agent reliability, intraday portfolio probes, and representation robustness in one compact snapshot.</span></a>
     <a class="card" href="community_registry.html"><strong>Community registry</strong><span>Validate redacted benchmark submissions and compare runs without raw provider text.</span></a>
     <a class="card" href="audit_report.html"><strong>Replayable audit report</strong><span>Trace one decision through observation, proposal, risk revision, execution, memory, and reproducibility fields.</span></a>
     <a class="card" href="agent_autopsy_dashboard.html"><strong>Agent Autopsy Dashboard</strong><span>Compare intent, risk-approved exposure, executed weights, slippage attribution, and intervention timing.</span></a>

@@ -26,7 +26,7 @@ Ideal backtests often assume immediate fills. TradeArena exposes the friction:
 - partial fills
 - pending and rejected orders
 
-The v0.1 benchmark card shows why this matters. Under realistic execution,
+The v0.2 benchmark card shows why this matters. Under realistic execution,
 evaluation includes fill rate, rejection rate, risk edits, and audit
 completeness alongside return and drawdown.
 
@@ -68,13 +68,13 @@ python scripts/run_showcase.py
 Then open:
 
 - `outputs/examples/index.html`
-- `outputs/examples/benchmark-v0.1.html`
+- `outputs/examples/benchmark-v0.2.html`
 - `outputs/examples/audit_report.html`
 
 GitHub Pages:
 
 - <https://weich97.github.io/TradeArena/>
-- <https://weich97.github.io/TradeArena/benchmark-v0.1.html>
+- <https://weich97.github.io/TradeArena/benchmark-v0.2.html>
 
 TradeArena is not financial advice and not a live trading bot. It is an
 open-source research prototype for studying whether autonomous financial agents

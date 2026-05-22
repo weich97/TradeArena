@@ -24,6 +24,10 @@ CALIBRATION_REPORTS = [
     ("public Binance BTCUSDT perpetual sample", ROOT / "docs/results/execution_quote_fill_calibration_binance_sample.json"),
 ]
 RELEASE_TAG = "v0.2.0"
+BENCHMARK_VERSION = "v0.2"
+BENCHMARK_TITLE = "TradeArena v0.2 Benchmark Card"
+LEGACY_MARKDOWN = ROOT / "docs/results/benchmark_v0_1.md"
+LEGACY_HTML = ROOT / "outputs/examples/benchmark-v0.1.html"
 POLICY_LABELS = {
     "gpt-5.5": "frontier-policy-A (redacted)",
     "claude-opus-4.7": "frontier-policy-B (redacted)",
@@ -33,9 +37,9 @@ POLICY_LABELS = {
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build the TradeArena v0.1 benchmark result page.")
-    parser.add_argument("--markdown", default="docs/results/benchmark_v0_1.md")
-    parser.add_argument("--html", default="outputs/examples/benchmark-v0.1.html")
+    parser = argparse.ArgumentParser(description="Build the TradeArena v0.2 benchmark result page.")
+    parser.add_argument("--markdown", default="docs/results/benchmark_v0_2.md")
+    parser.add_argument("--html", default="outputs/examples/benchmark-v0.2.html")
     args = parser.parse_args()
 
     crisis_rows = _read_csv(CRISIS_CSV)
@@ -80,6 +84,11 @@ def main() -> int:
     html_path.parent.mkdir(parents=True, exist_ok=True)
     markdown_path.write_text(md, encoding="utf-8")
     html_path.write_text(html_text, encoding="utf-8")
+    if markdown_path.relative_to(ROOT).as_posix() == "docs/results/benchmark_v0_2.md":
+        LEGACY_MARKDOWN.write_text(_legacy_markdown_alias(), encoding="utf-8")
+    if html_path.relative_to(ROOT).as_posix() == "outputs/examples/benchmark-v0.2.html":
+        LEGACY_HTML.parent.mkdir(parents=True, exist_ok=True)
+        LEGACY_HTML.write_text(_legacy_html_alias(), encoding="utf-8")
 
     print(f"Wrote {markdown_path.relative_to(ROOT)}")
     print(f"Wrote {html_path.relative_to(ROOT)}")
@@ -192,12 +201,12 @@ def _markdown(
 ) -> str:
     provenance = _provenance_rows()
     lines = [
-        "# TradeArena v0.1 Benchmark Card",
+        f"# {BENCHMARK_TITLE}",
         "",
         _wrap(
             "TradeArena is a financial-agent reliability benchmark and audit "
             "framework, not a profitability claim. This page gives a compact, "
-            "citable snapshot of what the v0.1 artifacts show under execution "
+            "citable snapshot of what the v0.2 artifacts show under execution "
             "realism, risk gates, and replayable intent-to-execution trajectories."
         ),
         "",
@@ -218,7 +227,7 @@ def _markdown(
         "as calibrated execution-cost estimates unless they attach quote/order-book/fill provenance.",
         "",
         f"- Software release: {RELEASE_TAG}.",
-        "- Benchmark snapshot lineage: v0.1.",
+        f"- Benchmark snapshot lineage: {BENCHMARK_VERSION}.",
         "- Benchmark card source: tracked snapshots under `docs/results/`.",
         "- Reproduction command:",
         "",
@@ -232,6 +241,13 @@ def _markdown(
         "- Live model calls: not required for first-run reproduction.",
         "- Raw prompt/response caches: not included.",
         "- Intended use: agent reliability and audit research, not trading advice.",
+        "",
+        "## Claim Badges And Validation Status",
+        "",
+        _md_table(
+            ["Surface", "Badge / status", "Evidence boundary"],
+            _claim_status_rows(),
+        ),
         "",
         "## What Is Measured",
         "",
@@ -513,7 +529,7 @@ def _markdown(
         "",
         _wrap(
             "A result is more useful when the diagnostic survives multiple "
-            "representation views. The v0.1 tracked snapshot includes 80 "
+            "representation views. The v0.2 tracked snapshot includes 80 "
             "rolling failure anchors and 320 pre-failure steps across eight "
             "LLM trajectories."
         ),
@@ -558,6 +574,11 @@ def _html(
     calibration_rows: list[dict[str, Any]],
 ) -> str:
     provenance = _provenance_rows()
+    claim_status_section = _section(
+        "Claim Badges And Validation Status",
+        "Rows are evidence-ranked before they are ranked by performance.",
+        _html_table(["Surface", "Badge / status", "Evidence boundary"], _claim_status_rows()),
+    )
     quickstart = ""
     if quickstart_rows:
         quickstart = _section(
@@ -771,7 +792,7 @@ def _html(
     )
     measured_section = _section(
         "What Is Measured",
-        "The v0.1 card emphasizes audit and execution dimensions, not only return.",
+        "The v0.2 card emphasizes audit and execution dimensions, not only return.",
         (
             "<ul>"
             "<li>Return and max drawdown.</li>"
@@ -806,7 +827,7 @@ def _html(
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TradeArena v0.1 Benchmark Card</title>
+<title>{BENCHMARK_TITLE}</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; color: #0f172a; background: #f8fafc; }}
 main {{ max-width: 1180px; margin: 0 auto; padding: 42px 24px 58px; }}
@@ -830,7 +851,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
 </style>
 <main>
   <div class="hero">
-    <h1>TradeArena v0.1 Benchmark Card</h1>
+    <h1>{BENCHMARK_TITLE}</h1>
     <p class="lead">Execution realism and risk gates materially change autonomous financial-agent evaluation. This is a compact, citable result page for agent reliability and intent-to-execution audit, not a profitability claim or financial advice.</p>
     <div class="links">
       <a href="showcase.html">Showcase</a>
@@ -841,6 +862,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
     <div class="claim-banner">Execution mode: <code>realistic-stress</code>, not calibrated transaction-cost prediction. Default results use shared stress assumptions; calibrated claims require quote/order-book/fill provenance.</div>
   </div>
   {provenance_section}
+  {claim_status_section}
   {measured_section}
   {quickstart}
   {classical}
@@ -886,7 +908,7 @@ def _md_table(headers: list[str], rows: list[list[str]]) -> str:
 def _provenance_rows() -> list[list[str]]:
     return [
         ["Software release", RELEASE_TAG],
-        ["Benchmark lineage", "v0.1 snapshot"],
+        ["Benchmark lineage", f"{BENCHMARK_VERSION} snapshot"],
         ["Benchmark card source", "`docs/results/` tracked snapshots plus first-run outputs"],
         [
             "Reproduction command",
@@ -897,6 +919,68 @@ def _provenance_rows() -> list[list[str]]:
         ["Raw prompt/response caches", "not included"],
         ["Intended use", "agent reliability and audit research, not trading advice"],
     ]
+
+
+def _claim_status_rows() -> list[list[str]]:
+    return [
+        [
+            "Execution mode",
+            "`stress-only` by default",
+            "Default rows are stress-simulator evidence, not calibrated transaction-cost prediction.",
+        ],
+        [
+            "Calibration evidence",
+            "`quote-calibrated` sample rows",
+            "Fixture and public Binance samples show calibration plumbing; broader venue claims need external reports.",
+        ],
+        [
+            "Provider rows",
+            "`cached-provider` / `redacted-prompt`",
+            "Useful reliability probes; not enough for strong model-skill claims without independent repetition.",
+        ],
+        [
+            "Baselines",
+            "`deterministic-baseline`",
+            "Classical baselines are main anchors, not appendix rows.",
+        ],
+        [
+            "Reproduction",
+            "`fresh-environment` CI passing",
+            "CI installs `tradearena-benchmark==0.2.0`, generates artifacts, hashes a run, and replays a step.",
+        ],
+        [
+            "External validation",
+            "open: macOS, Ubuntu, Colab/Binder, baseline, calibration, claim review",
+            "Independent reports are requested in issues #43, #44, #45, #46, #47, and #48.",
+        ],
+    ]
+
+
+def _legacy_markdown_alias() -> str:
+    return "\n".join(
+        [
+            "# TradeArena v0.1 Benchmark Card",
+            "",
+            "The maintained benchmark card is now `docs/results/benchmark_v0_2.md`.",
+            "The v0.1 path is kept as a compatibility pointer for older links.",
+            "",
+            "Open: [`benchmark_v0_2.md`](benchmark_v0_2.md).",
+            "",
+        ]
+    )
+
+
+def _legacy_html_alias() -> str:
+    return """<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=benchmark-v0.2.html">
+<title>TradeArena Benchmark Card Moved</title>
+<body>
+<p>The benchmark card moved to <a href="benchmark-v0.2.html">benchmark-v0.2.html</a>.</p>
+</body>
+</html>
+"""
 
 
 def _mean(rows: list[dict[str, str]], field: str) -> float:
