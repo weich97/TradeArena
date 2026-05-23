@@ -133,6 +133,7 @@ REQUIRED_FILES = [
     "scripts/calibrate_quote_fill_model.py",
     "scripts/download_binance_microstructure_sample.py",
     "scripts/validate_benchmark_spec.py",
+    "scripts/validate_reproduction_report.py",
     "scripts/run_external_reproduction_pack.py",
     "scripts/run_failure_autopsy.py",
     "scripts/validate_benchmark_submission.py",

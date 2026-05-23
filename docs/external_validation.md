@@ -40,6 +40,12 @@ This writes `outputs/reproduction/v0_2/manifest.json` with commit, Python
 version, commands, output hashes, trajectory hash, and whether live APIs,
 downloaded market data, or private fills were used.
 
+Validate the report before submitting it:
+
+```bash
+python scripts/validate_reproduction_report.py outputs/reproduction/v0_2/manifest.json
+```
+
 Report:
 
 - commit hash or release tag;

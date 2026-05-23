@@ -85,6 +85,8 @@ jobs:
         run: |
           /tmp/ta-clean/bin/python scripts/run_external_reproduction_pack.py \
             --output-dir outputs/fresh/reproduction
+          /tmp/ta-clean/bin/python scripts/validate_reproduction_report.py \
+            outputs/fresh/reproduction/manifest.json
       - name: Hash and replay first-contact artifact
         run: |
           /tmp/ta-clean/bin/tradearena \

@@ -22,6 +22,12 @@ history. The script runs:
 - `tradearena validate-submission examples/benchmark_submissions/example_redacted_submission.json`
 - `scripts/check_release_readiness.py`
 
+Validate the generated manifest before submitting it:
+
+```bash
+python scripts/validate_reproduction_report.py outputs/reproduction/v0_2/manifest.json
+```
+
 ## Required Report Fields
 
 Every reproduction report must include:

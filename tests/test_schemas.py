@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator
 
+from scripts.validate_reproduction_report import validate_reproduction_report
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.evaluation.submissions import validate_submission_file
 from tradearena.tools.calibration import summarize_execution_calibration, summarize_quote_fill_calibration
@@ -77,6 +80,42 @@ def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():
         assert errors == [], path
 
 
+def test_reproduction_report_validator_rejects_failed_required_commands(tmp_path: Path):
+    payload = _minimal_reproduction_report()
+    payload["commands"][0]["returncode"] = 2
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    errors = validate_reproduction_report(payload)
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_reproduction_report.py", str(path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "command trajectory returned 2" in errors
+    assert result.returncode == 1
+    assert "command trajectory returned 2" in result.stdout
+
+
+def test_reproduction_report_validator_accepts_complete_manifest(tmp_path: Path):
+    payload = _minimal_reproduction_report()
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+
+    assert validate_reproduction_report(payload) == []
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_reproduction_report.py", str(path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert "Valid reproduction report" in result.stdout
+
+
 def _validator(schema_name: str) -> Draft202012Validator:
     schema = _load_schema(schema_name)
     Draft202012Validator.check_schema(schema)
@@ -95,3 +134,44 @@ def _json_default(value: object) -> str:
     if isinstance(value, datetime):
         return value.isoformat()
     return str(value)
+
+
+def _minimal_reproduction_report() -> dict[str, Any]:
+    return {
+        "schema": "tradearena_external_reproduction_pack_v1",
+        "created_at": "2026-05-23T00:00:00+00:00",
+        "repository": "https://github.com/weich97/TradeArena",
+        "commit_or_tag": "v0.2.0",
+        "git_status_short": "",
+        "python": {
+            "version": "3.12.0",
+            "implementation": "CPython",
+            "executable": "python",
+            "platform": "test",
+        },
+        "commands": [
+            {
+                "id": "trajectory",
+                "description": "Generate trajectory",
+                "argv": ["python", "examples/audit_trajectory_walkthrough.py"],
+                "returncode": 0,
+            }
+        ],
+        "artifacts": [
+            {
+                "path": "outputs/examples/audit_walkthrough_trajectory.json",
+                "exists": True,
+                "bytes": 100,
+                "sha256": "sha256:" + "0" * 64,
+            }
+        ],
+        "trajectory_hash": {
+            "path": "outputs/examples/audit_walkthrough_trajectory.json",
+            "file_sha256": "sha256:" + "1" * 64,
+            "scenario_id": "audit_walkthrough",
+            "reproducibility_hash": "sha256:" + "2" * 64,
+        },
+        "live_api_used": False,
+        "market_data_used": "deterministic synthetic data",
+        "private_fills_used": False,
+    }
