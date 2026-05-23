@@ -391,6 +391,8 @@ accuracy, risk-gate understanding, execution-boundary awareness, claim
 discipline, reproduction awareness, and narrow plugin engineering.
 The tracked task matrix is in
 [`docs/results/skill_task_matrix.md`](docs/results/skill_task_matrix.md).
+Reference answers in `examples/skill_task_answers/reference/` provide a
+maintainer baseline for the scoring harness.
 
 ## LLM Run Paths
 

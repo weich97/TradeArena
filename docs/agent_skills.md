@@ -66,6 +66,7 @@ Run:
 python scripts/validate_skill_contract.py skills
 python scripts/build_skill_index.py skills --output docs/agent_skills_index.md --check
 python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --validate-only
+python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --answers-dir examples/skill_task_answers/reference
 ```
 
 The validator checks that every skill has a purpose, required inputs, safety

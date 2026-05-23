@@ -5,16 +5,19 @@ import json
 from pathlib import Path
 from typing import Any
 
-from score_skill_task import ABILITY_LABELS, validate_tasks
+from score_skill_task import ABILITY_LABELS, score_task, validate_tasks
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TASKS_DIR = ROOT / "examples" / "skill_tasks"
+DEFAULT_ANSWERS_DIR = ROOT / "examples" / "skill_task_answers" / "reference"
 DEFAULT_OUTPUT = ROOT / "docs" / "results" / "skill_task_matrix.md"
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the TradeArena skill task matrix report.")
     parser.add_argument("--tasks-dir", default=str(DEFAULT_TASKS_DIR), help="Directory containing skill task folders.")
+    parser.add_argument("--answers-dir", default=str(DEFAULT_ANSWERS_DIR), help="Optional directory of <task_id>.md answers to score.")
+    parser.add_argument("--answers-label", default="reference", help="Label for the scored answer set.")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Markdown report path.")
     parser.add_argument("--check", action="store_true", help="Fail if the tracked report is stale.")
     args = parser.parse_args(argv)
@@ -29,7 +32,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  - {failure}")
         return 1
 
-    markdown = render_report(task_paths)
+    answers_dir = Path(args.answers_dir)
+    answer_scores = score_answers(task_paths, answers_dir) if answers_dir.exists() else []
+    markdown = render_report(task_paths, answer_scores, answers_label=args.answers_label)
     if args.check:
         if not output.exists():
             print(f"Skill task matrix is missing: {output}")
@@ -46,8 +51,9 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def render_report(task_paths: list[Path]) -> str:
+def render_report(task_paths: list[Path], answer_scores: list[dict[str, Any]] | None = None, *, answers_label: str = "reference") -> str:
     rubrics = [_load_rubric(path / "rubric.json") for path in task_paths]
+    answer_scores = answer_scores or []
     lines = [
         "# TradeArena Skill Task Matrix",
         "",
@@ -87,6 +93,28 @@ def render_report(task_paths: list[Path]) -> str:
             f"{len(rubric['criteria'])} | {rubric['pass_threshold']} | {_escape(hard_fail_terms)} |"
         )
 
+    if answer_scores:
+        passed = sum(1 for row in answer_scores if row["passed"])
+        score = sum(int(row["score"]) for row in answer_scores)
+        max_score = sum(int(row["max_score"]) for row in answer_scores)
+        lines.extend(
+            [
+                "",
+                f"## {answers_label.title()} Answer Scorecard",
+                "",
+                f"Summary: {passed}/{len(answer_scores)} tasks passed; {score}/{max_score} rubric points earned.",
+                "",
+                "| Task | Ability | Score | Threshold | Passed | Hard fail |",
+                "| --- | --- | ---: | ---: | --- | --- |",
+            ]
+        )
+        for row in answer_scores:
+            lines.append(
+                f"| `{row['task_id']}` | {ABILITY_LABELS[row['ability']]} | "
+                f"{row['score']}/{row['max_score']} | {row['pass_threshold']} | "
+                f"{_bool_icon(bool(row['passed']))} | {_bool_icon(bool(row['hard_failed']))} |"
+            )
+
     lines.extend(
         [
             "",
@@ -95,6 +123,7 @@ def render_report(task_paths: list[Path]) -> str:
             "```bash",
             "python scripts/validate_skill_contract.py skills",
             "python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --validate-only",
+            "python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --answers-dir examples/skill_task_answers/reference",
             "python scripts/score_skill_task_report.py --tasks-dir examples/skill_tasks --output docs/results/skill_task_matrix.md --check",
             "```",
             "",
@@ -105,6 +134,16 @@ def render_report(task_paths: list[Path]) -> str:
 
 def _load_rubric(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def score_answers(task_paths: list[Path], answers_dir: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for task_path in task_paths:
+        answer_path = answers_dir / f"{task_path.name}.md"
+        if not answer_path.exists():
+            continue
+        rows.append(score_task(task_path, answer_path.read_text(encoding="utf-8")).to_dict())
+    return rows
 
 
 def _ability_task(ability: str) -> str:
@@ -131,6 +170,10 @@ def _ability_scoring(ability: str) -> str:
 
 def _escape(value: str) -> str:
     return value.replace("|", "\\|")
+
+
+def _bool_icon(value: bool) -> str:
+    return "yes" if value else "no"
 
 
 if __name__ == "__main__":

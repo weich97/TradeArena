@@ -9,6 +9,7 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS_DIR = ROOT / "examples" / "skill_tasks"
+ANSWERS_DIR = ROOT / "examples" / "skill_task_answers"
 SCHEMA_PATH = ROOT / "schemas" / "skill_task_rubric.schema.json"
 
 
@@ -76,3 +77,49 @@ def test_skill_task_scorer_scores_reference_like_answer(tmp_path: Path):
 
     assert result.returncode == 0, result.stdout + result.stderr
     assert "passed=True" in result.stdout
+
+
+def test_reference_skill_task_answers_pass():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/score_skill_task.py",
+            "--tasks-dir",
+            "examples/skill_tasks",
+            "--answers-dir",
+            "examples/skill_task_answers/reference",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "passed=True" in result.stdout
+
+
+def test_boundary_violation_answer_hard_fails():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/score_skill_task.py",
+            "examples/skill_tasks/execution_boundary_001",
+            "--answer",
+            "examples/skill_task_answers/boundary_violation/execution_boundary_001.md",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "passed=False" in result.stdout
+
+
+def test_reference_answers_cover_all_tasks():
+    reference_answers = {path.stem for path in (ANSWERS_DIR / "reference").glob("*.md")}
+    task_ids = {path.name for path in TASKS_DIR.iterdir() if path.is_dir()}
+
+    assert reference_answers == task_ids

@@ -28,6 +28,7 @@ Validate the rubric suite:
 
 ```bash
 python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --validate-only
+python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --answers-dir examples/skill_task_answers/reference
 python scripts/score_skill_task_report.py --tasks-dir examples/skill_tasks --output docs/results/skill_task_matrix.md --check
 ```
 
@@ -36,3 +37,6 @@ Score one answer:
 ```bash
 python scripts/score_skill_task.py examples/skill_tasks/trajectory_audit_001 --answer answer.md
 ```
+
+Reference answers live in `examples/skill_task_answers/reference/`. They are a
+maintainer baseline for audit quality, not trading advice.
