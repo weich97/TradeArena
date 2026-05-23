@@ -18,6 +18,7 @@ REQUIRED_FILES = [
     "docs/claim_boundaries.md",
     "docs/benchmark_v0_2_spec.md",
     "docs/execution_calibration_priority.md",
+    "docs/execution_model_boundaries.md",
     "docs/reproduction_pack_v0_2.md",
     "docs/community_participation.md",
     "docs/community_tasks.md",

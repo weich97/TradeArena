@@ -4,6 +4,21 @@ The next credibility milestone is execution calibration, not a larger model
 matrix. The default simulator remains a transparent stress model until a result
 attaches quote, order-book, or realized fill evidence.
 
+## Implementation Boundary
+
+Execution code now lives under `src/tradearena/execution/`:
+
+- `simple.py` contains idealized paper fills.
+- `stress.py` contains the configurable stress simulator plus calibrated and
+  quote-replay variants.
+- `fill_replay.py` contains realized-fill audit replay.
+- `calibration.py` exposes the execution-facing calibration helpers.
+
+`src/tradearena/tools/simulator.py` is a compatibility re-export for existing
+scripts and notebooks. New code should import from `tradearena.execution` so
+stress assumptions, calibrated evidence, quote replay, and fill replay remain
+separate in code review and benchmark evidence tags.
+
 ## Priority Order
 
 1. **Quote/fill fit:** fit spread, residual slippage, participation, latency,

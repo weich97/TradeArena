@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
+import tradearena.execution as execution
+import tradearena.tools.simulator as simulator_compat
 from tradearena.agents import MaxPositionRiskManager
 from tradearena.core.domain import Bar, Decision, Fill, MarketSnapshot, Order, PortfolioState, Side
 from tradearena.tools import FillReplayOrderSimulator, RealisticOrderSimulator
@@ -26,6 +28,14 @@ def _snapshot(volume: float = 1_000.0) -> MarketSnapshot:
             )
         },
     )
+
+
+def test_execution_package_and_tools_simulator_share_public_classes():
+    assert execution.RealisticOrderSimulator is simulator_compat.RealisticOrderSimulator
+    assert execution.FillReplayOrderSimulator is simulator_compat.FillReplayOrderSimulator
+    assert execution.SimpleOrderSimulator is simulator_compat.SimpleOrderSimulator
+    assert execution.EXECUTION_STRESS == "stress"
+    assert execution.EXECUTION_FILL_REPLAY == "fill_replay"
 
 
 @settings(max_examples=40, deadline=None)

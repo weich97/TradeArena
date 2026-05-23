@@ -181,7 +181,7 @@ Execution is split into two stages. First,
 approved target weights into market orders by comparing current position value
 with target portfolio value. Trades below `min_trade_value` are skipped to avoid
 noise. Second,
-[`RealisticOrderSimulator`](src/tradearena/tools/simulator.py) applies a
+[`RealisticOrderSimulator`](src/tradearena/execution/stress.py) applies a
 configurable paper-execution stress model:
 
 - submitted orders enter a pending queue and become eligible after
@@ -226,8 +226,10 @@ numbers as stress comparisons under shared assumptions. For execution claims,
 replace the defaults with parameters fitted from quotes and fills.
 
 TradeArena is therefore **not** suitable as a transaction-cost prediction
-engine in its default configuration. The execution layer is split into explicit
-modes so results cannot silently mix stress assumptions with calibrated claims:
+engine in its default configuration. The execution layer is split into
+`tradearena.execution.simple`, `tradearena.execution.stress`,
+`tradearena.execution.fill_replay`, and `tradearena.execution.calibration` so
+results cannot silently mix stress assumptions with calibrated claims:
 
 | Mode | Input required | Appropriate claim |
 | --- | --- | --- |

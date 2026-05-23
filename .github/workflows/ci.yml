@@ -30,8 +30,8 @@ jobs:
         run: python -m mypy
       - name: Unit tests
         run: python -m pytest tests -q --cov=tradearena --cov-report=xml --cov-report=term-missing
-      - name: Core/tools coverage threshold
-        run: python -m coverage report --include="src/tradearena/core/*,src/tradearena/tools/*" --fail-under=80
+      - name: Core/execution/tools coverage threshold
+        run: python -m coverage report --include="src/tradearena/core/*,src/tradearena/execution/*,src/tradearena/tools/*" --fail-under=80
       - name: Upload coverage
         if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v5
