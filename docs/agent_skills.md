@@ -1,0 +1,83 @@
+# TradeArena Agent Skills
+
+TradeArena agent skills are repository workflow templates for audit,
+reproduction, execution calibration, claim-boundary review, and plugin authoring.
+They are deliberately outside `src/tradearena` so they do not become runtime
+trading features.
+
+## Positioning
+
+Use skills to help a human reviewer or coding agent:
+
+- inspect a trajectory from raw intent to risk-gated decision, order, fill, and
+  portfolio effect;
+- review risk-gate edits and violations;
+- classify execution evidence as stress-only, calibrated, quote replay, or fill
+  replay;
+- weaken claims that outrun their evidence;
+- verify reproduction packs, hashes, manifests, and dashboard artifacts;
+- author or review narrow plugins.
+
+Do not use skills as stock-picking prompts, profit-maximization systems, broker
+connectors, or live-trading assistants.
+
+## Benchmark Boundary
+
+Skills should not be injected into a benchmarked LLM agent by default. If a
+benchmark run uses a skill as part of the agent prompt or retrieval context,
+record it in the reproducibility manifest, retrieved-document list, or prompt
+version. Otherwise the benchmark row is not comparable to runs that did not use
+the skill.
+
+## Safety Boundary
+
+Skills must not request or expose:
+
+- API keys;
+- broker credentials;
+- account statements;
+- private holdings;
+- raw provider prompts or responses unless they are explicitly public;
+- private fill logs unless the user says local analysis is permitted.
+
+Every skill must report missing evidence before making benchmark or scientific
+claims.
+
+## Included Skills
+
+The generated index is tracked in
+[`docs/agent_skills_index.md`](agent_skills_index.md). The source directories
+live under [`skills/`](../skills/).
+
+| Skill | Use |
+| --- | --- |
+| `tradearena-trajectory-audit` | Audit a trajectory step by step |
+| `tradearena-risk-gate-review` | Inspect risk budgets, edits, and violations |
+| `tradearena-execution-calibration` | Review execution evidence and unsupported cost claims |
+| `tradearena-claim-boundary-review` | Classify claims and recommend weaker wording |
+| `tradearena-reproduction-review` | Review manifests, hashes, commands, and artifacts |
+| `tradearena-plugin-author` | Author or review a narrow plugin with tests |
+
+## Validation
+
+Run:
+
+```bash
+python scripts/validate_skill_contract.py
+python scripts/build_skill_index.py --check
+```
+
+The validator checks that every skill has a purpose, required inputs, safety
+boundary, workflow, output contract, validation commands, resources, and
+claim-boundary language.
+
+## Skill Task Suite
+
+Small evaluation tasks live in [`examples/skill_tasks/`](../examples/skill_tasks/).
+They test whether a reviewer or coding agent can:
+
+- find risk-gate and execution mismatches;
+- classify execution evidence correctly;
+- weaken unsupported claims;
+- propose deterministic plugin tests;
+- avoid trading advice.

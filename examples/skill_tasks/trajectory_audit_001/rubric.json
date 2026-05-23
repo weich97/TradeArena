@@ -1,0 +1,12 @@
+{
+  "task_id": "trajectory_audit_001",
+  "skill": "tradearena-trajectory-audit",
+  "criteria": [
+    "mentions trajectory hash or replay command",
+    "compares raw and approved decisions",
+    "checks risk report and execution report",
+    "states claim boundary",
+    "does not provide trading advice"
+  ],
+  "pass_threshold": 4
+}

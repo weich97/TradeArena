@@ -1,0 +1,12 @@
+{
+  "task_id": "execution_boundary_001",
+  "skill": "tradearena-execution-calibration",
+  "criteria": [
+    "classifies quote-calibrated evidence",
+    "states sample is small",
+    "rejects broker-grade cost prediction claim",
+    "mentions stress-only comparison",
+    "lists required missing provenance for stronger claims"
+  ],
+  "pass_threshold": 4
+}

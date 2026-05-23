@@ -1,0 +1,12 @@
+{
+  "task_id": "claim_boundary_001",
+  "skill": "tradearena-claim-boundary-review",
+  "criteria": [
+    "classifies trajectory recording as engineering claim",
+    "classifies shared stress comparison as benchmark claim",
+    "weakens single-run profitability claim",
+    "classifies calibration pipeline claim narrowly",
+    "uses evidence labels"
+  ],
+  "pass_threshold": 4
+}

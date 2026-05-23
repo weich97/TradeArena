@@ -1,0 +1,12 @@
+{
+  "task_id": "plugin_author_001",
+  "skill": "tradearena-plugin-author",
+  "criteria": [
+    "identifies risk plugin protocol",
+    "does not change runner orchestration",
+    "adds deterministic test plan",
+    "avoids live API dependency",
+    "states security and data assumptions"
+  ],
+  "pass_threshold": 4
+}

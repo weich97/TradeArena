@@ -44,6 +44,7 @@
   <a href="docs/claim_boundaries.md">Claims</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
+  <a href="docs/agent_skills.md">Agent skills</a> |
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
   <a href="docs/community_tasks.md">First issues</a> |
   <a href="docs/contributor_roadmap.md">Roadmap</a> |
@@ -382,7 +383,9 @@ submit benchmark evidence:
 The concrete commands, acceptance criteria, and issue labels are in
 [`docs/community_tasks.md`](docs/community_tasks.md). For plugin work, use
 `tradearena new-plugin --type risk --name max-drawdown-guard` and follow
-[`docs/plugin_development.md`](docs/plugin_development.md).
+[`docs/plugin_development.md`](docs/plugin_development.md). For reviewer or
+coding-agent workflows, use [`docs/agent_skills.md`](docs/agent_skills.md);
+these skills are audit and reproduction templates, not benchmark-agent prompts.
 
 ## LLM Run Paths
 

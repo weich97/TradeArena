@@ -1,0 +1,12 @@
+{
+  "task_id": "risk_gate_review_001",
+  "skill": "tradearena-risk-gate-review",
+  "criteria": [
+    "identifies low-confidence block",
+    "identifies target-weight clipping",
+    "states risk budget fields",
+    "distinguishes warning from error",
+    "states missing evidence"
+  ],
+  "pass_threshold": 4
+}
