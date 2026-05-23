@@ -8,7 +8,6 @@ from typing import Any
 
 from tradearena.core.serialization import write_json
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -6,7 +6,6 @@ from typing import Any
 
 from tradearena.core.serialization import write_json
 
-
 OUTPUT_DIR = Path("outputs/examples")
 TABLE_DIR = Path("outputs/tradearena_paper/tables")
 FALLBACK_TABLE_DIR = Path("docs/results/representation")
@@ -95,7 +94,7 @@ def _write_svg(path: Path, summary: dict[str, Any]) -> None:
             f"{row['view']} no-lexical-collapse {float(row['rank_contraction_without_lexical_collapse']):.2f}"
             for row in lexical_rows[:2]
         )
-    parts.append(f'<rect x="620" y="110" width="250" height="92" rx="8" fill="#ffffff" stroke="#cbd5e1"/>')
+    parts.append('<rect x="620" y="110" width="250" height="92" rx="8" fill="#ffffff" stroke="#cbd5e1"/>')
     parts.append(_text(638, 140, dense_note, 13, "#0f172a", 700))
     parts.append(_text(638, 166, lexical_note[:55], 11, "#475569", 500))
     parts.append(_text(638, 184, lexical_note[55:110], 11, "#475569", 500))

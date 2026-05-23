@@ -13,7 +13,6 @@ from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.data import SyntheticMarketDataProvider
 from tradearena.evaluation import BehavioralEvaluator
 from tradearena.memory import InMemoryResearchMemory
-from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_execution_calibration
 from tradearena.tools import (
     CalibratedOrderSimulator,
     FillReplayOrderSimulator,
@@ -28,6 +27,7 @@ from tradearena.tools import (
     liquidity_halt_rule_package,
     review_market_rule_order,
 )
+from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_execution_calibration
 
 
 def test_order_simulator_never_overspends_cash():

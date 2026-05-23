@@ -8,7 +8,6 @@ from pathlib import Path
 from tradearena.core.reproducibility import compute_reproducibility_hash, hash_trajectory_file
 from tradearena.evaluation.submissions import validate_submission_file
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

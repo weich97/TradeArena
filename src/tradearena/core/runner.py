@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from typing import Any
 
 from tradearena.core.domain import (
     AgentProtocolTrace,
@@ -121,7 +122,7 @@ class TradeArena:
                 execution_report=execution_report,
                 reproducibility_state=reproducibility_state,
             )
-            risk_violations = []
+            risk_violations: list[Any] = []
             for report in (risk_report, in_trade_report, post_trade_report):
                 risk_violations.extend(getattr(report, "violations", []) or [])
 

@@ -1,8 +1,8 @@
-from pathlib import Path
 from datetime import datetime, timedelta
+from pathlib import Path
 
-from tradearena.experiments import PaperExperimentConfig, run_paper_experiment
 from tradearena.core.trajectory import StepRecord, Trajectory
+from tradearena.experiments import PaperExperimentConfig, run_paper_experiment
 from tradearena.experiments.paper import (
     _annotate_contrarian_effects,
     _hallucination_calibration_rows,
@@ -100,7 +100,7 @@ def test_contrarian_effect_annotation_flags_false_audit_drift():
     ]
 
     annotated = _annotate_contrarian_effects(rows)
-    contrarian = [row for row in annotated if row["feedback"] == "contrarian"][0]
+    contrarian = next(row for row in annotated if row["feedback"] == "contrarian")
 
     assert contrarian["contrarian_conservative_shift"] == 0.30000000000000004
     assert contrarian["return_delta_vs_true"] == -0.04

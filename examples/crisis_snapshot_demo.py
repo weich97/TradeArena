@@ -7,7 +7,6 @@ from typing import Any
 
 from tradearena.core.serialization import write_json
 
-
 OUTPUT_DIR = Path("outputs/examples")
 RESULTS_DIR = Path("docs/results/crisis")
 ASSETS_DIR = Path("docs/assets/crisis")

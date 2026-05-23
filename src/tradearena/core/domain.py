@@ -270,7 +270,7 @@ class PortfolioState:
             return 0.0
         return self.positions.get(symbol, 0.0) * self.last_prices.get(symbol, 0.0) / equity
 
-    def copy(self) -> "PortfolioState":
+    def copy(self) -> PortfolioState:
         return PortfolioState(
             cash=self.cash,
             positions=dict(self.positions),

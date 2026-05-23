@@ -24,6 +24,7 @@ jobs:
         run: |
           python -m compileall src scripts examples tests -q
           python -m ruff check src scripts examples tests
+          python -m mypy
           python -m pytest tests -q
       - name: Install build dependencies
         run: python -m pip install --upgrade build twine

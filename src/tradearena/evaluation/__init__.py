@@ -1,8 +1,8 @@
 """Evaluation and benchmark plugins."""
 
-from tradearena.evaluation.benchmarks import BenchmarkCase, BenchmarkRunner
-from tradearena.evaluation.autopsy import FAILURE_MODES, autopsy_trajectory, classify_step_failure_modes
 from tradearena.evaluation.audit import AuditManifest, export_audit_bundle
+from tradearena.evaluation.autopsy import FAILURE_MODES, autopsy_trajectory, classify_step_failure_modes
+from tradearena.evaluation.benchmarks import BenchmarkCase, BenchmarkRunner
 from tradearena.evaluation.metrics import (
     BehavioralEvaluator,
     DecisionQualityEvaluator,
@@ -18,7 +18,7 @@ from tradearena.evaluation.submissions import (
     write_registry_html,
     write_registry_markdown,
 )
-from tradearena.evaluation.tasks import BenchmarkTask, DataLeakagePolicy, TRADEARENA_CORE_TASKS
+from tradearena.evaluation.tasks import TRADEARENA_CORE_TASKS, BenchmarkTask, DataLeakagePolicy
 
 __all__ = [
     "AuditManifest",

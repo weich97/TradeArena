@@ -24,7 +24,6 @@ from tradearena.evaluation import ExecutionRealismEvaluator, PerformanceEvaluato
 from tradearena.memory import InMemoryResearchMemory
 from tradearena.tools import RealisticOrderSimulator
 
-
 OUTPUT_DIR = Path("outputs/examples")
 
 

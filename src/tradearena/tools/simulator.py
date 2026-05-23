@@ -8,7 +8,6 @@ from typing import Any
 
 from tradearena.core.domain import ExecutionReport, Fill, MarketSnapshot, Order, PortfolioState, Side
 
-
 EXECUTION_STRESS = "stress"
 EXECUTION_CALIBRATED = "calibrated"
 EXECUTION_QUOTE_REPLAY = "quote_replay"
@@ -152,12 +151,6 @@ class RealisticOrderSimulator:
                 rejected += 1
                 continue
 
-            fill_ratio = quantity / requested if requested else 0.0
-            was_partial = fill_ratio < 0.999999
-            if fill_ratio < 0.999999:
-                partial += 1
-            remaining_liquidity[order.symbol] = max(0.0, available - quantity)
-
             participation = quantity / max(1.0, bar.volume)
             intraday_vol = max(0.0, (bar.high - bar.low) / max(1e-9, bar.close))
             quote = _quote_for(snapshot, order.symbol) if self.use_quote_replay else None
@@ -197,17 +190,19 @@ class RealisticOrderSimulator:
                     rejected += 1
                     continue
                 fill_ratio = quantity / requested if requested else 0.0
-                if fill_ratio < 0.999999 and not was_partial:
-                    partial += 1
                 trade_value = quantity * price
                 commission = trade_value * commission_rate
                 portfolio.cash -= trade_value + commission
                 portfolio.positions[order.symbol] = portfolio.positions.get(order.symbol, 0.0) + quantity
             else:
+                fill_ratio = quantity / requested if requested else 0.0
                 trade_value = quantity * price
                 commission = trade_value * self.commission_bps / 10_000.0
                 portfolio.cash += trade_value - commission
                 portfolio.positions[order.symbol] = portfolio.positions.get(order.symbol, 0.0) - quantity
+            remaining_liquidity[order.symbol] = max(0.0, available - quantity)
+            if fill_ratio < 0.999999:
+                partial += 1
 
             fills.append(
                 Fill(

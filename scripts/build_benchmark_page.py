@@ -9,7 +9,6 @@ import textwrap
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 CRISIS_CSV = ROOT / "docs/results/crisis/crisis_summary.csv"
 REPRESENTATION_CSV = ROOT / "docs/results/representation/embedding_robustness.csv"
@@ -199,7 +198,6 @@ def _markdown(
     representation_summary: list[dict[str, Any]],
     calibration_rows: list[dict[str, Any]],
 ) -> str:
-    provenance = _provenance_rows()
     lines = [
         f"# {BENCHMARK_TITLE}",
         "",

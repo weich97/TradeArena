@@ -12,7 +12,6 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 BASE_URL = "https://data.binance.vision/data/futures/um/daily"
 
@@ -135,7 +134,7 @@ def _extract_quotes(path: Path, symbol: str, start: datetime, end: datetime, str
     with zipfile.ZipFile(path) as archive:
         name = archive.namelist()[0]
         with archive.open(name) as raw:
-            reader = csv.DictReader((line.decode("utf-8") for line in raw))
+            reader = csv.DictReader(line.decode("utf-8") for line in raw)
             for row in reader:
                 transaction_time = _from_ms(row["transaction_time"])
                 if transaction_time < start:
@@ -174,7 +173,7 @@ def _extract_fills(
     with zipfile.ZipFile(path) as archive:
         name = archive.namelist()[0]
         with archive.open(name) as raw:
-            reader = csv.DictReader((line.decode("utf-8") for line in raw))
+            reader = csv.DictReader(line.decode("utf-8") for line in raw)
             for row in reader:
                 timestamp = _from_ms(row["time"])
                 if timestamp < start:
@@ -213,7 +212,7 @@ def _read_klines(path: Path) -> dict[int, dict[str, str]]:
     with zipfile.ZipFile(path) as archive:
         name = archive.namelist()[0]
         with archive.open(name) as raw:
-            reader = csv.DictReader((line.decode("utf-8") for line in raw))
+            reader = csv.DictReader(line.decode("utf-8") for line in raw)
             for row in reader:
                 rows[int(row["open_time"])] = row
     return rows

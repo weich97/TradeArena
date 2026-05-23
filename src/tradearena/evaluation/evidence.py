@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
-
+from collections.abc import Iterable
 
 ALLOWED_EVIDENCE_TAGS = (
     "stress-only",

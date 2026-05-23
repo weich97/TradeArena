@@ -8,7 +8,6 @@ from pathlib import Path
 from tradearena.core.serialization import write_json
 from tradearena.tools import FuturesContractMetadata, FuturesRollRiskEngine
 
-
 OUTPUT_DIR = Path("outputs/examples/futures_roll_risk")
 
 

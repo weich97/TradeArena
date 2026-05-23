@@ -5,7 +5,6 @@ from pathlib import Path
 from tradearena.core.serialization import write_json
 from tradearena.factory import build_default_system
 
-
 DATA_DIR = Path("outputs/examples/akshare_ashare_sample")
 OUTPUT_DIR = Path("outputs/examples")
 

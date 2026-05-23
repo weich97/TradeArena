@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
-
 FAILURE_MODES = (
     "overtrading",
     "pre_risk_leverage",

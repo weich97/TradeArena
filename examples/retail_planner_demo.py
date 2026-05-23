@@ -16,7 +16,6 @@ from tradearena.planning import (
     load_holdings_csv,
 )
 
-
 OUTPUT_DIR = Path("outputs/examples")
 HOLDINGS_FIXTURE = Path("examples/fixtures/retail_holdings.csv")
 

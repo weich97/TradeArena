@@ -1,9 +1,9 @@
 """TradeArena: pluggable AI trading agent research framework."""
 
 from tradearena.core.domain import (
+    AgentProtocolTrace,
     Bar,
     Decision,
-    AgentProtocolTrace,
     Fill,
     MarketSnapshot,
     Order,

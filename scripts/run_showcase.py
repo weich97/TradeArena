@@ -6,7 +6,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "outputs/examples"
 DEMO_VIDEO_ASSET = ROOT / "docs/assets/tradearena_3min_demo.mp4"

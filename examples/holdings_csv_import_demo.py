@@ -4,8 +4,13 @@ from datetime import datetime
 from pathlib import Path
 
 from tradearena.core.serialization import write_json
-from tradearena.planning import FinancialGoal, InvestorProfile, RetailPlanningAgent, default_retail_universe, load_holdings_csv
-
+from tradearena.planning import (
+    FinancialGoal,
+    InvestorProfile,
+    RetailPlanningAgent,
+    default_retail_universe,
+    load_holdings_csv,
+)
 
 FIXTURE = Path("examples/fixtures/retail_holdings.csv")
 OUTPUT_DIR = Path("outputs/examples/holdings_csv_import")

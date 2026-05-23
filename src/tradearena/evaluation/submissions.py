@@ -9,7 +9,6 @@ from typing import Any
 from tradearena.core.reproducibility import compute_reproducibility_hash
 from tradearena.evaluation.evidence import format_evidence_tags, validate_evidence_tags
 
-
 REQUIRED_TOP_LEVEL = (
     "schema_version",
     "scenario_id",

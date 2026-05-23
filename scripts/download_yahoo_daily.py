@@ -3,8 +3,8 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 

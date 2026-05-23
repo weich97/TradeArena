@@ -10,7 +10,6 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
-
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE_DIR = ROOT / "outputs/examples"
 DEFAULT_WORK_DIR = ROOT / "outputs/launch/demo_video"

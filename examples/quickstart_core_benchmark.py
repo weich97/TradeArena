@@ -7,7 +7,6 @@ from tradearena.core.serialization import to_jsonable, write_json
 from tradearena.evaluation import BenchmarkCase, BenchmarkRunner
 from tradearena.factory import build_default_system
 
-
 OUTPUT_DIR = Path("outputs/examples")
 
 

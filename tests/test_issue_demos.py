@@ -11,7 +11,6 @@ from tradearena.factory import build_default_system, default_registry
 from tradearena.planning import load_holdings_csv
 from tradearena.tools import AlpacaPaperExportAdapter, FuturesContractMetadata, FuturesRollRiskEngine
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -8,7 +8,6 @@ from pathlib import Path
 from statistics import mean
 from typing import Any
 
-
 REQUIRED_COLUMNS = {"symbol", "side", "quantity", "reference_price", "fill_price"}
 
 

@@ -15,6 +15,6 @@ class EqualRiskBudgetOptimizer:
         }
         total = sum(positive.values())
         if total <= 0:
-            return {symbol: 0.0 for symbol in expected_scores}
+            return dict.fromkeys(expected_scores, 0.0)
         raw = {symbol: value / total for symbol, value in positive.items()}
         return {symbol: min(self.max_weight, weight) for symbol, weight in raw.items()}

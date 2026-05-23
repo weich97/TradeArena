@@ -8,7 +8,6 @@ from pathlib import Path
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 
-
 DEFAULT_TICKERS = (
     "AAPL,MSFT,NVDA,AMZN,META,GOOGL,GOOG,TSLA,AVGO,JPM,V,MA,UNH,XOM,COST,"
     "WMT,HD,PG,JNJ,ABBV,BAC,KO,PEP,CRM,NFLX,ORCL,AMD,CSCO,MRK,CVX,TMO,"

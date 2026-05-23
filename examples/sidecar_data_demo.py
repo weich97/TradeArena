@@ -4,7 +4,6 @@ from pathlib import Path
 
 from tradearena.factory import build_default_system
 
-
 DATA_DIR = Path("outputs/examples/sidecar_data")
 
 

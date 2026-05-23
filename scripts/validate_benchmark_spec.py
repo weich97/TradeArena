@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 REQUIRED_TOP_LEVEL = {
     "schema_version",
     "spec_id",

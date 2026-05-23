@@ -29,6 +29,7 @@ class StepRecord:
 class Trajectory:
     experiment_name: str
     seed: int
+    schema_version: str = "tradearena_trajectory_v1"
     steps: list[StepRecord] = field(default_factory=list)
     metadata: dict[str, Any] = field(default_factory=dict)
 

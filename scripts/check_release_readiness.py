@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import subprocess
-import sys
 from pathlib import Path
-
 
 ROOT = Path(__file__).resolve().parents[1]
 MAX_TRACKED_FILE_BYTES = 25 * 1024 * 1024
@@ -68,8 +66,10 @@ REQUIRED_FILES = [
     "docs/results/quality_decomposition/decision_execution_radar.svg",
     "docs/demo_artifacts.yaml",
     "schemas/benchmark_submission.schema.json",
+    "schemas/calibration_profile.schema.json",
     "schemas/demo_artifact_contract.schema.json",
     "schemas/reproduction_report.schema.json",
+    "schemas/trajectory.schema.json",
     "benchmarks/v0.2/spec.json",
     "examples/benchmark_submissions/example_redacted_submission.json",
     "examples/benchmark_submissions/model_matrix/calm_trend__poe_gpt_5_5.json",

@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import csv
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, cast
 
 
 @dataclass(frozen=True)
@@ -92,6 +93,7 @@ def summarize_execution_calibration(
     )
 
     return {
+        "schema": "tradearena_execution_calibration_v1",
         "data": {
             "symbols": sorted(symbols),
             "symbol_count": len(symbols),
@@ -415,7 +417,7 @@ def _symbol_from_filename(path: Path) -> str:
 
 def _float(value: object) -> float:
     try:
-        return float(value)
+        return float(cast(Any, value))
     except (TypeError, ValueError):
         return 0.0
 
@@ -576,7 +578,7 @@ def _fit_linear_cost(
     max_base: float,
     max_market_impact: float,
 ) -> tuple[float, float]:
-    if len(targets) < 2 or len(set(round(value, 8) for value in participation_bps)) < 2:
+    if len(targets) < 2 or len({round(value, 8) for value in participation_bps}) < 2:
         return max(min_base, min(max_base, mean(targets))), 0.0
     x_bar = mean(participation_bps)
     y_bar = mean(targets)

@@ -46,12 +46,12 @@ class MacroNewsAnalyst:
 
     def analyze(self, snapshot: MarketSnapshot, portfolio: PortfolioState, memory: object) -> list[Signal]:
         macro_score = sum(point.value for point in snapshot.macro if "growth" in point.name)
-        sentiment_by_symbol = {symbol: 0.0 for symbol in snapshot.bars}
+        sentiment_by_symbol = dict.fromkeys(snapshot.bars, 0.0)
         for item in snapshot.news:
             for symbol in item.symbols:
                 if symbol in sentiment_by_symbol:
                     sentiment_by_symbol[symbol] += item.sentiment
-        filing_by_symbol = {symbol: 0.0 for symbol in snapshot.bars}
+        filing_by_symbol = dict.fromkeys(snapshot.bars, 0.0)
         for item in getattr(snapshot, "filings", ()):
             for symbol in item.symbols:
                 if symbol in filing_by_symbol:

@@ -6,7 +6,6 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-
 BGE_M3_FILES = [
     "config.json",
     "config_sentence_transformers.json",

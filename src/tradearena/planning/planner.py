@@ -17,7 +17,6 @@ from tradearena.planning.domain import (
     SuitabilityReport,
 )
 
-
 SAFE_ASSET_CLASSES = ("cash_equivalent", "bond_etf", "treasury")
 EQUITY_ASSET_CLASSES = ("equity_etf", "equity", "sector_etf")
 FUTURES_ASSET_CLASSES = ("index_future", "commodity_future", "rate_future", "currency_future")

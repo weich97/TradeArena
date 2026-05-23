@@ -1,6 +1,6 @@
 """Tool plugins for simulation, features, risk, optimization, and backtesting."""
 
-from tradearena.tools.backtester import BacktestResult, Backtester
+from tradearena.tools.backtester import Backtester, BacktestResult
 from tradearena.tools.broker_export import AlpacaPaperExportAdapter, AlpacaPaperOrder
 from tradearena.tools.calibration import (
     ExecutionCalibrationConfig,

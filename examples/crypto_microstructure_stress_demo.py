@@ -6,7 +6,6 @@ from pathlib import Path
 from tradearena.core.serialization import write_json
 from tradearena.factory import build_default_system
 
-
 OUTPUT_DIR = Path("outputs/examples/crypto_microstructure_stress")
 
 
@@ -88,7 +87,7 @@ def _write_svg(path: Path, summary: dict[str, object]) -> None:
         parts.append(f'<rect x="38" y="{yy}" width="420" height="22" rx="6" fill="#e2e8f0"/>')
         parts.append(f'<rect x="38" y="{yy}" width="{width_value:.1f}" height="22" rx="6" fill="{color}"/>')
         parts.append(_text(478, yy + 17, f"{label}: {value:.3f}", 13, "#0f172a", 800))
-    parts.append(f'<rect x="38" y="352" width="820" height="1" fill="#cbd5e1"/>')
+    parts.append('<rect x="38" y="352" width="820" height="1" fill="#cbd5e1"/>')
     parts.append(_text(38, 382, f"Total slippage cost: ${float(summary['total_slippage_cost']):,.2f} | Max drawdown: {float(summary['max_drawdown']):.2%}", 13, "#334155", 800))
     parts.append("</svg>")
     path.write_text("\n".join(parts), encoding="utf-8")

@@ -8,7 +8,6 @@ from typing import Any
 from tradearena.core.serialization import to_jsonable, write_json
 from tradearena.core.trajectory import Trajectory
 
-
 KEY_METRICS = (
     "total_return",
     "sharpe",

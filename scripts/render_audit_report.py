@@ -7,7 +7,6 @@ import math
 from pathlib import Path
 from typing import Any
 
-
 DEFAULT_INPUT = "outputs/examples/audit_walkthrough_trajectory.json"
 DEFAULT_OUTPUT = "outputs/examples/audit_report.html"
 

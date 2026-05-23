@@ -4,7 +4,6 @@ import argparse
 import math
 import shutil
 from pathlib import Path
-from typing import Iterable
 
 from tradearena.core.serialization import write_json
 

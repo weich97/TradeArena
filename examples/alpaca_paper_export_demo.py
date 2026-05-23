@@ -6,7 +6,6 @@ from tradearena.core.domain import Order, OrderType, Side
 from tradearena.core.serialization import write_json
 from tradearena.tools import AlpacaPaperExportAdapter
 
-
 OUTPUT_DIR = Path("outputs/examples/alpaca_paper_export")
 
 

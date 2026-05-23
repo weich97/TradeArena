@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import math
-import re
 import hashlib
 import json
+import math
 import random
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -12,7 +12,14 @@ from typing import Any
 from tradearena.agents.llm import _get_secret
 from tradearena.core.serialization import to_jsonable, write_json
 from tradearena.core.trajectory import Trajectory
-from tradearena.experiments.reporting import KEY_METRICS, write_artifacts, write_bar_chart, write_csv, write_line_chart, write_markdown_table
+from tradearena.experiments.reporting import (
+    KEY_METRICS,
+    write_artifacts,
+    write_bar_chart,
+    write_csv,
+    write_line_chart,
+    write_markdown_table,
+)
 from tradearena.factory import build_default_system
 
 
@@ -1856,7 +1863,7 @@ def _hallucination_annotation_sample(
     ranked = sorted(
         step_rows,
         key=lambda row: (
-            hashlib.sha256(f"{row['case']}:{row['step']}".encode("utf-8")).hexdigest(),
+            hashlib.sha256(f"{row['case']}:{row['step']}".encode()).hexdigest(),
             str(row["case"]),
             int(row["step"]),
         ),
@@ -1904,7 +1911,7 @@ def _hallucination_calibration_rows(annotation_rows: list[dict[str, Any]], annot
     a = [int(str(row["annotator_a_label"]).strip()) for row in labeled]
     b = [int(str(row["annotator_b_label"]).strip()) for row in labeled]
     proxy = [int(row.get("proxy_label", 0)) for row in labeled]
-    gold = [int(str(row.get("adjudicated_label", "")).strip()) if str(row.get("adjudicated_label", "")).strip() in {"0", "1"} else int(round((x + y) / 2)) for x, y, row in zip(a, b, labeled)]
+    gold = [int(str(row.get("adjudicated_label", "")).strip()) if str(row.get("adjudicated_label", "")).strip() in {"0", "1"} else round((x + y) / 2) for x, y, row in zip(a, b, labeled)]
     return [
         {
             "status": "manual_labels_loaded",
@@ -3054,7 +3061,7 @@ def _percentile(values: list[float], q: float) -> float:
     if not values:
         return 0.0
     ordered = sorted(values)
-    idx = min(len(ordered) - 1, max(0, int(round(q * (len(ordered) - 1)))))
+    idx = min(len(ordered) - 1, max(0, round(q * (len(ordered) - 1))))
     return ordered[idx]
 
 

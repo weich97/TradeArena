@@ -7,7 +7,6 @@ from pathlib import Path
 
 from scripts.compare_execution_to_fills import compare_fills_to_model
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 SCRIPTS = ROOT / "scripts"
@@ -15,12 +14,14 @@ if str(SRC) not in sys.path:
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from run_leaderboard_model_matrix import SCENARIOS as SYNTHETIC_SCENARIOS  # noqa: E402
-from run_leaderboard_model_matrix import _scenario_execution_config  # noqa: E402
-from run_real_market_leaderboard import REAL_SCENARIOS  # noqa: E402
-from run_real_market_leaderboard import _data_hash  # noqa: E402
-from tradearena.factory import build_default_system  # noqa: E402
+from run_leaderboard_model_matrix import SCENARIOS as SYNTHETIC_SCENARIOS
+from run_leaderboard_model_matrix import _scenario_execution_config
+from run_real_market_leaderboard import (
+    REAL_SCENARIOS,
+    _data_hash,
+)
 
+from tradearena.factory import build_default_system
 
 CLASSICAL_BASELINES: dict[str, dict[str, str]] = {
     "always_hold": {
@@ -153,7 +154,7 @@ def _run_synthetic_baseline(
     seed: int,
 ) -> dict[str, Any]:
     execution = _scenario_execution_config(scenario)
-    trajectory, metrics = build_default_system(
+    _trajectory, metrics = build_default_system(
         name=f"classical_{scenario['key']}_{baseline['key']}",
         symbols=symbols,
         periods=periods,
@@ -193,7 +194,7 @@ def _run_real_baseline(
     data_dir: Path,
     data_hash: str,
 ) -> dict[str, Any]:
-    trajectory, metrics = build_default_system(
+    _trajectory, metrics = build_default_system(
         name=f"classical_real_{scenario['key']}_{baseline['key']}",
         symbols=symbols,
         periods=max_periods,

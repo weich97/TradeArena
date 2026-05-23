@@ -9,9 +9,8 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from tradearena.core.serialization import to_jsonable, write_json
+from tradearena.core.serialization import write_json
 from tradearena.factory import build_default_system
-
 
 TECH_51 = (
     "AAPL",

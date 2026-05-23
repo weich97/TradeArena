@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 HASH_PREFIX = "sha256:"
 
 

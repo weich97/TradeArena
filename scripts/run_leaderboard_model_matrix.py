@@ -13,11 +13,10 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file  # noqa: E402
-from tradearena.evaluation.evidence import evidence_payload_for_row, format_evidence_tags  # noqa: E402
-from tradearena.evaluation.statistics import paired_bootstrap_difference, sample_std, summarize_metric  # noqa: E402
-from tradearena.factory import build_default_system  # noqa: E402
-
+from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file
+from tradearena.evaluation.evidence import evidence_payload_for_row, format_evidence_tags
+from tradearena.evaluation.statistics import paired_bootstrap_difference, sample_std, summarize_metric
+from tradearena.factory import build_default_system
 
 DEFAULT_LLM_MODELS = (
     "poe:gpt-5.5",

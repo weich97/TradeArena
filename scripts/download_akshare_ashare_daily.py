@@ -3,10 +3,10 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
-
+from typing import Any
 
 DEFAULT_SYMBOLS = "600519.SS,300750.SZ,000001.SZ,601318.SS,000858.SZ"
 

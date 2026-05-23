@@ -341,7 +341,7 @@ class MaxPositionRiskManager:
         memory: object,
     ) -> RiskAttribution:
         exposure = {symbol: portfolio.weight(symbol) for symbol in snapshot.bars}
-        attribution = RiskAttribution(
+        return RiskAttribution(
             timestamp=snapshot.timestamp,
             realized_pnl=portfolio.realized_pnl,
             commission=sum(fill.commission for fill in fills),
@@ -349,7 +349,6 @@ class MaxPositionRiskManager:
             exposure=exposure,
             notes=("post-trade attribution computed from simulated fills",),
         )
-        return attribution
 
 
 @dataclass

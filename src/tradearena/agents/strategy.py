@@ -144,7 +144,7 @@ class RandomAllocationStrategy:
     def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
         symbols = sorted(snapshot.bars)
         if not symbols or self._rng.random() < self.cash_probability:
-            weights = {symbol: 0.0 for symbol in symbols}
+            weights = dict.fromkeys(symbols, 0.0)
         else:
             scores = {symbol: self._rng.random() for symbol in symbols}
             weights = _normalize_capped(scores, self.max_long_weight)
@@ -383,7 +383,7 @@ class MeanVarianceStrategy:
         if not symbols:
             return {}
         target = min(self.max_long_weight, 1.0 / len(symbols))
-        return {symbol: target for symbol in symbols}
+        return dict.fromkeys(symbols, target)
 
     def _covariance(self, series: list[list[float]]) -> list[list[float]]:
         means = [sum(values) / len(values) for values in series]
@@ -656,14 +656,13 @@ def _normalize_capped(scores: dict[str, float], max_long_weight: float) -> dict[
     positive = {symbol: max(0.0, value) for symbol, value in scores.items()}
     total = sum(positive.values())
     if total <= 1e-12:
-        return {symbol: 0.0 for symbol in scores}
+        return dict.fromkeys(scores, 0.0)
     weights = {symbol: value / total for symbol, value in positive.items()}
-    capped = {symbol: min(max_long_weight, value) for symbol, value in weights.items()}
-    return capped
+    return {symbol: min(max_long_weight, value) for symbol, value in weights.items()}
 
 
 def _equal_capped_weights(symbols: list[str], max_long_weight: float) -> dict[str, float]:
     if not symbols:
         return {}
     target = min(max_long_weight, 1.0 / len(symbols))
-    return {symbol: target for symbol in symbols}
+    return dict.fromkeys(symbols, target)

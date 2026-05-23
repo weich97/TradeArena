@@ -11,8 +11,8 @@ from tradearena.agents import (
     MacroNewsAnalyst,
     MarkowitzMVOStrategy,
     MaxPositionRiskManager,
-    MeanVarianceStrategy,
     MeanReversionStrategy,
+    MeanVarianceStrategy,
     MemoryAwareSignalWeightedStrategy,
     MomentumAnalyst,
     NaiveMomentumStrategy,
@@ -42,7 +42,6 @@ from tradearena.tools import (
     RealisticOrderSimulator,
     SimpleOrderSimulator,
 )
-
 
 POE_MODEL_API_ALIASES = {
     "gpt-5.5": "gpt-5.5",

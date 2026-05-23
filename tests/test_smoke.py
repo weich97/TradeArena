@@ -1,5 +1,5 @@
-from tradearena.factory import build_default_system, default_registry
 from tradearena.cli import _analyst_names_for_args, build_parser
+from tradearena.factory import build_default_system, default_registry
 
 
 def test_default_system_runs_and_records_trajectory():

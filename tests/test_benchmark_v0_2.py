@@ -7,7 +7,6 @@ from pathlib import Path
 
 from tradearena.tools.calibration import summarize_quote_fill_calibration
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

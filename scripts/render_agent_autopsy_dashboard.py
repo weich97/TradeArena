@@ -9,7 +9,6 @@ from typing import Any
 
 from tradearena.evaluation.autopsy import autopsy_trajectory
 
-
 DEFAULT_INPUT = "outputs/examples/audit_walkthrough_trajectory.json"
 DEFAULT_OUTPUT = "outputs/examples/agent_autopsy_dashboard.html"
 
