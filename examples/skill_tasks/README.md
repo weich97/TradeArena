@@ -28,6 +28,7 @@ Validate the rubric suite:
 
 ```bash
 python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --validate-only
+python scripts/score_skill_task_report.py --tasks-dir examples/skill_tasks --output docs/results/skill_task_matrix.md --check
 ```
 
 Score one answer:

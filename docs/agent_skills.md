@@ -83,6 +83,9 @@ They test whether a reviewer or coding agent can:
 - propose deterministic plugin tests;
 - avoid trading advice.
 
+The generated matrix is tracked in
+[`docs/results/skill_task_matrix.md`](results/skill_task_matrix.md).
+
 The task suite measures TradeArena-specific audit ability rather than trading
 ability:
 

@@ -41,3 +41,23 @@ def test_skill_task_rubrics_validate():
     )
 
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_skill_task_matrix_is_current():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/score_skill_task_report.py",
+            "--tasks-dir",
+            "examples/skill_tasks",
+            "--output",
+            "docs/results/skill_task_matrix.md",
+            "--check",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr

@@ -389,6 +389,8 @@ these skills are audit and reproduction templates, not benchmark-agent prompts.
 The companion task suite scores models as financial-audit agents: audit
 accuracy, risk-gate understanding, execution-boundary awareness, claim
 discipline, reproduction awareness, and narrow plugin engineering.
+The tracked task matrix is in
+[`docs/results/skill_task_matrix.md`](docs/results/skill_task_matrix.md).
 
 ## LLM Run Paths
 
