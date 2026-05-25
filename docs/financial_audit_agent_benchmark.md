@@ -57,3 +57,32 @@ python scripts/score_skill_task_report.py --tasks-dir examples/skill_tasks --out
 
 The generated report is tracked at
 `docs/results/skill_task_matrix.md`.
+
+## Scoring A Model Or Reviewer
+
+To evaluate a model, create one Markdown answer per task:
+
+```text
+examples/skill_task_answers/<answer_set>/
+  trajectory_audit_001.md
+  intent_execution_autopsy_001.md
+  ...
+```
+
+Then run:
+
+```bash
+python scripts/score_skill_task.py \
+  --tasks-dir examples/skill_tasks \
+  --answers-dir examples/skill_task_answers/<answer_set>
+
+python scripts/score_skill_task_report.py \
+  --tasks-dir examples/skill_tasks \
+  --answers-dir examples/skill_task_answers/<answer_set> \
+  --answers-label <answer_set> \
+  --output outputs/<answer_set>_skill_task_matrix.md
+```
+
+Report the model/provider, prompt version, whether skills were retrieved, and
+whether the answers used hidden artifacts. Do not compare answer sets unless
+they saw the same task inputs and the same skill text.

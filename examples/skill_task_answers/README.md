@@ -9,3 +9,16 @@ This directory contains answer sets for the skill task suite.
 
 These answers evaluate financial-audit workflow quality. They are not trading
 strategies, investment advice, broker integrations, or live execution tools.
+
+To score a model or reviewer, add a sibling directory with one Markdown file per
+task id:
+
+```bash
+python scripts/score_skill_task.py \
+  --tasks-dir examples/skill_tasks \
+  --answers-dir examples/skill_task_answers/<answer_set>
+```
+
+Record the model/provider, prompt version, skill text used, and any hidden
+artifacts. A score is only comparable when every answer set saw the same task
+inputs and the same skill files.
