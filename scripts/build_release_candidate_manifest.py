@@ -20,6 +20,7 @@ DEFAULT_ARTIFACTS = [
     "docs/results/market_rules_fixture.json",
     "docs/results/external_validation_bundle.md",
     "docs/results/poe_skill_task_matrix.md",
+    "docs/results/poe_skill_challenge_matrix.md",
     "docs/results/skill_task_matrix.md",
     "docs/results/community_registry.md",
     "docs/public_artifact_privacy.md",

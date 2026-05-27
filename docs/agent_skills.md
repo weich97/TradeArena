@@ -91,6 +91,12 @@ whether they can pick stocks.
 
 The generated matrix is tracked in
 [`docs/results/skill_task_matrix.md`](results/skill_task_matrix.md).
+Provider-backed challenge matrices are tracked in
+[`docs/results/poe_skill_task_matrix.md`](results/poe_skill_task_matrix.md) and
+[`docs/results/poe_skill_challenge_matrix.md`](results/poe_skill_challenge_matrix.md).
+The challenge suite under `examples/skill_tasks_challenge/` intentionally
+stresses adversarial claim wording, public-artifact redaction, reproduction
+honesty, and execution-calibration boundaries.
 
 The task suite measures TradeArena-specific audit ability rather than trading
 ability:

@@ -75,6 +75,22 @@ under ignored local `outputs/` and `outputs/llm_cache/` paths; the tracked
 report contains aggregate task and ability scores only. See
 [`docs/poe_skill_task_experiments.md`](poe_skill_task_experiments.md).
 
+The harder challenge suite is intentionally adversarial:
+
+```bash
+python scripts/run_poe_skill_task_matrix.py \
+  --tasks-dir examples/skill_tasks_challenge \
+  --repeats 2 \
+  --prompt-variants standard,skeptical_reviewer,adversarial_claim_boundary \
+  --public-output docs/results/poe_skill_challenge_matrix.md \
+  --public-csv docs/results/poe_skill_challenge_matrix.csv
+```
+
+It probes whether a model resists leaderboard misreadings, stress-calibration
+overclaims, public-artifact privacy violations, dirty reproduction claims, and
+market-rule overgeneralization. Those rows are evidence for financial-audit
+reliability, not for trading profitability.
+
 ## Scoring A Model Or Reviewer
 
 To evaluate a model, create one Markdown answer per task:

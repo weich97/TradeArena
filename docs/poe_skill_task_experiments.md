@@ -24,6 +24,57 @@ Default settings:
 - estimated budget: roughly 350k-400k Poe tokens, depending on provider tokenization
   and answer length.
 
+For a robustness run that spends tokens on prompt sensitivity rather than more
+model names, use the three reviewer variants:
+
+```bash
+python scripts/run_poe_skill_task_matrix.py \
+  --repeats 1 \
+  --prompt-variants standard,skeptical_reviewer,adversarial_claim_boundary \
+  --refresh-cache
+```
+
+The repeat id is part of the cache key, so repeated samples are independent
+provider calls rather than cache replays.
+
+## Challenge Suite
+
+The standard task suite checks broad coverage. The challenge suite in
+`examples/skill_tasks_challenge/` is deliberately sharper: it tries to tempt
+models into profitability overclaims, stress-model calibration overclaims,
+privacy leaks, dirty reproduction claims, and market-rule overgeneralization.
+
+Run the challenge matrix with:
+
+```bash
+python scripts/run_poe_skill_task_matrix.py \
+  --tasks-dir examples/skill_tasks_challenge \
+  --repeats 2 \
+  --prompt-variants standard,skeptical_reviewer,adversarial_claim_boundary \
+  --max-output-tokens 1800 \
+  --public-output docs/results/poe_skill_challenge_matrix.md \
+  --public-csv docs/results/poe_skill_challenge_matrix.csv
+```
+
+Tracked public results:
+
+- standard matrix: `docs/results/poe_skill_task_matrix.md`;
+- challenge matrix: `docs/results/poe_skill_challenge_matrix.md`.
+
+Current tracked snapshots:
+
+- standard 12-task robustness run: 5 Poe models, 3 reviewer variants, 180 live
+  calls; Gemini 3.1 Pro averaged 88.3%, GPT-5.5 averaged 85.0%, and the lower
+  rows exposed more hard failures on claim, reproduction, and plugin tasks.
+- challenge 8-task run: 5 Poe models, 3 reviewer variants, 2 independent
+  samples, 240 live calls; Gemini 3.1 Pro averaged 80.4%, Claude Opus 4.7
+  averaged 78.3%, GPT-5.5 averaged 77.9%, GLM-5 averaged 77.5%, and Kimi K2.5
+  averaged 73.8%.
+
+The challenge scores are lower by design. They are useful because they surface
+where models still overread leaderboard rows, underreport reproduction
+defects, or soften public-artifact privacy boundaries under adversarial wording.
+
 DeepSeek is intentionally not routed through Poe. To include direct DeepSeek
 rows, run:
 

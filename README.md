@@ -448,6 +448,16 @@ The tracked task matrix is in
 [`docs/results/skill_task_matrix.md`](docs/results/skill_task_matrix.md).
 Reference answers in `examples/skill_task_answers/reference/` provide a
 maintainer baseline for the scoring harness.
+Provider-hosted Poe model matrices are tracked separately as audit-agent
+experiments, not trading leaderboards:
+[`docs/results/poe_skill_task_matrix.md`](docs/results/poe_skill_task_matrix.md)
+and
+[`docs/results/poe_skill_challenge_matrix.md`](docs/results/poe_skill_challenge_matrix.md).
+The challenge suite in `examples/skill_tasks_challenge/` stresses claim
+discipline, privacy redaction, reproduction honesty, execution-boundary
+awareness, and market-rule caution.
+The tracked challenge run covers 5 Poe-hosted models, 8 adversarial audit tasks,
+3 reviewer prompt variants, and 2 independent samples per variant.
 
 ## LLM Run Paths
 
