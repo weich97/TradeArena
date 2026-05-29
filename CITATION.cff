@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use TradeArena in your research or software, please cite this repository."
+message: "If you use TradeArena in research, please cite the arXiv technical report. If you use a specific software release, also cite the repository release you used."
 title: "TradeArena: A Modular and Execution-Realistic Framework for Risk-Aware LLM Trading Agents"
 type: software
 authors:
@@ -17,3 +17,14 @@ keywords:
   - risk management
   - execution simulation
   - benchmark
+preferred-citation:
+  type: article
+  title: "Representation Signatures and Risk-Feedback Alignment in LLM Trading Agents"
+  authors:
+    - family-names: Xue
+      given-names: Weicheng
+  year: 2026
+  date-released: "2026-05-16"
+  doi: "10.48550/arXiv.2605.28850"
+  url: "https://arxiv.org/abs/2605.28850"
+  journal: "arXiv preprint arXiv:2605.28850"

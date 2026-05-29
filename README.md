@@ -22,6 +22,9 @@
   <a href="https://pypi.org/project/tradearena-benchmark/">
     <img alt="Python versions" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-3776ab?logo=python&logoColor=white">
   </a>
+  <a href="https://arxiv.org/abs/2605.28850">
+    <img alt="arXiv:2605.28850" src="https://img.shields.io/badge/arXiv-2605.28850-b31b1b.svg">
+  </a>
   <a href="https://github.com/weich97/TradeArena/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/weich97/TradeArena">
   </a>
@@ -42,6 +45,7 @@
   <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
   <a href="docs/public_artifact_privacy.md">Artifact privacy</a> |
+  <a href="docs/research_report.md">Technical report</a> |
   <a href="docs/evaluation_rigor.md">Rigor</a> |
   <a href="docs/claim_boundaries.md">Claims</a> |
   <a href="docs/observability.md">Trace export</a> |
@@ -140,6 +144,12 @@ The repository also includes a small skill task suite for evaluating LLMs as
 financial-audit agents rather than stock pickers. Those tasks ask models to
 audit trajectories, interpret risk feedback, attribute execution friction,
 review reproduction evidence, and weaken claims that outrun the evidence.
+
+The accompanying technical report is:
+
+> Weicheng Xue. 2026. Representation Signatures and Risk-Feedback Alignment in
+> LLM Trading Agents. arXiv:2605.28850.
+> https://arxiv.org/abs/2605.28850
 
 ## Claim Boundary
 
@@ -787,5 +797,21 @@ must follow [`docs/advanced_integrations_security.md`](docs/advanced_integration
 
 ## Cite
 
-See [`CITATION.cff`](CITATION.cff). If you use TradeArena in research or
-software, cite the repository release you used.
+If you use TradeArena in research, please cite the technical report:
+
+```bibtex
+@article{xue2026tradearena,
+  title         = {Representation Signatures and Risk-Feedback Alignment in LLM Trading Agents},
+  author        = {Xue, Weicheng},
+  year          = {2026},
+  journal       = {arXiv preprint arXiv:2605.28850},
+  doi           = {10.48550/arXiv.2605.28850},
+  url           = {https://arxiv.org/abs/2605.28850},
+  eprint        = {2605.28850},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+```
+
+See [`CITATION.cff`](CITATION.cff) for machine-readable citation metadata. If
+you use a specific software release, also cite the repository release you used.

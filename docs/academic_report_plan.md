@@ -1,5 +1,13 @@
 # Academic Report Plan
 
+The public technical report is now available as:
+
+> Weicheng Xue. 2026. Representation Signatures and Risk-Feedback Alignment in
+> LLM Trading Agents. arXiv:2605.28850.
+> https://arxiv.org/abs/2605.28850
+
+See [`docs/research_report.md`](research_report.md) for citation metadata.
+
 TradeArena currently has technical documentation and benchmark artifacts. A
 credible academic report needs a narrower scientific argument, explicit evidence,
 and limitations that a reviewer can audit.

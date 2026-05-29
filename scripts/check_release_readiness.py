@@ -18,6 +18,7 @@ REQUIRED_FILES = [
     "docs/benchmark_maturity.md",
     "docs/v0_2_credibility_audit.md",
     "docs/academic_report_plan.md",
+    "docs/research_report.md",
     "docs/external_validation.md",
     "docs/claim_boundaries.md",
     "docs/evidence_labels.md",
